@@ -7,6 +7,7 @@ import com.dmiranda.revert.network.Network.EntitySpawnSelf;
 import com.dmiranda.revert.network.Network.UnitUpdate;
 import com.dmiranda.revert.network.properties.PUnit;
 import com.dmiranda.revert.shared.Entity;
+import com.dmiranda.revert.shared.EntityFactory;
 import com.dmiranda.revert.shared.GameWorld;
 import com.dmiranda.revert.shared.Player;
 import com.dmiranda.revert.shared.Ship;
@@ -60,10 +61,9 @@ public class GameWorldServer extends GameWorld {
 	
 	public int serverCreateShip(Player player, float x, float y){
 		
-		Ship ship = new Ship(player, x, y, 32, 32);
-		player.attachShip(ship);
+		Entity entity = EntityFactory.server().createEntity(Unit.UT_FIGHTER, player, x, y);
 		
-		return entityManager.addEntity(ship);
+		return entityManager.addEntity(entity);
 		
 	}
 	
@@ -77,13 +77,7 @@ public class GameWorldServer extends GameWorld {
 		
 		if(tickTime < 1){
 		
-			Connection[] connections = game.server.getConnections();
-			for(int j = 0; j < connections.length; j++){
-				
-				int latency = connections[j].getReturnTripTime();
-				
-				game.server.sendToUDP(connections[j].getID(), unitUpdate);
-			}
+			game.server.sendToAllUDP(unitUpdate);
 		
 			tickTime = Network.CLIENT_SEND_INTERVAL;
 		}
@@ -109,7 +103,7 @@ public class GameWorldServer extends GameWorld {
 					
 					EntityDeath death = new EntityDeath();
 					death.id = unit.getId();
-					death.killerid = unit.getLastHitBy().getId();			// TODO: may sometimes return null on last hit by
+					death.killerid = unit.getLastHitBy() == null ? -1 : unit.getLastHitBy().getId();	 //may sometimes return null on last hit by
 					game.server.sendToAllTCP(death);
 					
 					// Temp - respawn the killed entity for the player

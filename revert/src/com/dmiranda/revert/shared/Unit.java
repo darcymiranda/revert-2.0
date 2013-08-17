@@ -101,7 +101,11 @@ public class Unit extends Entity {
 	}
 	
 	public void setHealth(float health){
-		setHealth(health, maxHealth);
+		if(maxHealth == 0){
+			setHealth(health, health);
+		} else {
+			setHealth(health, maxHealth);
+		}
 	}
 	
 	public void setHealth(float health, float maxHealth){
@@ -117,6 +121,11 @@ public class Unit extends Entity {
 			this.maxHealth = 1;
 		}
 		
+	}
+	
+	public void setParameters(float health, float rotationSpeed){
+		setHealth(health, health);
+		this.rotationSpeed = rotationSpeed;
 	}
 	
 	public void addWeapon(Weapon weapon){ weapons.add(weapon); }

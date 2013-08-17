@@ -16,28 +16,14 @@ public class Ship extends Unit {
 	public Ship(Player owner, float x, float y, int width, int height) {
 		super(x, y, width, height);
 		
+		setOwnerPlayer(owner);
+		
 		type = Unit.UT_FIGHTER;
 		
 		engineOffset = new Vector2();
 		shipEngine = new ShipEngine(this, 20.5f, 5.5f, 350f);
 		
-		setOwnerPlayer(owner);
-		setHealth(50, 50);
-		
 		createCollisionCircle();
-		
-		rotationSpeed = 2.5f;
-		acceleration = 5.5f;
-		topSpeed = 350f;
-		
-		Weapon weapon = new Weapon(this, "Gun", 5, 5, 125, 0.98f, 500, 100, 0, 800);
-		weapon.setLocation(45, 10);
-		addWeapon(weapon);
-		
-		weapon = new Weapon(this, "Gun", 5, 5, 125, 0.98f, 500, 100, 0, 800);
-		weapon.setLocation(-45, 10);
-		addWeapon(weapon);
-		
 		
 	}
 	
@@ -87,6 +73,12 @@ public class Ship extends Unit {
 			velocity.y *= maxSpeed / dirSpeed;
 			
 		}
+	}
+	
+	public void setParameters(float health, float rotationSpeed, float acceleration, float topSpeed){
+		super.setParameters(health, rotationSpeed);
+		this.acceleration = acceleration;
+		this.topSpeed = topSpeed;
 	}
 
 	public void moveUp(boolean w){ this.w = w; }

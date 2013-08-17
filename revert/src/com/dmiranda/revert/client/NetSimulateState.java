@@ -1,11 +1,9 @@
 package com.dmiranda.revert.client;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.EntityState;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Entity;
-import com.dmiranda.revert.tools.Tools;
 
 public class NetSimulateState {
 	

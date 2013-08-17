@@ -23,6 +23,7 @@ public class Player {
 	}
 	
 	public void attachShip(Ship ship){
+		if(ship != null){ System.err.println("Attached a ship to a player that already had a ship"); }
 		this.ship = ship;
 		ship.setOwnerPlayer(this);
 	}
