@@ -107,6 +107,8 @@ public class GameWorldServer extends GameWorld {
 						
 						Entity spawnedEntity = EntityFactory.server().createEntity(entity.getType(), entity.getOwnerPlayer(), x, y);
 						
+						GameWorld.entityManager.addEntity(spawnedEntity);
+						
 						EntitySpawnSelf spawn = new EntitySpawnSelf();
 						spawn.id = spawnedEntity.getId();
 						spawn.x = x;	
