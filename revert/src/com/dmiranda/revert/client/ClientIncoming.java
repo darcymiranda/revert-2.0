@@ -13,6 +13,7 @@ import com.dmiranda.revert.network.properties.PAsteroid;
 import com.dmiranda.revert.network.properties.PUnit;
 import com.dmiranda.revert.shared.Asteroid;
 import com.dmiranda.revert.shared.Entity;
+import com.dmiranda.revert.shared.EntityFactory;
 import com.dmiranda.revert.shared.GameWorld;
 import com.dmiranda.revert.shared.Player;
 import com.dmiranda.revert.shared.Ship;
@@ -60,7 +61,8 @@ public class ClientIncoming extends Listener {
 							unit.setPosition(pUnit.x, pUnit.y);
 							unit.setVelocity(pUnit.xv, pUnit.yv);
 						}
-						
+
+						unit.setShooting(pUnit.shooting);
 						unit.rotateTo(pUnit.rt);
 						unit.setHealth(pUnit.health);
 						
@@ -70,7 +72,6 @@ public class ClientIncoming extends Listener {
 						
 						Ship ship = (Ship)entity;
 						
-						ship.setShooting(pUnit.shooting);
 						ship.moveUp(pUnit.w);
 						ship.moveLeft(pUnit.a);
 						ship.moveRight(pUnit.d);
@@ -82,26 +83,16 @@ public class ClientIncoming extends Listener {
 				else{
 					
 					Player player = game.world.getPlayers().get(pUnit.playerid);
+					
 					if(player != null){
-						switch(pUnit.type){
-							case 0:
-								
-								SpaceStation spaceStation = new SpaceStation(player, pUnit.x, pUnit.y);
-								GameWorld.entityManager.addEntity(spaceStation, pUnit.id);
-								
-								Gdx.app.debug("Network [UnitUpdate]", "Created space station(" + pUnit.id + ") for player " + player);
-								break;
-							case 1:
-								
-								game.world.clientCreateShip(player, pUnit.id, pUnit.x, pUnit.y);
-								
-								Gdx.app.debug("Network [UnitUpdate]", "Created ship(" + pUnit.id + ") for player " + player);
-								
-								break;
+						
+						Entity newEntity = EntityFactory.client().createEntity(pUnit.type, player, pUnit.x, pUnit.y);
+						if(newEntity != null){
+							
+							Gdx.app.debug("Network [UnitUpdate]", "Created entity " + pUnit.id + " for " + player);
+							
+							GameWorld.entityManager.addEntity(newEntity, pUnit.id);
 						}
-					}
-					else{
-						Gdx.app.error("Network [UnitUpdate]", pUnit.id + " but player(" + pUnit.playerid + ") was null");
 					}
 				}
 			}
@@ -150,9 +141,16 @@ public class ClientIncoming extends Listener {
 		}
 		else if(object instanceof EntitySpawnSelf){
 			EntitySpawnSelf spawn = (EntitySpawnSelf)object;
+
+			Ship unit = (Ship) EntityFactory.client().createEntity(spawn.type, game.world.getLocalPlayer(), spawn.x, spawn.y);
 			
-			Gdx.app.debug("Network [SpawnSelf]", "created ship(" + spawn.id + ")");
-			game.world.clientCreateShip(game.world.getLocalPlayer(), spawn.id, spawn.x, spawn.y);
+			unit.getClientNetSim().setOnlySync(true);
+			game.getCamera().focusEntity(unit);
+			game.getMinimap().setCenterOnShip(unit);
+			
+			Gdx.app.debug("Network [SpawnSelf]", "created unit(" + spawn.id + ")");
+			
+			GameWorld.entityManager.addEntity(unit, spawn.id);
 			
 		}
 		else if(object instanceof Connect){

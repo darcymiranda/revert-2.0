@@ -7,9 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Asteroid;
 import com.dmiranda.revert.shared.Entity;
-import com.dmiranda.revert.shared.EntityFactory;
 import com.dmiranda.revert.shared.GameWorld;
-import com.dmiranda.revert.shared.Player;
 import com.dmiranda.revert.shared.Ship;
 import com.dmiranda.revert.shared.Unit;
 import com.dmiranda.revert.shared.bullet.Bullet;
@@ -44,20 +42,6 @@ public class GameWorldClient extends GameWorld {
 		
 		Asteroid asteroid = new Asteroid(type, x, y, r);
 		entityManager.addLocalEntity(asteroid);
-		
-	}
-	
-	public void clientCreateShip(Player player, int id, float x, float y){
-		
-		Ship ship = (Ship) EntityFactory.client().createEntity(Unit.UT_FIGHTER, player, x, y);
-		
-		if(player.local){
-			ship.getClientNetSim().setOnlySync(true);
-			game.getCamera().focusEntity(ship);
-			game.getMinimap().setCenterOnShip(ship);
-		}
-		
-		entityManager.addEntity(ship, id);
 		
 	}
 	

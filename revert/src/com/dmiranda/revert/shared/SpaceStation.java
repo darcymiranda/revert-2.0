@@ -11,8 +11,6 @@ public class SpaceStation extends Unit {
 		super(x, y, 256, 256);
 		super.setOwnerPlayer(owner);
 		
-		type = Unit.UT_SPACESTATION;
-		
 		setHealth(5250, 5250);
 		createCollisionCircle(50);
 		

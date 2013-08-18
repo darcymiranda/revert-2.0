@@ -54,19 +54,13 @@ public class GameWorldServer extends GameWorld {
 		entityManager.addEntity(asteroid);
 		*/
 		
-		entityManager.addEntity(new SpaceStation(players.get(COMPUTER_RED), 372, 372));
-		entityManager.addEntity(new SpaceStation(players.get(COMPUTER_BLUE), 2188, 2188));
+		entityManager.addEntity(
+				EntityFactory.server().createEntity(Unit.UT_SPACESTATION, players.get(COMPUTER_RED), 372, 372));
+		entityManager.addEntity(
+				EntityFactory.server().createEntity(Unit.UT_SPACESTATION, players.get(COMPUTER_BLUE), 2188, 2188));
+		
 		
 	}
-	
-	public int serverCreateShip(Player player, float x, float y){
-		
-		Entity entity = EntityFactory.server().createEntity(Unit.UT_FIGHTER, player, x, y);
-		
-		return entityManager.addEntity(entity);
-		
-	}
-	
 	
 	@Override
 	public void update(float delta){
@@ -106,17 +100,20 @@ public class GameWorldServer extends GameWorld {
 					death.killerid = unit.getLastHitBy() == null ? -1 : unit.getLastHitBy().getId();	 //may sometimes return null on last hit by
 					game.server.sendToAllTCP(death);
 					
-					// Temp - respawn the killed entity for the player
-					float x = unit.getOwnerPlayer().getSpawnPoint().x;
-					float y = unit.getOwnerPlayer().getSpawnPoint().y;
-					int entityId = game.world.serverCreateShip(unit.getOwnerPlayer(), x, y);
-					
-					EntitySpawnSelf spawn = new EntitySpawnSelf();
-					spawn.id = entityId;
-					spawn.x = x;	
-					spawn.y = y;
-					spawn.type = 0;
-					game.server.sendToTCP(unit.getOwnerPlayer().id, spawn);
+					// Temp - respawn the killed ship for the player
+					if(entity instanceof Ship){
+						float x = unit.getOwnerPlayer().getSpawnPoint().x;
+						float y = unit.getOwnerPlayer().getSpawnPoint().y;
+						
+						Entity spawnedEntity = EntityFactory.server().createEntity(entity.getType(), entity.getOwnerPlayer(), x, y);
+						
+						EntitySpawnSelf spawn = new EntitySpawnSelf();
+						spawn.id = spawnedEntity.getId();
+						spawn.x = x;	
+						spawn.y = y;
+						spawn.type = entity.getType();
+						game.server.sendToTCP(spawnedEntity.getOwnerPlayer().id, spawn);
+					}
 					
 				}
 				
@@ -125,7 +122,7 @@ public class GameWorldServer extends GameWorld {
 					PUnit pUnit = new PUnit();
 					
 					pUnit.playerid = unit.getOwnerPlayer().id;
-					pUnit.type = unit.getUnitType();
+					pUnit.type = unit.getType();
 					pUnit.id = unit.getId();
 					pUnit.x = unit.getPosition().x;
 					pUnit.y = unit.getPosition().y;

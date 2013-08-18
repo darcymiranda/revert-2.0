@@ -18,8 +18,6 @@ public class Ship extends Unit {
 		
 		setOwnerPlayer(owner);
 		
-		type = Unit.UT_FIGHTER;
-		
 		engineOffset = new Vector2();
 		shipEngine = new ShipEngine(this, 20.5f, 5.5f, 350f);
 		

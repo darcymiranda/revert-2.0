@@ -21,6 +21,7 @@ public class Entity {
 	private CollisionCircle collisionCircle;
 	private boolean net = true;
 	private boolean alive = true;
+	private int type = -1;
 	private int id = -1;
 	
 	private Vector2 oldPosition;
@@ -123,6 +124,7 @@ public class Entity {
 	public void setVelocity(Vector2 velocity){ this.velocity = new Vector2(velocity); }
 	public void setVelocity(float x, float y){ this.velocity = new Vector2(x, y); }
 	public void setRotation(float r){ this.rotation = r; }
+	public void setType(int type){ this.type = type; }
 	
 	public boolean isNetworkEnabled(){ return net; }
 	public Vector2 getVelocity(){ return velocity; }
@@ -136,6 +138,7 @@ public class Entity {
 	public Entity getOwnerEntity(){ return ownerEntity; }
 	public CollisionCircle getCollisionCircle(){ return collisionCircle; }
 	public int getId(){ return id; }
+	public int getType(){ return type; }
 	
 	public EntityActionState getEntityActionState(){ return actionState; }
 	

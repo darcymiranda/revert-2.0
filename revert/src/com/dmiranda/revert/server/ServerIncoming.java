@@ -14,8 +14,10 @@ import com.dmiranda.revert.network.properties.PAsteroid;
 import com.dmiranda.revert.server.RevertServer.UserConnection;
 import com.dmiranda.revert.shared.Asteroid;
 import com.dmiranda.revert.shared.Entity;
+import com.dmiranda.revert.shared.EntityFactory;
 import com.dmiranda.revert.shared.GameWorld;
 import com.dmiranda.revert.shared.Player;
+import com.dmiranda.revert.shared.Unit;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
@@ -28,19 +30,17 @@ public class ServerIncoming extends Listener {
 	}
 	
 	@Override
-	public void received(Connection connection, Object object){
-		super.received(connection, object);
+	public void received(Connection currentConnection, Object object){
+		super.received(currentConnection, object);
 		
-		UserConnection currentUserConnection = (UserConnection)connection;
-		
-		Player currentPlayer = game.world.getPlayers().get(currentUserConnection.getID());
+		Player currentPlayer = game.world.getPlayers().get(currentConnection.getID());
 		if(currentPlayer == null){
 			
 			if(object instanceof Connect){
 				
-				System.out.println("Connected: Session #" + currentUserConnection.getID());
+				System.out.println("Connected: Session #" + currentConnection.getID());
 				
-				currentPlayer = game.world.createPlayer(currentUserConnection.getID(), currentUserConnection.getID() % 2, ((Connect)object).username, false);
+				currentPlayer = game.world.createPlayer(currentConnection.getID(), currentConnection.getID() % 2, ((Connect)object).username, false);
 				
 				if(currentPlayer.team == 0)
 					currentPlayer.setSpawnPoint(372, 372);
@@ -56,14 +56,16 @@ public class ServerIncoming extends Listener {
 				
 				float x = MathUtils.random(currentPlayer.getSpawnPoint().x + 256, currentPlayer.getSpawnPoint().x + 256 + 100);
 				float y = MathUtils.random(currentPlayer.getSpawnPoint().y + 256, currentPlayer.getSpawnPoint().y + 256 + 100);
-				int entityId = game.world.serverCreateShip(currentPlayer, x, y);
+				
+				Entity spawnedEntity = EntityFactory.server().createEntity(Unit.UT_FIGHTER, currentPlayer, x, y);
+				GameWorld.entityManager.addEntity(spawnedEntity);
 				
 				EntitySpawnSelf spawn = new EntitySpawnSelf();
-				spawn.id = entityId;
+				spawn.id = spawnedEntity.getId();
 				spawn.x = x;		
 				spawn.y = y;
-				spawn.type = 0;
-				game.server.sendToTCP(currentUserConnection.getID(), spawn);
+				spawn.type = Unit.UT_FIGHTER;
+				game.server.sendToTCP(currentConnection.getID(), spawn);
 				
 				MapProperties props = new MapProperties();
 				props.asteroidProperties = new ArrayList<PAsteroid>();
@@ -83,12 +85,12 @@ public class ServerIncoming extends Listener {
 					}
 				}
 				
-				game.server.sendToTCP(currentUserConnection.getID(), props);
+				game.server.sendToTCP(currentConnection.getID(), props);
 				
 				// Send data of all the other clients to sync the new one
 				Connection[] connections = game.server.getConnections();
 				for(int i = 0; i < connections.length; i ++){
-					if(connections[i].getID() == connection.getID()) continue;
+					if(connections[i].getID() == currentConnection.getID()) continue;
 					
 					Player player = game.world.getPlayers().get(connections[i].getID());
 					if(player == null){
@@ -112,7 +114,7 @@ public class ServerIncoming extends Listener {
 				Vector2 newPosition = new Vector2(updater.x, updater.y);
 				
 				float distance = currentPlayer.ship.getPosition().dst2(newPosition.x, newPosition.y);
-				if(distance > 3000 || distance < -3000){
+				if(distance > 5000 || distance < -5000){
 					
 					System.err.println(currentPlayer + "  " + currentPlayer.ship + " moved too quickly of " + distance + " units.");
 					
@@ -135,7 +137,7 @@ public class ServerIncoming extends Listener {
 		else if(object instanceof PingTest){
 			PingTest pingTest = (PingTest)object;
 			pingTest.reply = true;
-			game.server.sendToTCP(currentUserConnection.getID(), pingTest);
+			game.server.sendToTCP(currentConnection.getID(), pingTest);
 		}
 	}
 	
@@ -166,15 +168,6 @@ public class ServerIncoming extends Listener {
 		Disconnect disconnect = new Disconnect();
 		disconnect.id = connection.getID();
 		game.server.sendToAllTCP(disconnect);
-	}
-	
-	private UserConnection[] getPlayerConnections(){
-		Connection[] connections = game.server.getConnections();
-		UserConnection[] userConnections = new UserConnection[connections.length];
-		for(int i = 0; i < connections.length; i++){
-			userConnections[i] = (UserConnection) connections[i];
-		}
-		return userConnections;
 	}
 
 }

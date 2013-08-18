@@ -10,7 +10,6 @@ public class Unit extends Entity {
 	
 	public static final int UT_SPACESTATION = 0,
 							UT_FIGHTER = 1;
-	protected int type;
 	
 	protected float health, maxHealth;
 	protected float rotationSpeed;
@@ -136,7 +135,6 @@ public class Unit extends Entity {
 	public float getMaxHealth(){ return maxHealth; }
 	public ArrayList<Weapon> getWeapons(){ return weapons; }
 	public Weapon getPrimaryWeapon(){ return weapons.size() > 0 ? weapons.get(0) : null; }
-	public int getUnitType(){ return type; }
 	
 	public boolean isShooting(){ return shooting; }
 	public void setShooting(boolean shooting){ this.shooting = shooting; }

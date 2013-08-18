@@ -66,8 +66,15 @@ public class EntityFactory {
 				entity = ship;
 				
 				break;
+			case Unit.UT_SPACESTATION:
+				entity = new SpaceStation(player, x, y);
+				break;
 		}
 		
+		if(entity != null){
+			entity.setType(type);
+		}
+	
 		return entity;
 		
 	}
