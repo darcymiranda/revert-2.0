@@ -1,6 +1,7 @@
 package com.dmiranda.revert.shared;
 
 import com.dmiranda.revert.GameWorldClient;
+import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.shared.weapon.Weapon;
 
 public class EntityFactory {
@@ -42,9 +43,10 @@ public class EntityFactory {
 		
 		switch(type){
 			case Unit.UT_FIGHTER:
-				Ship ship = new Ship(player, x, y, 32, 32);
+				Ship ship = new Ship(player, x, y, 30, 40);
 				
 				ship.setParameters(50, 2.5f, 5.5f, 350f);
+				ship.createCollisionCircle(30);
 				
 				Weapon weapon = new Weapon(ship, "Gun", 5, 5, 125, 0.98f, 500, 100, 0, 800);
 				weapon.setLocation(45, 10);
@@ -57,8 +59,7 @@ public class EntityFactory {
 				player.attachShip(ship);
 				
 				if(side == CLIENT_SIDE){
-					// TODO: Reimplement the way we render
-					ship.setTexture(null);
+					ship.setTexture(Revert.getLoadedTexture("fighter.png"));
 					ship.clientStartNetSim();
 					GameWorldClient.particleSystem.addNewEffectFollower("ship_engine2", ship, ship.getEngineOffset(), true);
 				}
@@ -68,6 +69,16 @@ public class EntityFactory {
 				break;
 			case Unit.UT_SPACESTATION:
 				entity = new SpaceStation(player, x, y);
+				if(side == CLIENT_SIDE){
+					SpaceStation spaceStation = (SpaceStation) entity;
+					spaceStation.setTexture(Revert.getLoadedTexture("spacestation.png"));
+					
+					spaceStation.addTurret(33, 80);
+					spaceStation.addTurret(90 + 20, 80);
+					spaceStation.addTurret(180, 80);
+					spaceStation.addTurret(270 - 20, 80);
+					spaceStation.addTurret(360 - 40, 80);
+				}
 				break;
 		}
 		

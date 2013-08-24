@@ -1,7 +1,0 @@
-{
-        com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
-                default: {
-                        down: play-active, up: play-default, over: play-hover
-                }
-        }
-}

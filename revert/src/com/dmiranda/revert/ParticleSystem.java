@@ -27,19 +27,19 @@ public class ParticleSystem {
 		//TODO: Automatically load particle effects
 		
 		pe = new ParticleEffect();
-		pe.load(Gdx.files.internal("data/particles/ship_engine2.p"), Gdx.files.internal("textures"));
+		pe.load(Gdx.files.internal("./assets/data/particles/ship_engine2.p"), Gdx.files.internal("./assets/textures"));
 		cache.put("ship_engine2", pe);
 		
 		pe = new ParticleEffect();
-		pe.load(Gdx.files.internal("data/particles/hit.p"), Gdx.files.internal("textures"));
+		pe.load(Gdx.files.internal("./assets/data/particles/hit.p"), Gdx.files.internal("./assets/textures"));
 		cache.put("hit", pe);
 		
 		pe = new ParticleEffect();
-		pe.load(Gdx.files.internal("data/particles/expo1.p"), Gdx.files.internal("textures"));
+		pe.load(Gdx.files.internal("./assets/data/particles/expo1.p"), Gdx.files.internal("./assets/textures"));
 		cache.put("expo1", pe);
 		
 		pe = new ParticleEffect();
-		pe.load(Gdx.files.internal("data/particles/muzzle-flash.p"), Gdx.files.internal("textures"));
+		pe.load(Gdx.files.internal("./assets/data/particles/muzzle-flash.p"), Gdx.files.internal("./assets/textures"));
 		cache.put("muzzle-flash", pe);
 		
 		

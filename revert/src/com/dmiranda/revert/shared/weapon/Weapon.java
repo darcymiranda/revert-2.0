@@ -223,6 +223,9 @@ public class Weapon {
 		
 		Bullet[] bullets = new Bullet[1];
 		bullets[0] = bullet.newInstance(getDamageRoll(), getEffectedAccuracy(), bulletSpeed);
+		
+		//GameWorldClient.particleSystem.
+		
 		return bullets;
 	}
 	

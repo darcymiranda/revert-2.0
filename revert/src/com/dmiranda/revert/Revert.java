@@ -33,6 +33,7 @@ public class Revert implements ApplicationListener {
 	public static AssetManager assets = new AssetManager();
 	public static HashMap<String, Animation> animations = new HashMap<String, Animation>();
 	public static final boolean DESKTOP = true;
+	public static final boolean CLIENT_SIDE = true;
 
 	public GameWorldClient world;
 	
@@ -47,7 +48,7 @@ public class Revert implements ApplicationListener {
 	
 	private RevertClient client;
 	
-	private BitmapFont lFont, sFont, tFont;
+	public static BitmapFont lFont, sFont, tFont;
 	
 	private GAME_STATES currentGameState = null;
 	
@@ -94,14 +95,13 @@ public class Revert implements ApplicationListener {
 	
 	private void initLoad(){
 		
-		lFont = new BitmapFont(Gdx.files.internal("data/fonts/mlarge.fnt"), Gdx.files.internal("data/fonts/mlarge.png"), true);
-		sFont = new BitmapFont(Gdx.files.internal("data/fonts/msmall.fnt"), Gdx.files.internal("data/fonts/msmall.png"), true);
-		tFont = new BitmapFont(Gdx.files.internal("data/fonts/mtiny.fnt"), Gdx.files.internal("data/fonts/mtiny.png"), true);
+		lFont = new BitmapFont(Gdx.files.internal("./assets/data/fonts/mlarge.fnt"), Gdx.files.internal("./assets/data/fonts/mlarge.png"), true);
+		sFont = new BitmapFont(Gdx.files.internal("./assets/data/fonts/msmall.fnt"), Gdx.files.internal("./assets/data/fonts/msmall.png"), true);
+		tFont = new BitmapFont(Gdx.files.internal("./assets/data/fonts/mtiny.fnt"), Gdx.files.internal("./assets/data/fonts/mtiny.png"), true);
 		
 		loadAssets();
 		
-		//animations.put("fighter-engine", new Animation(64, TextureRegion.split(Revert.getLoadedTexture("fighter_engine.png"), 16, 5)[0]));
-		//animations.put("fighter-engine-light", new Animation(32, TextureRegion.split(Revert.getLoadedTexture("light.png"), 30, 30)[0]));
+
 		
 	}
 
@@ -145,6 +145,9 @@ public class Revert implements ApplicationListener {
 		}
 		else if(currentGameState == GAME_STATES.LOAD){
 			
+			animations.put("fighter-engine", new Animation(64,Revert.getLoadedTexture("fighter_engine.png").split(16, 5)[0]));
+			animations.put("fighter-engine-light", new Animation(32, Revert.getLoadedTexture("light.png").split(30, 30)[0]));
+			
 			world.create();
 			minimap.loadGraphics();
 			
@@ -173,14 +176,21 @@ public class Revert implements ApplicationListener {
 			
 			doInputs();
 			
-			// Update and render world
-			world.update(Gdx.graphics.getDeltaTime());
-			world.render(sb, gameCamera);
+			sb.begin();
+			{
+				
+				// Update and render world
+				world.update(Gdx.graphics.getDeltaTime());
+				world.render(sb, gameCamera);
+				
+			}
+			sb.end();
 			
 			// Render UI
 			sb.setProjectionMatrix(uiCamera.combined);
 			sb.begin();
 			{
+				
 				minimap.renderUI(sb);
 				
 				Entity[] entities = GameWorld.entityManager.getEntities();
@@ -194,6 +204,10 @@ public class Revert implements ApplicationListener {
 				tFont.draw(sb, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, sFont.getXHeight() * 2);
 				tFont.draw(sb, "Team: " + (world.getLocalPlayerFast().team == 0 ? "Red" : "Blue"), 10, sFont.getXHeight() *4);
 				
+				if(world.getLocalPlayerFast() != null && world.getLocalPlayerFast().ship != null){
+					tFont.draw(sb, "Position: " + Math.round(world.getLocalPlayerFast().ship.getPosition().x) + " : "
+											    + Math.round(world.getLocalPlayerFast().ship.getPosition().y), 10, sFont.getXHeight() * 6);
+				}
 				
 			}
 			sb.end();
@@ -305,7 +319,7 @@ public class Revert implements ApplicationListener {
 			dirHandle = Gdx.files.internal("/");
 		}
 		else{
-			dirHandle = Gdx.files.internal("./bin/textures");
+			dirHandle = Gdx.files.internal("./assets/textures");
 		}
 		
 		for(FileHandle handle : dirHandle.list()){
@@ -314,8 +328,8 @@ public class Revert implements ApplicationListener {
 		
 	}
 	
-	public static Texture getLoadedTexture(String name){
-		final String prefix = "./bin/textures/";
+	public static TextureRegion getLoadedTexture(String name){
+		final String prefix = "./assets/textures/";
 		
 		// Default texture to a default texture to prevent crashes
 		if(!assets.isLoaded(prefix + name, Texture.class)){
@@ -323,7 +337,7 @@ public class Revert implements ApplicationListener {
 			return assets.get(prefix + "default.png");
 		}
 		
-		return assets.get(prefix + name, Texture.class);
+		return new TextureRegion(assets.get(prefix + name, Texture.class));
 	}
 
 
@@ -341,9 +355,6 @@ public class Revert implements ApplicationListener {
 	public void resume() {
 	}
 	
-	public BitmapFont getFontTiny(){ return tFont; }
-	public BitmapFont getFontSmall(){ return sFont; }
-	public BitmapFont getFontLarge(){ return lFont; }
 	public Minimap getMinimap(){ return minimap; }
 	public Camera getCamera(){ return gameCamera; }
 	public RevertClient getClient(){ return client; }

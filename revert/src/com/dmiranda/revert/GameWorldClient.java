@@ -18,6 +18,7 @@ public class GameWorldClient extends GameWorld {
 	public static ParticleSystem particleSystem;
 	
 	private EntityRenderer entityRenderer;
+	private ForegroundStarEffect starEffect;
 	
 	private int tickTime;
 	
@@ -27,12 +28,14 @@ public class GameWorldClient extends GameWorld {
 		this.game = game;
 
 		entityRenderer = new EntityRenderer(this);
+		starEffect = new ForegroundStarEffect(game.getCamera());
 	}
 	
 	public void create(){
 		
 		map.loadGraphics();
 		entityRenderer.loadGraphics();
+		starEffect.init();
 		
 		particleSystem = new ParticleSystem();
 		
@@ -110,30 +113,31 @@ public class GameWorldClient extends GameWorld {
 	
 	public void render(SpriteBatch sb, Camera camera){
 		
-		sb.begin();
-		{
-			map.render(sb, 0, camera);
+		map.render(sb, 0, camera);
+		
+		if(game.getCamera().hasFocus()){
+			starEffect.render(Gdx.graphics.getDeltaTime(), sb);
+		}
+		
+		Entity[] localEntities = entityManager.getLocalEntities();
+		for(int i = 0; i < localEntities.length; i++){
+			if(localEntities[i] == null) continue;
 			
-			Entity[] localEntities = entityManager.getLocalEntities();
-			for(int i = 0; i < localEntities.length; i++){
-				if(localEntities[i] == null) continue;
-				
-				entityRenderer.render(sb, localEntities[i]);
-			}
-			
-			particleSystem.render(sb, Gdx.graphics.getDeltaTime());
+			localEntities[i].render(sb);
+			entityRenderer.render(sb, localEntities[i]);
+		}
+		
+		particleSystem.render(sb, Gdx.graphics.getDeltaTime());
 
-			Entity[] entities = entityManager.getEntities();
-			for(int i = 0; i < entities.length; i++){
-				if(entities[i] == null) continue;
-				
-				entityRenderer.render(sb, entities[i]);
-				
-			}
+		Entity[] entities = entityManager.getEntities();
+		for(int i = 0; i < entities.length; i++){
+			if(entities[i] == null) continue;
+			
+			entities[i].render(sb);
+			entityRenderer.render(sb, entities[i]);
 			
 		}
-		sb.end();
-		
+			
 	}
 	
 	public void forceNextNetSend(){ tickTime = -1; }

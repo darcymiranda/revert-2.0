@@ -1,7 +1,7 @@
 package com.dmiranda.revert.shared;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class Entity {
@@ -16,7 +16,7 @@ public class Entity {
 	
 	protected EntityActionState actionState;
 	
-	private Texture texture;
+	private TextureRegion texture;
 	
 	private CollisionCircle collisionCircle;
 	private boolean net = true;
@@ -72,11 +72,7 @@ public class Entity {
 					getWidth(),
 					getHeight(),
 					1, 1,
-					getRotation(),
-					0, 0,
-					(int)getWidth(),
-					(int)getHeight(),
-					false, false);
+					getRotation());
 		}
 	}
 	
@@ -114,7 +110,7 @@ public class Entity {
 	protected void onHit(Entity hitter){}
 	protected void onDeath(Entity killer){}
 
-	public void setTexture(Texture texture){ this.texture = texture; }
+	public void setTexture(TextureRegion texture){ this.texture = texture; }
 	public void setNetworkEnabled(boolean net){ this.net = net; }
 	public void setId(int id){ this.id = id; }
 	public void setOwnerEntity(Entity entity){ this.ownerEntity = entity; }

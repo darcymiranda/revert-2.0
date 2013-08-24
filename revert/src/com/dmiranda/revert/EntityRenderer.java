@@ -1,25 +1,17 @@
 package com.dmiranda.revert;
 
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.shared.Asteroid;
 import com.dmiranda.revert.shared.Entity;
-import com.dmiranda.revert.shared.EntityActionState;
-import com.dmiranda.revert.shared.Ship;
-import com.dmiranda.revert.shared.SpaceStation;
-import com.dmiranda.revert.shared.Turret;
 import com.dmiranda.revert.shared.Unit;
 import com.dmiranda.revert.shared.bullet.Bullet;
 
 public class EntityRenderer {
 	
-	private Animation anfighterEngine, anfighterEngineLight;
 	private TextureRegion[] asteroidTypes;
 	
 	private GameWorldClient world;
@@ -30,16 +22,12 @@ public class EntityRenderer {
 	
 	public void loadGraphics(){
 		
-		anfighterEngine = new Animation(64, TextureRegion.split(Revert.getLoadedTexture("fighter_engine.png"), 16, 5)[0]);
-		anfighterEngineLight = new Animation(32, TextureRegion.split(Revert.getLoadedTexture("light.png"), 30, 30)[0]);
-		
-		asteroidTypes = TextureRegion.split(Revert.getLoadedTexture("asteroid.png"), 128, 128)[0];
+		asteroidTypes = Revert.getLoadedTexture("asteroid.png").split(128, 128)[0];
 		
 	}
 	
 	public void render(SpriteBatch sb, Entity entity){
 		
-
 		if(entity instanceof Unit){
 			
 			Unit unit = (Unit)entity;
@@ -47,7 +35,7 @@ public class EntityRenderer {
 			// healthbar
 			if(unit.getHealth() > 0 && unit.getHealth() != unit.getMaxHealth()){
 				
-				Texture healthTexture = Revert.getLoadedTexture("health.png");
+				TextureRegion healthTexture = Revert.getLoadedTexture("health.png");
 				
 				Vector2 position = unit.getPosition();
 				float barLength = unit.getWidth() * (unit.getHealth() / unit.getMaxHealth());
@@ -56,7 +44,7 @@ public class EntityRenderer {
 				
 			}
 			
-			if(entity instanceof Ship){
+/*			if(entity instanceof Ship){
 				
 				Vector2 locOffsetEngine = new Vector2();
 				locOffsetEngine.x = -MathUtils.sinDeg(entity.getRotation() + 180) * 20.5f;
@@ -132,9 +120,9 @@ public class EntityRenderer {
 					
 					world.game.getFontTiny().setColor(Color.WHITE);
 				}
-			}
+			}*/
 			
-			else if(unit instanceof SpaceStation){
+/*			else if(unit instanceof SpaceStation){
 				
 				sb.draw(Revert.getLoadedTexture("spacestation.png"),
 						unit.getPosition().x,
@@ -170,7 +158,7 @@ public class EntityRenderer {
 				}
 
 				
-			}
+			}*/
 		
 		}
 		else if(entity instanceof Asteroid){
@@ -199,27 +187,19 @@ public class EntityRenderer {
 					entity.getWidth(),
 					entity.getHeight(),
 					1, 1,
-					entity.getRotation(),
-					0, 0,
-					(int)entity.getWidth(),
-					(int)entity.getHeight(),
-					false, false);
+					entity.getRotation());
 			
-			Texture glow = Revert.getLoadedTexture("glow.png");
+			TextureRegion glow = Revert.getLoadedTexture("glow.png");
 			
 			sb.draw(glow,
-					entity.getCenterX() - glow.getWidth() / 2,
-					entity.getCenterY() - glow.getHeight() / 2, 
-					glow.getWidth() / 2,
-					glow.getHeight() / 2,
-					glow.getWidth(),
-					glow.getHeight(),
+					entity.getCenterX() - glow.getRegionWidth() / 2,
+					entity.getCenterY() - glow.getRegionHeight() / 2, 
+					glow.getRegionWidth() / 2,
+					glow.getRegionHeight() / 2,
+					glow.getRegionWidth(),
+					glow.getRegionHeight(),
 					1, 1,
-					entity.getRotation(),
-					0, 0,
-					(int)glow.getWidth(),
-					(int)glow.getHeight(),
-					false, false);
+					entity.getRotation());
 		
 		}	
 		

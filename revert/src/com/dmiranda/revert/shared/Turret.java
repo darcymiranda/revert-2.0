@@ -14,7 +14,7 @@ public class Turret extends Unit {
 	private float targetFinderDelay = 500;
 	private float targetFinderTick = 0;
 
-	public Turret(float degree, float distance, Entity owner){
+	public Turret(Entity owner, float degree, float distance){
 		super(owner.getCenterX(), owner.getCenterY(), 16, 16);
 		
 		this.locOffsetDegree = degree;

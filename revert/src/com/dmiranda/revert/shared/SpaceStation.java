@@ -2,6 +2,9 @@ package com.dmiranda.revert.shared;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.dmiranda.revert.Revert;
+
 
 public class SpaceStation extends Unit {
 	
@@ -13,12 +16,6 @@ public class SpaceStation extends Unit {
 		
 		setHealth(5250, 5250);
 		createCollisionCircle(50);
-		
-		addTurret(33, 80);
-		addTurret(90 + 20, 80);
-		addTurret(180, 80);
-		addTurret(270 - 20, 80);
-		addTurret(360 - 40, 80);
 		
 	}
 	
@@ -34,13 +31,25 @@ public class SpaceStation extends Unit {
 		
 	}
 	
+	@Override
+	public void render(SpriteBatch sb){
+		super.render(sb);
+		for(int i = 0; i < turrets.size(); i++){
+			turrets.get(i).render(sb);
+		}
+	}
+	
 	/**
 	 * Add a turret to the building
 	 * @param x offset from the center of the parent
 	 * @param y offset from the center of the parent
 	 */
 	public void addTurret(float x, float y){
-		turrets.add(new Turret(x, y, this));
+		Turret turret = new Turret(this, x, y);
+		if(Revert.CLIENT_SIDE){
+			turret.setTexture(Revert.getLoadedTexture("turret.png"));
+		}
+		turrets.add(turret);
 	}
 	
 	public ArrayList<Turret> getTurrets(){ return turrets; }

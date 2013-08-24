@@ -62,8 +62,10 @@ public class Camera {
 	
 	public void focusEntity(Entity entity){ focusEntity = entity; }
 	
+	public boolean hasFocus(){ return focusEntity != null; }
 	public OrthographicCamera getCamera(){ return orthoCam; }
-	
+	public Entity getFocusEntity(){ return focusEntity; }
+	public Vector2 getFocusPosition(){ return focusEntity.getCenterPosition(); }
 	public Vector2 getTranslation(){ return new Vector2(getModifiedViewport().add(getModifiedPosition())); }
 	public Vector2 getUnmodifiedPosition(){ return new Vector2(orthoCam.position.x, orthoCam.position.y); }
 	public Vector2 getModifiedPosition(){ return new Vector2(orthoCam.position.x - xcorner, orthoCam.position.y - ycorner); }

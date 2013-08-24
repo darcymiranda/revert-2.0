@@ -1,8 +1,11 @@
 package com.dmiranda.revert.shared;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.dmiranda.revert.shared.weapon.Weapon;
+import com.dmiranda.revert.GameWorldClient;
+import com.dmiranda.revert.Revert;
 
 public class Ship extends Unit {
 	
@@ -21,7 +24,6 @@ public class Ship extends Unit {
 		engineOffset = new Vector2();
 		shipEngine = new ShipEngine(this, 20.5f, 5.5f, 350f);
 		
-		createCollisionCircle();
 		
 	}
 	
@@ -52,6 +54,29 @@ public class Ship extends Unit {
 		engineOffset.x = -MathUtils.sinDeg(getRotation() + 180) * 20.5f;
 		engineOffset.y = MathUtils.cosDeg(getRotation() + 180) * 20.5f;
 		
+		
+	}
+	
+	@Override
+	public void render(SpriteBatch sb){
+		super.render(sb);
+		
+		shipEngine.render(sb);
+		
+		// TODO: Draw as gui so nothing goes over top
+		// Draw name
+		String name = getOwnerPlayer().username;
+	
+		if(getOwnerPlayer().team == 0)
+			Revert.tFont.setColor(Color.RED);
+		else if(getOwnerPlayer().team == 1)
+			Revert.tFont.setColor(Color.BLUE);
+		
+		Revert.tFont.draw(sb, name, 
+							getCenterX() - Revert.tFont.getSpaceWidth() * name.length(),
+							getPosition().y + getHeight() + 5);
+		
+		Revert.tFont.setColor(Color.WHITE);
 		
 	}
 	

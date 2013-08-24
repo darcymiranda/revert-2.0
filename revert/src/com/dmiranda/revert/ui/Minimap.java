@@ -12,7 +12,7 @@ import com.dmiranda.revert.shared.Player;
 
 public class Minimap {
 	
-	private Texture background;
+	private TextureRegion background;
 	private TextureRegion[] icons;
 	private Vector2 mapPosition;
 	private float iconSize;
@@ -41,7 +41,7 @@ public class Minimap {
 	
 	public void loadGraphics(){
 		
-		icons = TextureRegion.split(Revert.getLoadedTexture("minimap-icons.png"), 3, 3)[0];
+		icons = Revert.getLoadedTexture("minimap-icons.png").split(3, 3)[0];
 		background = Revert.getLoadedTexture("mm_background.png");
 		
 	}
