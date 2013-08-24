@@ -1,0 +1,46 @@
+gui-assets.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+quit-active
+  rotate: false
+  xy: 114, 46
+  size: 110, 42
+  orig: 110, 42
+  offset: 0, 0
+  index: -1
+quit-hover
+  rotate: false
+  xy: 114, 90
+  size: 110, 42
+  orig: 110, 42
+  offset: 0, 0
+  index: -1
+play-default
+  rotate: false
+  xy: 114, 2
+  size: 110, 42
+  orig: 110, 42
+  offset: 0, 0
+  index: -1
+play-active
+  rotate: false
+  xy: 2, 2
+  size: 110, 42
+  orig: 110, 42
+  offset: 0, 0
+  index: -1
+quit-default
+  rotate: false
+  xy: 2, 90
+  size: 110, 42
+  orig: 110, 42
+  offset: 0, 0
+  index: -1
+play-hover
+  rotate: false
+  xy: 2, 46
+  size: 110, 42
+  orig: 110, 42
+  offset: 0, 0
+  index: -1
