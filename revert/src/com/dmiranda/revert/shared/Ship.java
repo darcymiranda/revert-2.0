@@ -32,7 +32,37 @@ public class Ship extends Unit {
 		super.update(delta);
 		
 		if(w || s || a || d){
+			
 			actionState.changeState(EntityActionState.STATE_ON);
+			
+			if(w){
+				
+				if(velocity.y > -topSpeed){
+					velocity.y -= acceleration;
+				}
+				
+			}
+			else if(s){
+				
+				if(velocity.y < topSpeed){
+					velocity.y += acceleration;
+				}
+			}
+			
+			if(a){
+				
+				if(velocity.x > -topSpeed){
+					velocity.x -= acceleration;
+				}
+			}
+			else if(d){
+				
+				if(velocity.x < topSpeed){
+					velocity.x += acceleration;
+				}
+			}
+			
+			/* Old style movement
 			if(w){
 				setDirectionVelocity(acceleration, topSpeed);
 			}
@@ -46,6 +76,7 @@ public class Ship extends Unit {
 			else if(d){
 				setDirectionVelocity(acceleration / 2, topSpeed, rotation+90);
 			}
+			*/
 		}
 		else{
 			actionState.changeState(EntityActionState.STATE_OFF);
