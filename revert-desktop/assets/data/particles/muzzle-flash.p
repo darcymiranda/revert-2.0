@@ -152,7 +152,7 @@ aligned: false
 additive: false
 behind: false
 - Image Path -
-.\bin\textures\muzzle-flash.png
+E:\Dropbox\workspace\revert\revert-desktop\assets\textures\muzzle-flash.png
 
 
 fash
@@ -163,7 +163,7 @@ lowMin: 25.0
 lowMax: 25.0
 - Count - 
 min: 0
-max: 5
+max: 3
 - Emission - 
 lowMin: 0.0
 lowMax: 0.0
@@ -177,8 +177,8 @@ timeline0: 0.0
 - Life - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 100.0
-highMax: 100.0
+highMin: 55.0
+highMax: 55.0
 relative: false
 scalingCount: 3
 scaling0: 1.0
@@ -228,8 +228,8 @@ timeline0: 0.0
 - Scale - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 42.0
-highMax: 36.0
+highMin: 16.0
+highMax: 32.0
 relative: false
 scalingCount: 1
 scaling0: 1.0

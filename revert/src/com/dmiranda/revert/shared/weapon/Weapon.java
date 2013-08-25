@@ -2,12 +2,11 @@ package com.dmiranda.revert.shared.weapon;
 
 import java.util.Random;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.dmiranda.revert.GameWorldClient;
+import com.dmiranda.revert.Effect;
+import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Entity;
 import com.dmiranda.revert.shared.GameWorld;
@@ -50,6 +49,8 @@ public class Weapon {
 	private float locOffsetDistance;
 	// protected SoundEffect soundShoot;
 	// protected SoundEffect soundReload;
+	
+	private TextureRegion[] muzzleFlashes;
 
 	/**
 	 * A weapon that returns bullets with .action()
@@ -89,6 +90,10 @@ public class Weapon {
 		infTotalAmmo = true;
 		
 		setBullet(new GenericBullet(this));
+		
+		if(Network.clientSide){
+			muzzleFlashes = Revert.getLoadedTexture("muzzle-flash.png").split(16, 16)[0];
+		}
 		
 	}
 	
@@ -224,7 +229,23 @@ public class Weapon {
 		Bullet[] bullets = new Bullet[1];
 		bullets[0] = bullet.newInstance(getDamageRoll(), getEffectedAccuracy(), bulletSpeed);
 		
-		//GameWorldClient.particleSystem.
+		if(Network.clientSide){
+			
+			Vector2 r = getRelativeLocation();
+			
+			Effect muzzle = new Effect(r.x - 16 / 2, r.y - 16 / 2, 16, 16);
+			muzzle.setVelocity(new Vector2(owner.getVelocity()).mul(2));
+			muzzle.setRotation(owner.getRotation());
+			muzzle.setTexture(muzzleFlashes[MathUtils.random(muzzleFlashes.length - 1)]);
+			
+			Effect flash = new Effect(r.x - 64 / 2, r.y - 64 / 2, 64, 64);
+			flash.setVelocity(new Vector2(owner.getVelocity()).mul(2));
+			flash.setRotation(owner.getRotation());
+			flash.setTexture(Revert.getLoadedTexture("glow.png"));
+			
+			GameWorld.entityManager.addLocalEntity(muzzle);
+			GameWorld.entityManager.addLocalEntity(flash);
+		}
 		
 		return bullets;
 	}

@@ -23,7 +23,9 @@ public class Turret extends Unit {
 		locOffset = new Vector2();
 		
 		setOwnerEntity(owner);
-		addWeapon(new Weapon(this, "Gun", 1, 1, MathUtils.random(350, 650), 0.99f, 1500, 100, 0, 800));
+		Weapon weapon = new Weapon(this, "Gun", 1, 1, MathUtils.random(350, 650), 0.99f, 1500, 100, 0, 800);
+		weapon.setLocation(0, 16);
+		addWeapon(weapon);
 		setHealth(200);
 	}
 	

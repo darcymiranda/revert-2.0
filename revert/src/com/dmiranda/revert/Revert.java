@@ -33,7 +33,6 @@ public class Revert implements ApplicationListener {
 	public static AssetManager assets = new AssetManager();
 	public static HashMap<String, Animation> animations = new HashMap<String, Animation>();
 	public static final boolean DESKTOP = true;
-	public static final boolean CLIENT_SIDE = true;
 
 	public GameWorldClient world;
 	
@@ -66,7 +65,7 @@ public class Revert implements ApplicationListener {
 	@Override
 	public void create() {
 		
-		Network.isClientSide = true;
+		Network.clientSide = true;
 		
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 

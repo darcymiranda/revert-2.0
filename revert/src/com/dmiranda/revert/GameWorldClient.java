@@ -119,14 +119,6 @@ public class GameWorldClient extends GameWorld {
 			starEffect.render(Gdx.graphics.getDeltaTime(), sb);
 		}
 		
-		Entity[] localEntities = entityManager.getLocalEntities();
-		for(int i = 0; i < localEntities.length; i++){
-			if(localEntities[i] == null) continue;
-			
-			localEntities[i].render(sb);
-			entityRenderer.render(sb, localEntities[i]);
-		}
-		
 		particleSystem.render(sb, Gdx.graphics.getDeltaTime());
 
 		Entity[] entities = entityManager.getEntities();
@@ -137,7 +129,14 @@ public class GameWorldClient extends GameWorld {
 			entityRenderer.render(sb, entities[i]);
 			
 		}
+		
+		Entity[] localEntities = entityManager.getLocalEntities();
+		for(int i = 0; i < localEntities.length; i++){
+			if(localEntities[i] == null) continue;
 			
+			localEntities[i].render(sb);
+			entityRenderer.render(sb, localEntities[i]);
+		}
 	}
 	
 	public void forceNextNetSend(){ tickTime = -1; }

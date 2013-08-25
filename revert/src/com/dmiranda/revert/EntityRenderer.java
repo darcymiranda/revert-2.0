@@ -189,7 +189,7 @@ public class EntityRenderer {
 					1, 1,
 					entity.getRotation());
 			
-			TextureRegion glow = Revert.getLoadedTexture("glow.png");
+/*			TextureRegion glow = Revert.getLoadedTexture("glow.png");
 			
 			sb.draw(glow,
 					entity.getCenterX() - glow.getRegionWidth() / 2,
@@ -199,7 +199,7 @@ public class EntityRenderer {
 					glow.getRegionWidth(),
 					glow.getRegionHeight(),
 					1, 1,
-					entity.getRotation());
+					entity.getRotation());*/
 		
 		}	
 		

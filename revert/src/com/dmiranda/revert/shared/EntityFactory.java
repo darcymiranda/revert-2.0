@@ -49,11 +49,11 @@ public class EntityFactory {
 				ship.createCollisionCircle(30);
 				
 				Weapon weapon = new Weapon(ship, "Gun", 5, 5, 125, 0.98f, 500, 100, 0, 800);
-				weapon.setLocation(45, 10);
+				weapon.setLocation(16, 27);
 				ship.addWeapon(weapon);
 				
 				weapon = new Weapon(ship, "Gun", 5, 5, 125, 0.98f, 500, 100, 0, 800);
-				weapon.setLocation(-45, 10);
+				weapon.setLocation(-16, 27);
 				ship.addWeapon(weapon);
 				
 				player.attachShip(ship);
@@ -69,16 +69,18 @@ public class EntityFactory {
 				break;
 			case Unit.UT_SPACESTATION:
 				entity = new SpaceStation(player, x, y);
+				SpaceStation spaceStation = (SpaceStation) entity;;
+				
 				if(side == CLIENT_SIDE){
-					SpaceStation spaceStation = (SpaceStation) entity;
 					spaceStation.setTexture(Revert.getLoadedTexture("spacestation.png"));
-					
-					spaceStation.addTurret(33, 80);
-					spaceStation.addTurret(90 + 20, 80);
-					spaceStation.addTurret(180, 80);
-					spaceStation.addTurret(270 - 20, 80);
-					spaceStation.addTurret(360 - 40, 80);
 				}
+				
+				spaceStation.addTurret(33, 80);
+				spaceStation.addTurret(90 + 20, 80);
+				spaceStation.addTurret(180, 80);
+				spaceStation.addTurret(270 - 20, 80);
+				spaceStation.addTurret(360 - 40, 80);
+				
 				break;
 		}
 		

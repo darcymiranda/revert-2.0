@@ -41,6 +41,7 @@ public class Player {
 	}
 	
 	public boolean isEnemies(Player player){
+		if(player == null) return false;
 		return this.team != player.team;
 	}
 	

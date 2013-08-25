@@ -15,7 +15,7 @@ public class Network {
 	public static final int PORT_UDP = 19777;
 	public static final boolean RUN_WITH_SERVER = true;
 	
-	public static boolean isClientSide;
+	public static boolean clientSide;
 	
 	public static void register(EndPoint endPoint) {
 		

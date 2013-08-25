@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dmiranda.revert.Revert;
+import com.dmiranda.revert.network.Network;
 
 
 public class SpaceStation extends Unit {
@@ -46,7 +47,7 @@ public class SpaceStation extends Unit {
 	 */
 	public void addTurret(float x, float y){
 		Turret turret = new Turret(this, x, y);
-		if(Revert.CLIENT_SIDE){
+		if(Network.clientSide){
 			turret.setTexture(Revert.getLoadedTexture("turret.png"));
 		}
 		turrets.add(turret);
