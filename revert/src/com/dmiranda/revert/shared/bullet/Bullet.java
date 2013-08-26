@@ -1,6 +1,9 @@
 package com.dmiranda.revert.shared.bullet;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.dmiranda.revert.Revert;
+import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Entity;
 import com.dmiranda.revert.shared.weapon.Weapon;
 
@@ -14,7 +17,7 @@ public abstract class Bullet extends Entity {
 	public Bullet(Weapon weapon, float x, float y, int width, int height, float speed, float direction) {
 		super(x, y, width, height);
 		
-		createCollisionCircle();
+		createCollisionCircle(x, y, 4);
 		
 		position = weapon.getRelativeLocation();
 		position.x -= width / 2;
@@ -27,6 +30,7 @@ public abstract class Bullet extends Entity {
 		ownerEntity = weapon.getOwner();
 		decay = 5000;
 		setSpeed(speed, direction);
+
 		
 	}
 	
@@ -47,6 +51,12 @@ public abstract class Bullet extends Entity {
 		super.onHit(hitter);
 		
 		kill(hitter);
+		
+	}
+	
+	@Override
+	public void render(SpriteBatch sb){
+		super.render(sb);
 		
 	}
 	

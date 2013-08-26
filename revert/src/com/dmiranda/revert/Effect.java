@@ -12,7 +12,7 @@ public class Effect extends Entity {
 	}
 	
 	public Effect(float x, float y, int width, int height) {
-		this(x, y, width, height, 32);
+		this(x, y, width, height, 1);
 	}
 	
 	@Override

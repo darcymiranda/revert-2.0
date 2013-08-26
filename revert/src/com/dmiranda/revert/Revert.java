@@ -138,7 +138,7 @@ public class Revert implements ApplicationListener {
 			}
 			
 			sb.begin();
-			sFont.draw(sb, "Loading " + assets.getProgress()*100 + "%", Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2);
+			sFont.draw(sb, "Loading " + Math.round(assets.getProgress()*100) + "%", Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() * 0.75f);
 			sb.end();
 			
 		}

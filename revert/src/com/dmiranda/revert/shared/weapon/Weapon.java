@@ -39,6 +39,7 @@ public class Weapon {
 	protected boolean canShoot;
 	protected boolean reloading;
 	protected boolean canInteruptReload;
+	protected boolean shooting;
 
 	protected String name;
 	protected Entity owner;
@@ -103,6 +104,12 @@ public class Weapon {
 	}
 	
 	private boolean tickReloadSpeed(float delta){
+		
+		if(startUpDelayIncr > 0){
+			startUpDelayIncr -= delta;
+			return false;
+		}
+		
 		if(reloading){
 			if(reloadTimeIncr > reloadTime){
 				reloading = false;
@@ -144,6 +151,10 @@ public class Weapon {
 		canShoot = tickReloadSpeed(delta);
 		if(canShoot){
 			canShoot = tickFireRate(delta);
+		}
+		
+		if(shooting){
+			shoot();
 		}
 		
 	}
@@ -224,6 +235,15 @@ public class Weapon {
 		
 	}
 	
+	public void setShooting(boolean shooting){
+		
+		if(shooting == !this.shooting){
+			startUpDelayIncr = startUpDelay;
+		}
+		
+		this.shooting = shooting;
+	}
+	
 	protected Bullet[] onShoot(){
 		
 		Bullet[] bullets = new Bullet[1];
@@ -250,10 +270,15 @@ public class Weapon {
 		return bullets;
 	}
 	
-	public Bullet[] action() {
+	public Bullet[] shoot() {
 		if(!preAction()) return null;
 		
-		return onShoot();
+		Bullet[] bullets = onShoot();
+		for(int i = 0; i < bullets.length; i++){
+			GameWorld.entityManager.addLocalEntity(bullets[i]);
+		}
+		
+		return bullets;
 	}
 	
 	public Weapon newInstance(Entity owner){

@@ -52,7 +52,10 @@ public class Unit extends Entity {
 		rotation += d * rotationSpeed * delta;
 		
 		for(int i = 0; i < weapons.size(); i++){
-			weapons.get(i).update(delta);
+			
+			Weapon weapon = weapons.get(i);
+			weapon.update(delta);
+			weapon.setShooting(shooting);
 		}
 		
 	}
@@ -71,15 +74,13 @@ public class Unit extends Entity {
 		
 	}
 	
-	public void onShoot(){}
-	
-	public ArrayList<Bullet[]> shoot(){
+/*	public ArrayList<Bullet[]> shoot(){
 		
 		ArrayList<Bullet[]> allBullets = new ArrayList<Bullet[]>();
 		
 		for(int i = 0; i < weapons.size(); i++){
 			
-			Bullet[] bullets = weapons.get(i).action();
+			Bullet[] bullets = weapons.get(i).shoot();
 			
 			if(bullets != null){
 				allBullets.add(bullets);
@@ -92,7 +93,7 @@ public class Unit extends Entity {
 		}
 		
 		return allBullets;
-	}
+	}*/
 	
 	public void applyDamage(Entity attacker, float damage){
 		lastHitBy = attacker;

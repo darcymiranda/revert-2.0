@@ -16,7 +16,7 @@ public class Entity {
 	
 	protected EntityActionState actionState;
 	
-	private TextureRegion texture;
+	protected TextureRegion texture;
 	
 	private CollisionCircle collisionCircle;
 	private boolean net = true;
@@ -81,7 +81,11 @@ public class Entity {
 	}
 	
 	public void createCollisionCircle(float radius){
-		collisionCircle = new CollisionCircle(getCenterX(), getCenterY(), radius);
+		createCollisionCircle(getCenterX(), getCenterY(), radius);
+	}
+	
+	public void createCollisionCircle(float x, float y, float radius){
+		collisionCircle = new CollisionCircle(x, y, radius);
 	}
 	
 	public boolean isAllieTo(Entity otherEntity){

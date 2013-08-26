@@ -151,49 +151,6 @@ public class EntityManager {
 			
 			GameWorld.map.collideEndMapEntity(entity);
 			
-			if(entity instanceof Ship){
-				
-				Ship ship = (Ship)entity;
-				
-				if(ship.isShooting()){
-					
-					ArrayList<Bullet[]> allBullets = ship.shoot();
-					for(int j = 0; j < allBullets.size(); j++){
-						
-						Bullet[] bullets = allBullets.get(j);
-						for(int k = 0; k < bullets.length; k++){
-							
-							addLocalEntity(bullets[k]);
-							
-						}
-					}
-				}
-			}
-			
-			if(entity instanceof SpaceStation){
-				SpaceStation spaceStation = (SpaceStation)entity;
-				ArrayList<Turret> turrets = spaceStation.getTurrets();
-				for(int z = 0; z < turrets.size(); z++){
-					Turret turret = turrets.get(z);
-					
-					if(turret.isShooting()){
-						
-						ArrayList<Bullet[]> allBullets = turret.shoot();
-						for(int j = 0; j < allBullets.size(); j++){
-							
-							Bullet[] bullets = allBullets.get(j);
-							for(int k = 0; k < bullets.length; k++){
-								
-								addLocalEntity(bullets[k]);
-								
-							}
-						}
-						
-					}
-					
-				}
-			}
-			
 			if(entity.getCollisionCircle() != null){
 				doCollision(entity);
 			}

@@ -2,7 +2,9 @@ package com.dmiranda.revert;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.dmiranda.revert.shared.Entity;
 import com.dmiranda.revert.shared.GameWorld;
 import com.dmiranda.revert.tools.Tools;
@@ -15,6 +17,8 @@ public class Camera {
 	
 	private float xcorner = Gdx.graphics.getWidth() / 2;
 	private float ycorner = Gdx.graphics.getHeight() / 2;
+	
+	private final float MAX_DIST = 250;
 	
 	public Camera(){
 		
@@ -44,8 +48,20 @@ public class Camera {
 		
 		if(focusEntity != null){
 			
-			orthoCam.position.x = Tools.lerp(orthoCam.position.x, focusEntity.getCenterX() + focusEntity.getVelocity().x, 0.05f);
-			orthoCam.position.y = Tools.lerp(orthoCam.position.y, focusEntity.getCenterY() + focusEntity.getVelocity().y, 0.05f);
+			Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+			getCamera().unproject(mouse);
+			
+			float dx = -MAX_DIST * (float) MathUtils.sinDeg(focusEntity.getRotation());
+			float dy = MAX_DIST * (float) MathUtils.cosDeg(focusEntity.getRotation());
+			
+			Vector3 focusToProj = new Vector3(focusEntity.getCenterX() - focusEntity.getVelocity().x, focusEntity.getCenterY() - focusEntity.getVelocity().y, 0);
+			getCamera().project(focusToProj);
+			
+			MathUtils.clamp(focusToProj.x, -orthoCam.viewportWidth, orthoCam.viewportWidth);
+			MathUtils.clamp(focusToProj.y, -orthoCam.viewportHeight, orthoCam.viewportHeight);
+			
+			orthoCam.position.x = Tools.lerp(orthoCam.position.x, focusEntity.getCenterX() + dx, 0.05f);
+			orthoCam.position.y = Tools.lerp(orthoCam.position.y, focusEntity.getCenterY() + dy, 0.05f);
 			
 			if(orthoCam.position.x < xcorner) orthoCam.position.x = xcorner;
 			else if(orthoCam.position.x + xcorner > GameWorld.map.getWidth()){
