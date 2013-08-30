@@ -254,12 +254,12 @@ public class Weapon {
 			Vector2 r = getRelativeLocation();
 			
 			Effect muzzle = new Effect(r.x - 16 / 2, r.y - 16 / 2, 16, 16);
-			muzzle.setVelocity(new Vector2(owner.getVelocity()).mul(2));
+			muzzle.setVelocity(new Vector2(owner.getVelocity()).scl(2));
 			muzzle.setRotation(owner.getRotation());
 			muzzle.setTexture(muzzleFlashes[MathUtils.random(muzzleFlashes.length - 1)]);
 			
 			Effect flash = new Effect(r.x - 64 / 2, r.y - 64 / 2, 64, 64);
-			flash.setVelocity(new Vector2(owner.getVelocity()).mul(2));
+			flash.setVelocity(new Vector2(owner.getVelocity()).scl(2));
 			flash.setRotation(owner.getRotation());
 			flash.setTexture(Revert.getLoadedTexture("glow.png"));
 			

@@ -23,7 +23,7 @@ public class CollisionCircle {
 
 	public boolean intersects(CollisionCircle other) {
 		
-		return Intersector.overlapCircles(this.getShape(), other.getShape());
+		return Intersector.overlaps(this.getShape(), other.getShape());
 		
 	}
 	
