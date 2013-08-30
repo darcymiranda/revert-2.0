@@ -1,9 +1,11 @@
 package com.dmiranda.revert;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Asteroid;
 import com.dmiranda.revert.shared.Entity;
@@ -18,7 +20,8 @@ public class GameWorldClient extends GameWorld {
 	public static ParticleSystem particleSystem;
 	
 	private EntityRenderer entityRenderer;
-	private ForegroundStarEffect starEffect;
+	private BackgroundEffect backgroundEffect;
+    private TextureRegion background;
 	
 	private int tickTime;
 	
@@ -28,14 +31,14 @@ public class GameWorldClient extends GameWorld {
 		this.game = game;
 
 		entityRenderer = new EntityRenderer(this);
-		starEffect = new ForegroundStarEffect(game.getCamera());
+		backgroundEffect = new BackgroundEffect(game.getCamera());
 	}
 	
 	public void create(){
-		
-		map.loadGraphics();
+
+        background = Revert.getLoadedTexture("bg-stars.png");
 		entityRenderer.loadGraphics();
-		starEffect.init();
+		backgroundEffect.init();
 		
 		particleSystem = new ParticleSystem();
 		
@@ -112,13 +115,21 @@ public class GameWorldClient extends GameWorld {
 	}
 	
 	public void render(SpriteBatch sb, Camera camera){
-		
-		map.render(sb, 0, camera);
-		
-		if(game.getCamera().hasFocus()){
-			starEffect.render(Gdx.graphics.getDeltaTime(), sb);
-		}
-		
+
+        // Draw the background
+        sb.disableBlending();
+        sb.begin();
+        sb.setProjectionMatrix(camera.calculateParallaxMatrix(0.1f, 0.1f));
+        sb.draw(background, -game.getCamera().getOrtho().viewportWidth / 2, -game.getCamera().getOrtho().viewportHeight / 2);
+        sb.end();
+
+        // Draw everything else
+        sb.enableBlending();
+        sb.setProjectionMatrix(game.getCamera().getOrtho().combined);
+        sb.begin();
+
+        //backgroundEffect.render(Gdx.graphics.getDeltaTime(), sb);
+
 		particleSystem.render(sb, Gdx.graphics.getDeltaTime());
 
 		Entity[] entities = entityManager.getEntities();
@@ -126,7 +137,6 @@ public class GameWorldClient extends GameWorld {
 			if(entities[i] == null) continue;
 			
 			entities[i].render(sb);
-			entityRenderer.render(sb, entities[i]);
 			
 		}
 		
@@ -135,8 +145,9 @@ public class GameWorldClient extends GameWorld {
 			if(localEntities[i] == null) continue;
 			
 			localEntities[i].render(sb);
-			entityRenderer.render(sb, localEntities[i]);
 		}
+
+        sb.end();
 	}
 	
 	public void forceNextNetSend(){ tickTime = -1; }

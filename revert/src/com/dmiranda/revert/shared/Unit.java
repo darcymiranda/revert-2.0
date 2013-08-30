@@ -2,6 +2,10 @@ package com.dmiranda.revert.shared;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.client.NetSimulateState;
 import com.dmiranda.revert.shared.bullet.Bullet;
 import com.dmiranda.revert.shared.weapon.Weapon;
@@ -73,27 +77,6 @@ public class Unit extends Entity {
 		}
 		
 	}
-	
-/*	public ArrayList<Bullet[]> shoot(){
-		
-		ArrayList<Bullet[]> allBullets = new ArrayList<Bullet[]>();
-		
-		for(int i = 0; i < weapons.size(); i++){
-			
-			Bullet[] bullets = weapons.get(i).shoot();
-			
-			if(bullets != null){
-				allBullets.add(bullets);
-			}
-			
-		}
-		
-		if(allBullets.size() > 0){
-			onShoot();
-		}
-		
-		return allBullets;
-	}*/
 	
 	public void applyDamage(Entity attacker, float damage){
 		lastHitBy = attacker;

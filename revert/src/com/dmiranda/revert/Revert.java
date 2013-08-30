@@ -25,8 +25,9 @@ import com.dmiranda.revert.shared.Entity;
 import com.dmiranda.revert.shared.GameWorld;
 import com.dmiranda.revert.shared.Player;
 import com.dmiranda.revert.shared.Ship;
+import com.dmiranda.revert.ui.Hud;
 import com.dmiranda.revert.ui.MainMenu;
-import com.dmiranda.revert.ui.Minimap;
+import com.dmiranda.revert.ui.MiniMap;
 
 public class Revert implements ApplicationListener {
 
@@ -41,8 +42,8 @@ public class Revert implements ApplicationListener {
 	private Camera gameCamera;
 	private OrthographicCamera uiCamera;
 	private SpriteBatch sb;
-	private Minimap minimap;
-	
+
+    private Hud hud;
 	private ShapeRenderer debugRenderer;
 	
 	private RevertClient client;
@@ -72,7 +73,7 @@ public class Revert implements ApplicationListener {
 		initLoad();
 		
 		setGameState(GAME_STATES.MENU);
-		
+
 		uiCamera = new OrthographicCamera();
 		uiCamera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		uiCamera.position.x = Gdx.graphics.getWidth() / 2;
@@ -81,8 +82,8 @@ public class Revert implements ApplicationListener {
 		sb = new SpriteBatch();
 		gameCamera = new Camera();
 		world = new GameWorldClient(this);
-		minimap = new Minimap(this);
-		
+        hud = new Hud(this);
+
 		debugRenderer = new ShapeRenderer();
 		
 		menuScreen = new MainMenu(this);
@@ -112,16 +113,16 @@ public class Revert implements ApplicationListener {
 
 	@Override
 	public void render() {
-		
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		Gdx.gl.glEnable(GL10.GL_BLEND);
+
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+        Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glEnable(GL10.GL_BLEND);
 		
 		gameCamera.update();
 		uiCamera.update();
 		
 		sb.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		sb.setProjectionMatrix(gameCamera.getCamera().combined);
+		sb.setProjectionMatrix(gameCamera.getOrtho().combined);
 		
 		if(currentGameState == GAME_STATES.MENU){
 			
@@ -148,7 +149,7 @@ public class Revert implements ApplicationListener {
 			animations.put("fighter-engine-light", new Animation(32, Revert.getLoadedTexture("light.png").split(30, 30)[0]));
 			
 			world.create();
-			minimap.loadGraphics();
+            hud.load();
 			
 			// Networking
 			if(Network.RUN_WITH_SERVER){
@@ -174,47 +175,17 @@ public class Revert implements ApplicationListener {
 		else if(currentGameState == GAME_STATES.PLAY){
 			
 			doInputs();
-			
-			sb.begin();
-			{
-				
-				// Update and render world
-				world.update(Gdx.graphics.getDeltaTime());
-				world.render(sb, gameCamera);
-				
-			}
-			sb.end();
-			
-			// Render UI
-			sb.setProjectionMatrix(uiCamera.combined);
-			sb.begin();
-			{
-				
-				minimap.renderUI(sb);
-				
-				Entity[] entities = GameWorld.entityManager.getEntities();
-				for(int i = 0; i < entities.length; i++){
-					if(entities[i] == null) continue;
-					minimap.render(sb, entities[i]);
-				}
-				
-				// Debug text
-				tFont.draw(sb, "Latency: " + client.getLatency(), 10, sFont.getXHeight());
-				tFont.draw(sb, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, sFont.getXHeight() * 2);
-				tFont.draw(sb, "Team: " + (world.getLocalPlayerFast().team == 0 ? "Red" : "Blue"), 10, sFont.getXHeight() *4);
-				
-				if(world.getLocalPlayerFast() != null && world.getLocalPlayerFast().ship != null){
-					tFont.draw(sb, "Position: " + Math.round(world.getLocalPlayerFast().ship.getPosition().x) + " : "
-											    + Math.round(world.getLocalPlayerFast().ship.getPosition().y), 10, sFont.getXHeight() * 6);
-				}
-				
-			}
-			sb.end();
-			
+
+            // Update and render world
+            world.update(Gdx.graphics.getDeltaTime());
+            world.render(sb, gameCamera);
+
+			hud.render(sb);
+
 			/*
 			// Render debug info
 			Entity[] entities = GameWorld.entityManager.getEntities();
-			debugRenderer.setProjectionMatrix(gameCamera.getCamera().combined);
+			debugRenderer.setProjectionMatrix(gameCamera.getOrtho().combined);
 			debugRenderer.setColor(Color.WHITE);
 			debugRenderer.begin(ShapeType.Circle);
 			{
@@ -256,7 +227,7 @@ public class Revert implements ApplicationListener {
 			if(localShip != null){
 				
 				Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-				getCamera().getCamera().unproject(mouse);
+				getCamera().getOrtho().unproject(mouse);
 				
 				float direction = (float) -(Math.atan2(mouse.x - localShip.getCenterX(), 
 													  mouse.y - localShip.getCenterY()) * (180 / Math.PI));
@@ -353,9 +324,10 @@ public class Revert implements ApplicationListener {
 	@Override
 	public void resume() {
 	}
-	
-	public Minimap getMinimap(){ return minimap; }
+
 	public Camera getCamera(){ return gameCamera; }
+    public OrthographicCamera getUICamera(){ return uiCamera; }
 	public RevertClient getClient(){ return client; }
+    public Hud getHud(){ return hud; }
 	
 }

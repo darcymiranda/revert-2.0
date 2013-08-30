@@ -3,6 +3,7 @@ package com.dmiranda.revert;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.dmiranda.revert.shared.Entity;
@@ -14,11 +15,16 @@ public class Camera {
 	private OrthographicCamera orthoCam;
 	
 	private Entity focusEntity;
-	
+
 	private float xcorner = Gdx.graphics.getWidth() / 2;
 	private float ycorner = Gdx.graphics.getHeight() / 2;
 	
 	private final float MAX_DIST = 250;
+
+    Matrix4 parallaxView = new Matrix4();
+    Matrix4 parallaxCombined = new Matrix4();
+    Vector3 tmp = new Vector3();
+    Vector3 tmp2 = new Vector3();
 	
 	public Camera(){
 		
@@ -33,7 +39,7 @@ public class Camera {
 	public void zoom(float zoom){
 		
 		orthoCam.zoom = zoom;
-		
+
 		xcorner = Gdx.graphics.getWidth() / 2 * orthoCam.zoom;
 		ycorner = Gdx.graphics.getHeight() / 2 * orthoCam.zoom;
 		
@@ -41,6 +47,18 @@ public class Camera {
 		orthoCam.viewportHeight = Gdx.graphics.getHeight();
 		
 	}
+
+    public Matrix4 calculateParallaxMatrix (float parallaxX, float parallaxY) {
+        update();
+        tmp.set(orthoCam.position);
+        tmp.x *= parallaxX;
+        tmp.y *= parallaxY;
+
+        parallaxView.setToLookAt(tmp, tmp2.set(tmp).add(orthoCam.direction), orthoCam.up);
+        parallaxCombined.set(orthoCam.projection);
+        Matrix4.mul(parallaxCombined.val, parallaxView.val);
+        return parallaxCombined;
+    }
 	
 	public void update(){
 		
@@ -49,13 +67,13 @@ public class Camera {
 		if(focusEntity != null){
 			
 			Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-			getCamera().unproject(mouse);
+			orthoCam.unproject(mouse);
 			
 			float dx = -MAX_DIST * (float) MathUtils.sinDeg(focusEntity.getRotation());
 			float dy = MAX_DIST * (float) MathUtils.cosDeg(focusEntity.getRotation());
 			
 			Vector3 focusToProj = new Vector3(focusEntity.getCenterX() - focusEntity.getVelocity().x, focusEntity.getCenterY() - focusEntity.getVelocity().y, 0);
-			getCamera().project(focusToProj);
+            orthoCam.project(focusToProj);
 			
 			MathUtils.clamp(focusToProj.x, -orthoCam.viewportWidth, orthoCam.viewportWidth);
 			MathUtils.clamp(focusToProj.y, -orthoCam.viewportHeight, orthoCam.viewportHeight);
@@ -77,9 +95,10 @@ public class Camera {
 	}
 	
 	public void focusEntity(Entity entity){ focusEntity = entity; }
-	
+
+    public Vector2 getCenterPosition(){ return new Vector2(orthoCam.position.x - orthoCam.viewportWidth / 2, orthoCam.position.y - orthoCam.viewportHeight); }
 	public boolean hasFocus(){ return focusEntity != null; }
-	public OrthographicCamera getCamera(){ return orthoCam; }
+	public OrthographicCamera getOrtho(){ return orthoCam; }
 	public Entity getFocusEntity(){ return focusEntity; }
 	public Vector2 getFocusPosition(){ return focusEntity.getCenterPosition(); }
 	public Vector2 getTranslation(){ return new Vector2(getModifiedViewport().add(getModifiedPosition())); }

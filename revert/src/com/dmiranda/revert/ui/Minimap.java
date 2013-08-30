@@ -10,7 +10,7 @@ import com.dmiranda.revert.shared.Asteroid;
 import com.dmiranda.revert.shared.Entity;
 import com.dmiranda.revert.shared.Player;
 
-public class Minimap {
+public class MiniMap {
 	
 	private TextureRegion background;
 	private TextureRegion[] icons;
@@ -24,7 +24,7 @@ public class Minimap {
 	private Revert game;
 	private Entity centerEntity;
 	
-	public Minimap(Revert game){
+	public MiniMap(Revert game){
 		
 		this.game = game;
 		
@@ -39,7 +39,7 @@ public class Minimap {
 		
 	}
 	
-	public void loadGraphics(){
+	public void load(){
 		
 		icons = Revert.getLoadedTexture("minimap-icons.png").split(3, 3)[0];
 		background = Revert.getLoadedTexture("mm_background.png");

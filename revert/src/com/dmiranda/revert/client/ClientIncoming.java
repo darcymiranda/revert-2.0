@@ -146,7 +146,7 @@ public class ClientIncoming extends Listener {
 			
 			unit.getClientNetSim().setOnlySync(true);
 			game.getCamera().focusEntity(unit);
-			game.getMinimap().setCenterOnShip(unit);
+			game.getHud().getMiniMap().setCenterOnShip(unit);
 			
 			Gdx.app.debug("Network [SpawnSelf]", "created unit(" + spawn.id + ")");
 			
