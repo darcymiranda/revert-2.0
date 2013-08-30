@@ -1,11 +1,13 @@
 package com.dmiranda.revert;
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Asteroid;
@@ -19,10 +21,12 @@ public class GameWorldClient extends GameWorld {
 
     public Revert game;
     public static ParticleSystem particleSystem;
+    public static RayHandler rayHandler;
 
     private EntityRenderer entityRenderer;
     private BackgroundEffect backgroundEffect;
     private TextureRegion background;
+    private World lightWorld;
 
     private int tickTime;
 
@@ -42,6 +46,16 @@ public class GameWorldClient extends GameWorld {
         backgroundEffect.init();
 
         particleSystem = new ParticleSystem();
+
+        RayHandler.setGammaCorrection(true);
+
+        lightWorld = new World(new Vector2(), true);
+        rayHandler = new RayHandler(lightWorld);
+        rayHandler.setShadows(false);
+        rayHandler.setCombinedMatrix(game.getCamera().getOrtho().combined);
+        rayHandler.setAmbientLight(0.1f, 0.1f, 0.1f, 0.5f);
+        rayHandler.setCulling(true);
+        rayHandler.setBlurNum(1);
 
     }
 
@@ -123,12 +137,10 @@ public class GameWorldClient extends GameWorld {
         sb.draw(background, -game.getCamera().getOrtho().viewportWidth / 2, -game.getCamera().getOrtho().viewportHeight / 2);
         sb.end();
 
-        // Draw everything else
+        // Draw world
         sb.enableBlending();
         sb.setProjectionMatrix(game.getCamera().getOrtho().combined);
         sb.begin();
-
-        //backgroundEffect.render(Gdx.graphics.getDeltaTime(), sb);
 
         particleSystem.render(sb, Gdx.graphics.getDeltaTime());
 
@@ -148,6 +160,19 @@ public class GameWorldClient extends GameWorld {
         }
 
         sb.end();
+
+        // Draw lights
+        OrthographicCamera cam = game.getCamera().getOrtho();
+        rayHandler.setCombinedMatrix(cam.combined, cam.position.x, cam.position.y, cam.viewportWidth, cam.viewportHeight);
+
+        lightWorld.step(Gdx.graphics.getDeltaTime(), 8, 3);
+        rayHandler.updateAndRender();
+
+    }
+
+    public void dispose(){
+        if(lightWorld != null) lightWorld.dispose();
+        rayHandler.dispose();
     }
 
     public void forceNextNetSend() {

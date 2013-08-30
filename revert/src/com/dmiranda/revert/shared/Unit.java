@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.client.NetSimulateState;
+import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.bullet.Bullet;
 import com.dmiranda.revert.shared.weapon.Weapon;
 
@@ -33,6 +34,11 @@ public class Unit extends Entity {
 	public void clientStartNetSim(){
 		clientNetSim = new NetSimulateState(this);
 	}
+
+    @Override
+    protected void onCreateClient(){
+        super.onCreateClient();
+    }
 	
 	@Override
 	public void update(float delta){
@@ -63,9 +69,27 @@ public class Unit extends Entity {
 		}
 		
 	}
+
+    @Override
+    public void render(SpriteBatch sb){
+        super.render(sb);
+
+        for(int i = 0; i < weapons.size(); i++){
+
+            Weapon weapon = weapons.get(i);
+            weapon.render(sb);
+        }
+    }
+
+    @Override
+    protected void onDeath(Entity killer){
+        for(int i = 0; i < weapons.size(); i++){
+            weapons.get(i).remove();
+        }
+    }
 	
 	@Override
-	public void onHit(Entity hitter){
+	protected void onHit(Entity hitter){
 		super.onHit(hitter);
 		
 		if(hitter instanceof Bullet){
@@ -111,7 +135,12 @@ public class Unit extends Entity {
 		this.rotationSpeed = rotationSpeed;
 	}
 	
-	public void addWeapon(Weapon weapon){ weapons.add(weapon); }
+	public void addWeapon(Weapon weapon){
+        weapons.add(weapon);
+        if(Network.clientSide){
+            weapon.onClientCreate();
+        }
+    }
 	
 	public NetSimulateState getClientNetSim(){ return clientNetSim; }
 	public Entity getLastHitBy(){ return lastHitBy; }

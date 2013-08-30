@@ -2,10 +2,13 @@ package com.dmiranda.revert.shared.weapon;
 
 import java.util.Random;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.Effect;
+import com.dmiranda.revert.LightExpire;
 import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Entity;
@@ -50,7 +53,8 @@ public class Weapon {
 	private float locOffsetDistance;
 	// protected SoundEffect soundShoot;
 	// protected SoundEffect soundReload;
-	
+
+    private LightExpire light;
 	private TextureRegion[] muzzleFlashes;
 
 	/**
@@ -243,6 +247,17 @@ public class Weapon {
 		
 		this.shooting = shooting;
 	}
+
+    public void render(SpriteBatch sb){
+        if(light != null){
+            light.update();
+        }
+    }
+
+    public void onClientCreate(){
+        light = new LightExpire(new Color(1.0f, 1.0f, 0, 0.7f), 45, 16);
+        light.setExpireOption(LightExpire.TURN_OFF);
+    }
 	
 	protected Bullet[] onShoot(){
 		
@@ -250,6 +265,15 @@ public class Weapon {
 		bullets[0] = bullet.newInstance(getDamageRoll(), getEffectedAccuracy(), bulletSpeed);
 		
 		if(Network.clientSide){
+
+            if(light != null){
+
+                Vector2 r = getRelativeLocation();
+
+                light.activate(true);
+                light.setPosition(r.x, r.y);
+
+            }
 			
 			Vector2 r = getRelativeLocation();
 			
@@ -257,14 +281,17 @@ public class Weapon {
 			muzzle.setVelocity(new Vector2(owner.getVelocity()).scl(2));
 			muzzle.setRotation(owner.getRotation());
 			muzzle.setTexture(muzzleFlashes[MathUtils.random(muzzleFlashes.length - 1)]);
-			
+
+            /*
 			Effect flash = new Effect(r.x - 64 / 2, r.y - 64 / 2, 64, 64);
 			flash.setVelocity(new Vector2(owner.getVelocity()).scl(2));
 			flash.setRotation(owner.getRotation());
 			flash.setTexture(Revert.getLoadedTexture("glow.png"));
+			*/
 			
 			GameWorld.entityManager.addLocalEntity(muzzle);
-			GameWorld.entityManager.addLocalEntity(flash);
+			//GameWorld.entityManager.addLocalEntity(flash);
+
 		}
 		
 		return bullets;
@@ -280,6 +307,10 @@ public class Weapon {
 		
 		return bullets;
 	}
+
+    public void remove(){
+        light.remove();
+    }
 	
 	public Weapon newInstance(Entity owner){
 		return new Weapon(owner, name, minDamage, maxDamage, fireRate, spread, bulletSpeed, maxAmmo, reloadTime, startUpDelay);

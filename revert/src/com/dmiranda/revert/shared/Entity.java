@@ -113,6 +113,7 @@ public class Entity {
 	
 	protected void onHit(Entity hitter){}
 	protected void onDeath(Entity killer){}
+    protected void onCreateClient(){}
 
 	public void setTexture(TextureRegion texture){ this.texture = texture; }
 	public void setNetworkEnabled(boolean net){ this.net = net; }

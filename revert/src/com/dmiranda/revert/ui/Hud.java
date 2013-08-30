@@ -37,9 +37,9 @@ public class Hud {
         // Debug text
         Revert.tFont.draw(sb, "Latency: " + game.getClient().getLatency(), 10, Revert.sFont.getXHeight());
         Revert.tFont.draw(sb, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Revert.sFont.getXHeight() * 2);
-        Revert.tFont.draw(sb, "Team: " + (game.world.getLocalPlayerFast().team == 0 ? "Red" : "Blue"), 10, Revert.sFont.getXHeight() *4);
 
         if(game.world.getLocalPlayerFast() != null && game.world.getLocalPlayerFast().ship != null){
+            Revert.tFont.draw(sb, "Team: " + (game.world.getLocalPlayerFast().team == 0 ? "Red" : "Blue"), 10, Revert.sFont.getXHeight() *4);
             Revert.tFont.draw(sb, "Position: " + Math.round(game.world.getLocalPlayerFast().ship.getPosition().x) + " : "
                     + Math.round(game.world.getLocalPlayerFast().ship.getPosition().y), 10, Revert.sFont.getXHeight() * 6);
         }

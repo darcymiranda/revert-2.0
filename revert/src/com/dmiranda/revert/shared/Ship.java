@@ -26,6 +26,13 @@ public class Ship extends Unit {
 		
 		
 	}
+
+    @Override
+    protected void onCreateClient(){
+        super.onCreateClient();
+
+        shipEngine.onCreateClient();
+    }
 	
 	@Override
 	public void update(float delta){
@@ -111,7 +118,7 @@ public class Ship extends Unit {
 		
 	}
 	
-	private void setDirectionVelocity(float acceleration, float maxSpeed){
+/*	private void setDirectionVelocity(float acceleration, float maxSpeed){
 		setDirectionVelocity(acceleration, maxSpeed, rotation);
 	}
 	
@@ -127,7 +134,7 @@ public class Ship extends Unit {
 			velocity.y *= maxSpeed / dirSpeed;
 			
 		}
-	}
+	}*/
 	
 	public void setParameters(float health, float rotationSpeed, float acceleration, float topSpeed){
 		super.setParameters(health, rotationSpeed);

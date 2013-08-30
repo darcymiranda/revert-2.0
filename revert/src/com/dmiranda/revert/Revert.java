@@ -101,27 +101,26 @@ public class Revert implements ApplicationListener {
 		
 		loadAssets();
 		
-
-		
 	}
 
 	@Override
 	public void dispose() {
 		assets.dispose();
+        world.dispose();
 	}
 	
 
 	@Override
 	public void render() {
 
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-        Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-        Gdx.gl.glEnable(GL10.GL_BLEND);
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        //Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        //Gdx.gl.glEnable(GL10.GL_BLEND);
 		
 		gameCamera.update();
 		uiCamera.update();
 		
-		sb.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		//sb.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		sb.setProjectionMatrix(gameCamera.getOrtho().combined);
 		
 		if(currentGameState == GAME_STATES.MENU){
@@ -159,7 +158,7 @@ public class Revert implements ApplicationListener {
 				
 			}
 			
-			setGameState(Network.RUN_WITH_SERVER ? GAME_STATES.NETWORK : GAME_STATES.PLAY );
+			setGameState(GAME_STATES.PLAY );
 		}
 		else if(currentGameState == GAME_STATES.NETWORK){
 			
