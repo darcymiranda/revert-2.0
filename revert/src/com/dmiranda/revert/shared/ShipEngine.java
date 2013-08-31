@@ -1,15 +1,14 @@
 package com.dmiranda.revert.shared;
 
-import box2dLight.Light;
-import box2dLight.PointLight;
-import com.badlogic.gdx.Gdx;
+import box2dLight.ConeLight;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.GameWorldClient;
-import com.dmiranda.revert.LightFlicker;
+import com.dmiranda.revert.effects.LightBase;
+import com.dmiranda.revert.effects.LightFlicker;
 import com.dmiranda.revert.Revert;
 
 public class ShipEngine {
@@ -17,11 +16,16 @@ public class ShipEngine {
 	private float acceleration;
 	private float topSpeed;
     private float directionalSpeed;
+    private float boosterAcceleration;
+    private float boosterTopSpeed;
+    private boolean booster;
 	
 	private Ship owner;
 	private Vector2 posOffset;
+    private float locationOffset;
 
     private LightFlicker light;
+    private ConeLight lightBooster;
     private boolean lightFlicker;
     private float lightFlickerTick;
     private float lightFlickerSpeed;
@@ -31,6 +35,10 @@ public class ShipEngine {
 		this.owner = owner;
 		this.acceleration = acceleration;
 		this.topSpeed = topSpeed;
+        this.locationOffset = locationOffset;
+
+        boosterAcceleration = acceleration * 1.5f;
+        boosterTopSpeed = topSpeed * 2f;
 
 		posOffset = new Vector2();
 
@@ -39,15 +47,33 @@ public class ShipEngine {
 	}
 
     public void onCreateClient(){
-        light = new LightFlicker(new Color(1f, 0.5f, 0.1f, 1f), topSpeed / 8);
+        lightBooster = new ConeLight(GameWorldClient.rayHandler, 8, new Color(1f, 0.5f, 0.5f, 1), lightFlickerDistance * 1.7f, owner.getCenterX(), owner.getCenterY(), owner.getRotation(), 25);
+        lightBooster.setSoft(false);
+        lightBooster.setActive(false);
+        light = new LightFlicker(new Color(1f, 0.5f, 0.1f, 0.8f), lightFlickerDistance);
+        light.activate(false);
+    }
+
+    public void booster(boolean booster){
+        this.booster = booster;
+
+        lightBooster.setActive(booster);
+
+        if(booster){
+            light.setDistance(55);
+            light.setColor(0, 0.2f, 1f, 1.0f);
+        } else {
+            light.setDistance(40);
+            light.setColor(1f, 0.5f, 0.1f, 1f);
+        }
     }
 	
 	public void render(SpriteBatch sb){
 		
-		posOffset.x = -MathUtils.sinDeg(owner.getRotation() + 180) * 20.5f;
-		posOffset.y = MathUtils.cosDeg(owner.getRotation() + 180) * 20.5f;
+		posOffset.x = -MathUtils.sinDeg(owner.getRotation() + 180) * locationOffset;
+		posOffset.y = MathUtils.cosDeg(owner.getRotation() + 180) * locationOffset;
 
-        light.setPosition(owner.getCenterX() + posOffset.x,  owner.getCenterY() + posOffset.y);
+        light.setPosition(owner.getCenterX() + posOffset.x, owner.getCenterY() + posOffset.y);
         light.update();
 
 		if(owner.getEntityActionState().getCurrentState() == EntityActionState.STATE_ON){
@@ -57,7 +83,13 @@ public class ShipEngine {
 /*			if(GameWorldClient.particleSystem.getEffectsFollow().containsKey(this)){
 				GameWorldClient.particleSystem.getEffectsFollow().get(this).getEffect().start();
 			}*/
-		
+
+            Color curColor = sb.getColor();
+            if(booster){
+                lightBooster.setDirection(owner.getRotateTo() - 90);
+                lightBooster.setPosition(owner.getCenterX() + posOffset.x - 5, owner.getCenterY() + posOffset.y - 5);
+            }
+
 			TextureRegion engineFlame = Revert.animations.get("fighter-engine").getKeyFrame(owner.getEntityActionState().getStateTime(), true);
 			
 			sb.draw(engineFlame,
@@ -73,6 +105,7 @@ public class ShipEngine {
 		}else{
 
             light.activate(false);
+            lightBooster.setActive(false);
 
 /*			if(GameWorldClient.particleSystem.getEffectsFollow().containsKey(this)){
 				GameWorldClient.particleSystem.getEffectsFollow().get(this).getEffect().allowCompletion();

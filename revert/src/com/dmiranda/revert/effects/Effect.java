@@ -1,4 +1,4 @@
-package com.dmiranda.revert;
+package com.dmiranda.revert.effects;
 
 import com.dmiranda.revert.shared.Entity;
 

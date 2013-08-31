@@ -1,4 +1,4 @@
-package com.dmiranda.revert.ui;
+package com.dmiranda.revert.effects;
 
 import box2dLight.Light;
 import box2dLight.PointLight;
@@ -11,13 +11,14 @@ import com.dmiranda.revert.shared.Entity;
  * Date: 8/30/13
  * Time: 3:49 PM
  */
-public abstract class BaseLight {
+public class LightBase {
 
     protected Light light;
     protected Entity owner;
 
-    public BaseLight(Color color, float distance, float x, float y) {
+    public LightBase(Color color, float distance, float x, float y) {
         light = new PointLight(GameWorldClient.rayHandler, 8, color, distance, 0, 0);
+        light.setXray(true);
     }
 
     public void update(){
@@ -28,7 +29,15 @@ public abstract class BaseLight {
 
     }
 
-    public void setOwner(Entity owner){
+    public void setColor(float r, float g, float b, float a){
+        light.setColor(r, g, b, a);
+    }
+
+    public void setColor(Color color){
+        light.setColor(color);
+    }
+
+    public void attachToEntity(Entity owner){
         this.owner = owner;
     }
 

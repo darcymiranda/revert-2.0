@@ -114,13 +114,10 @@ public class Revert implements ApplicationListener {
 	public void render() {
 
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-        //Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-        //Gdx.gl.glEnable(GL10.GL_BLEND);
 		
 		gameCamera.update();
 		uiCamera.update();
-		
-		//sb.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
 		sb.setProjectionMatrix(gameCamera.getOrtho().combined);
 		
 		if(currentGameState == GAME_STATES.MENU){
@@ -149,22 +146,24 @@ public class Revert implements ApplicationListener {
 			
 			world.create();
             hud.load();
-			
-			// Networking
-			if(Network.RUN_WITH_SERVER){
 				
-				client = new RevertClient(this);
-				client.connect(Network.DEFAULT_HOST, Network.PORT_TCP, Network.PORT_UDP, tempHostName);
-				
-			}
-			
-			setGameState(GAME_STATES.PLAY );
+            client = new RevertClient(this);
+
+            sb.begin();
+            sFont.draw(sb, "Connecting...", Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() * 0.75f);
+            sb.end();
+
+            setGameState(GAME_STATES.NETWORK);
 		}
 		else if(currentGameState == GAME_STATES.NETWORK){
 			
 			sb.begin();
-			sFont.draw(sb, client.getStatus(), Gdx.graphics.getWidth() / 2 - 200, Gdx.graphics.getHeight() / 2);
+			sFont.draw(sb, client.getStatus(), Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() * 0.75f);
 			sb.end();
+
+            if(!client.isConnecting()){
+                client.connect(Network.DEFAULT_HOST, Network.PORT_TCP, Network.PORT_UDP, tempHostName);
+            }
 				
 			if(client.isHandshakeComplete()){
 				setGameState(GAME_STATES.PLAY);
@@ -231,51 +230,35 @@ public class Revert implements ApplicationListener {
 				float direction = (float) -(Math.atan2(mouse.x - localShip.getCenterX(), 
 													  mouse.y - localShip.getCenterY()) * (180 / Math.PI));
 				
-				localShip.rotateTo(direction);
-				
-				if(DESKTOP){
-					
-					localShip.moveUp(Gdx.input.isKeyPressed(Input.Keys.W));
-					localShip.moveLeft(Gdx.input.isKeyPressed(Input.Keys.A));
-					localShip.moveDown(Gdx.input.isKeyPressed(Input.Keys.S));
-					localShip.moveRight(Gdx.input.isKeyPressed(Input.Keys.D));
-					
-					boolean shoot = Gdx.input.isButtonPressed(Buttons.LEFT);
-					
-					if(localShip.isShooting() != shoot){
-						
-						world.forceNextNetSend();
-						
-						/*
-						Network.UnitShoot updaterShoot = new Network.UnitShoot();
-						updaterShoot.shooting = shoot;
-						getClient().getRawClient().sendTCP(updaterShoot);
-						*/
-					}
-					
-					localShip.setShooting(Gdx.input.isButtonPressed(Buttons.LEFT));
-					
-					if(!localShip.isAlive()){
-						if(Gdx.input.isKeyPressed(Input.Keys.ENTER)){
-							
-						}
-					}
-				}
-				else{
-					
-					if(Gdx.input.isTouched(0)){
-						localShip.moveUp(true);
-						localShip.setShooting(false);
-					}
-					
-					if(Gdx.input.isTouched(1)){
-						localShip.moveUp(true);
-						localShip.setShooting(!localShip.isShooting());
-					}
-					
-				}
-			
-			}
+                localShip.rotateTo(direction);
+                localShip.moveUp(Gdx.input.isKeyPressed(Input.Keys.W | Input.Keys.UP));
+                localShip.moveLeft(Gdx.input.isKeyPressed(Input.Keys.A));
+                localShip.moveDown(Gdx.input.isKeyPressed(Input.Keys.S));
+                localShip.moveRight(Gdx.input.isKeyPressed(Input.Keys.D));
+                localShip.enableBooster(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
+
+                boolean shoot = Gdx.input.isButtonPressed(Buttons.LEFT);
+
+                if(localShip.isShooting() != shoot){
+
+                    world.forceNextNetSend();
+
+                    /*
+                    Network.UnitShoot updaterShoot = new Network.UnitShoot();
+                    updaterShoot.shooting = shoot;
+                    getClient().getRawClient().sendTCP(updaterShoot);
+                    */
+                }
+
+                localShip.setShooting(Gdx.input.isButtonPressed(Buttons.LEFT));
+
+                if(!localShip.isAlive()){
+                    if(Gdx.input.isKeyPressed(Input.Keys.ENTER)){
+
+                    }
+                }
+
+            }
 		
 		}
 		

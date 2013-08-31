@@ -1,18 +1,14 @@
-package com.dmiranda.revert;
+package com.dmiranda.revert.effects;
 
-import box2dLight.Light;
-import box2dLight.PointLight;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.dmiranda.revert.shared.Entity;
-import com.dmiranda.revert.ui.BaseLight;
 
 /**
  * User: dmiranda
  * Date: 8/30/13
  * Time: 3:09 PM
  */
-public class LightFlicker extends BaseLight {
+public class LightFlicker extends LightBase {
 
     private boolean flicker;
     private float flickerDistance;

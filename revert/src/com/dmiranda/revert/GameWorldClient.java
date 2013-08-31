@@ -53,7 +53,6 @@ public class GameWorldClient extends GameWorld {
         rayHandler = new RayHandler(lightWorld);
         rayHandler.setShadows(false);
         rayHandler.setCombinedMatrix(game.getCamera().getOrtho().combined);
-        rayHandler.setAmbientLight(0.1f, 0.1f, 0.1f, 0.5f);
         rayHandler.setCulling(true);
         rayHandler.setBlurNum(1);
 
@@ -80,7 +79,7 @@ public class GameWorldClient extends GameWorld {
 
         ParticleEffect effect = particleSystem.getCachedEffect("hit");
         ParticleEmitter emitter = effect.getEmitters().first();
-        emitter.getLife().setHigh(350);
+        emitter.getLife().setHigh(150);
         emitter.setPosition(bullet.getCenterX() + (bullet.getVelocity().x * Gdx.graphics.getDeltaTime()),
                 bullet.getCenterY() + (bullet.getVelocity().y * Gdx.graphics.getDeltaTime()));
         emitter.getAngle().setHigh(bullet.getRotation() - 70, bullet.getRotation() - 110);
@@ -172,7 +171,7 @@ public class GameWorldClient extends GameWorld {
 
     public void dispose(){
         if(lightWorld != null) lightWorld.dispose();
-        rayHandler.dispose();
+        if(rayHandler != null) rayHandler.dispose();
     }
 
     public void forceNextNetSend() {

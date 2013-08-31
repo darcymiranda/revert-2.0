@@ -14,10 +14,11 @@ public class RevertClient {
 	private Client client;
 	private Revert game;
 	private boolean handShakeStatus;
-	private int session;
+	private boolean connecting;
+    private int session;
 	private long latency;
-	
-	private String status;
+
+	private String status = "";
 	
 	public RevertClient(Revert game){
 		
@@ -43,12 +44,14 @@ public class RevertClient {
 		status = "Connecting to " + Network.DEFAULT_HOST + " : " + Network.PORT_TCP;
 		
 		try {
-			
-			client.connect(15000, host, portTcp, portUdp);
+
+            connecting = true;
+			client.connect(5000, host, portTcp, portUdp);
 			
 		} catch (IOException e) {
 			
 			status = e.getMessage();
+            connecting = false;
 		}
 		
 		Network.Connect connect = new Network.Connect();
@@ -66,6 +69,10 @@ public class RevertClient {
 	public boolean isConnect(){ 
 		return client.isConnected(); 
 	}
+
+    public boolean isConnecting(){
+        return connecting;
+    }
 	
 	public void setHandshakeStatus(boolean handShakeStatus){
 		this.handShakeStatus = handShakeStatus;

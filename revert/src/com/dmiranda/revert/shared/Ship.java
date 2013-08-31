@@ -24,7 +24,6 @@ public class Ship extends Unit {
 		engineOffset = new Vector2();
 		shipEngine = new ShipEngine(this, 20.5f, 5.5f, 350f);
 		
-		
 	}
 
     @Override
@@ -117,6 +116,12 @@ public class Ship extends Unit {
 		Revert.tFont.setColor(Color.WHITE);
 		
 	}
+
+    public void enableBooster(boolean booster){
+        if(w || a || s || d){
+            shipEngine.booster(booster);
+        }
+    }
 	
 /*	private void setDirectionVelocity(float acceleration, float maxSpeed){
 		setDirectionVelocity(acceleration, maxSpeed, rotation);

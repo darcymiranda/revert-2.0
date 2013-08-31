@@ -7,8 +7,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.dmiranda.revert.Effect;
-import com.dmiranda.revert.LightExpire;
+import com.dmiranda.revert.effects.Effect;
+import com.dmiranda.revert.effects.LightExpire;
 import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Entity;
@@ -276,21 +276,14 @@ public class Weapon {
             }
 			
 			Vector2 r = getRelativeLocation();
-			
+
+            // TODO: Make a show/hide effect instead of always creating one like the light
 			Effect muzzle = new Effect(r.x - 16 / 2, r.y - 16 / 2, 16, 16);
 			muzzle.setVelocity(new Vector2(owner.getVelocity()).scl(2));
 			muzzle.setRotation(owner.getRotation());
 			muzzle.setTexture(muzzleFlashes[MathUtils.random(muzzleFlashes.length - 1)]);
-
-            /*
-			Effect flash = new Effect(r.x - 64 / 2, r.y - 64 / 2, 64, 64);
-			flash.setVelocity(new Vector2(owner.getVelocity()).scl(2));
-			flash.setRotation(owner.getRotation());
-			flash.setTexture(Revert.getLoadedTexture("glow.png"));
-			*/
 			
 			GameWorld.entityManager.addLocalEntity(muzzle);
-			//GameWorld.entityManager.addLocalEntity(flash);
 
 		}
 		
@@ -309,7 +302,9 @@ public class Weapon {
 	}
 
     public void remove(){
-        light.remove();
+        if(Network.clientSide){
+            light.remove();
+        }
     }
 	
 	public Weapon newInstance(Entity owner){

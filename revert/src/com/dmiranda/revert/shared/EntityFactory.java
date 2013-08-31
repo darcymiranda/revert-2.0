@@ -46,7 +46,7 @@ public class EntityFactory {
 				Ship ship = new Ship(player, x, y, 30, 40);
 				
 				ship.setParameters(50, 2.5f, 5.5f, 350f);
-				ship.createCollisionCircle(30);
+				ship.createCollisionCircle(24);
 				
 				Weapon weapon = new Weapon(ship, "Gun", 5, 5, 125, 0.98f, 750, 100, 0, 0);
 				weapon.setLocation(16, 27);
