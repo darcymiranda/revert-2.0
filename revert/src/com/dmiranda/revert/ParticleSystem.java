@@ -5,7 +5,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -25,6 +28,13 @@ public class ParticleSystem {
 		ParticleEffect pe;
 		
 		//TODO: Automatically load particle effects
+        FileHandle dirHandle = Gdx.files.internal("./assets/data/particles");
+        for(FileHandle handle : dirHandle.list()){
+            pe = new ParticleEffect();
+            pe.load(handle, Gdx.files.internal("./assets/textures"));
+            cache.put(handle.name(), pe);
+            System.out.println(handle.name());
+        }/*
 		
 		pe = new ParticleEffect();
 		pe.load(Gdx.files.internal("./assets/data/particles/ship_engine2.p"), Gdx.files.internal("./assets/textures"));
@@ -40,7 +50,7 @@ public class ParticleSystem {
 		
 		pe = new ParticleEffect();
 		pe.load(Gdx.files.internal("./assets/data/particles/muzzle-flash.p"), Gdx.files.internal("./assets/textures"));
-		cache.put("muzzle-flash", pe);
+		cache.put("muzzle-flash", pe);*/
 		
 		
 	}

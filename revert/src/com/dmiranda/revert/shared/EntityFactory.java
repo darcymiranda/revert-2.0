@@ -61,7 +61,7 @@ public class EntityFactory {
 				if(side == CLIENT_SIDE){
 					ship.setTexture(Revert.getLoadedTexture("fighter.png"));
 					ship.clientStartNetSim();
-					//GameWorldClient.particleSystem.addNewEffectFollower("ship_engine2", ship, ship.getEngineOffset(), true);
+//					GameWorldClient.particleSystem.addNewEffectFollower("smoke-trail", ship, ship.getEngineOffset(), true);
 				}
 				
 				entity = ship;
