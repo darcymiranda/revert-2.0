@@ -26,7 +26,6 @@ public class Turret extends Unit {
 		Weapon weapon = new Weapon(this, "Gun", 1, 1, MathUtils.random(350, 650), 0.99f, 1500, 100, 0, 800);
 		weapon.setLocation(0, 16);
 		addWeapon(weapon);
-		setHealth(200);
 	}
 	
 	public void setTarget(Entity target){

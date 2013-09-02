@@ -170,8 +170,14 @@ public class GameWorldClient extends GameWorld {
     }
 
     public void dispose(){
-        if(lightWorld != null) lightWorld.dispose();
-        if(rayHandler != null) rayHandler.dispose();
+        try{
+            if(lightWorld != null) lightWorld.dispose();
+            if(rayHandler != null) rayHandler.dispose();
+        }catch(Exception e){
+            // Gross & LAzy
+            // Already disposed bug in light lib
+        }
+
     }
 
     public void forceNextNetSend() {

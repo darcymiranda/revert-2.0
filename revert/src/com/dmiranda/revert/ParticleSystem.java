@@ -26,31 +26,13 @@ public class ParticleSystem {
 	public ParticleSystem(){
 		
 		ParticleEffect pe;
-		
-		//TODO: Automatically load particle effects
+
         FileHandle dirHandle = Gdx.files.internal("./assets/data/particles");
         for(FileHandle handle : dirHandle.list()){
             pe = new ParticleEffect();
             pe.load(handle, Gdx.files.internal("./assets/textures"));
             cache.put(handle.name(), pe);
-            System.out.println(handle.name());
-        }/*
-		
-		pe = new ParticleEffect();
-		pe.load(Gdx.files.internal("./assets/data/particles/ship_engine2.p"), Gdx.files.internal("./assets/textures"));
-		cache.put("ship_engine2", pe);
-		
-		pe = new ParticleEffect();
-		pe.load(Gdx.files.internal("./assets/data/particles/hit.p"), Gdx.files.internal("./assets/textures"));
-		cache.put("hit", pe);
-		
-		pe = new ParticleEffect();
-		pe.load(Gdx.files.internal("./assets/data/particles/expo1.p"), Gdx.files.internal("./assets/textures"));
-		cache.put("expo1", pe);
-		
-		pe = new ParticleEffect();
-		pe.load(Gdx.files.internal("./assets/data/particles/muzzle-flash.p"), Gdx.files.internal("./assets/textures"));
-		cache.put("muzzle-flash", pe);*/
+        }
 		
 		
 	}

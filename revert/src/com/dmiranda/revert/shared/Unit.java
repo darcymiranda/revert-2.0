@@ -13,8 +13,8 @@ import com.dmiranda.revert.shared.weapon.Weapon;
 
 public class Unit extends Entity {
 	
-	public static final int UT_SPACESTATION = 0,
-							UT_FIGHTER = 1;
+	public static final int UT_SPACESTATION = 1,
+							UT_FIGHTER = 2;
 	
 	protected float health, maxHealth;
 	protected float rotationSpeed;
@@ -45,9 +45,7 @@ public class Unit extends Entity {
 		super.update(delta);
 		
 		if(clientNetSim != null){
-			
 			clientNetSim.update(delta);
-			
 		}
 		
 		// Rotate based on the rotation speed
@@ -75,7 +73,6 @@ public class Unit extends Entity {
         super.render(sb);
 
         for(int i = 0; i < weapons.size(); i++){
-
             Weapon weapon = weapons.get(i);
             weapon.render(sb);
         }
