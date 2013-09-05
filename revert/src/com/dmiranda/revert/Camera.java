@@ -10,9 +10,7 @@ import com.dmiranda.revert.shared.Entity;
 import com.dmiranda.revert.shared.GameWorld;
 import com.dmiranda.revert.tools.Tools;
 
-public class Camera {
-	
-	private OrthographicCamera orthoCam;
+public class Camera extends OrthographicCamera {
 	
 	private Entity focusEntity;
 
@@ -27,68 +25,67 @@ public class Camera {
     Vector3 tmp2 = new Vector3();
 	
 	public Camera(){
-		
-		orthoCam = new OrthographicCamera();
-		orthoCam.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		orthoCam.position.x = xcorner;
-		orthoCam.position.y = ycorner;
+
+		setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		position.x = xcorner;
+		position.y = ycorner;
 		zoom(1f);
 		
 	}
 	
 	public void zoom(float zoom){
 		
-		orthoCam.zoom = zoom;
+		zoom = zoom;
 
-		xcorner = Gdx.graphics.getWidth() / 2 * orthoCam.zoom;
-		ycorner = Gdx.graphics.getHeight() / 2 * orthoCam.zoom;
+		xcorner = Gdx.graphics.getWidth() / 2 * zoom;
+		ycorner = Gdx.graphics.getHeight() / 2 * zoom;
 		
-		orthoCam.viewportWidth = Gdx.graphics.getWidth();
-		orthoCam.viewportHeight = Gdx.graphics.getHeight();
+		viewportWidth = Gdx.graphics.getWidth();
+		viewportHeight = Gdx.graphics.getHeight();
 		
 	}
 
     public Matrix4 calculateParallaxMatrix (float parallaxX, float parallaxY) {
         update();
-        tmp.set(orthoCam.position);
+        tmp.set(position);
         tmp.x *= parallaxX;
         tmp.y *= parallaxY;
 
-        parallaxView.setToLookAt(tmp, tmp2.set(tmp).add(orthoCam.direction), orthoCam.up);
-        parallaxCombined.set(orthoCam.projection);
+        parallaxView.setToLookAt(tmp, tmp2.set(tmp).add(direction), up);
+        parallaxCombined.set(projection);
         Matrix4.mul(parallaxCombined.val, parallaxView.val);
         return parallaxCombined;
     }
-	
+
+    @Override
 	public void update(){
-		
-		orthoCam.update();
+        super.update();
 		
 		if(focusEntity != null){
 			
 			Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-			orthoCam.unproject(mouse);
+			unproject(mouse);
 			
 			float dx = -MAX_DIST * (float) MathUtils.sinDeg(focusEntity.getRotation());
 			float dy = MAX_DIST * (float) MathUtils.cosDeg(focusEntity.getRotation());
 			
 			Vector3 focusToProj = new Vector3(focusEntity.getCenterX() - focusEntity.getVelocity().x, focusEntity.getCenterY() - focusEntity.getVelocity().y, 0);
-            orthoCam.project(focusToProj);
+            project(focusToProj);
 			
-			MathUtils.clamp(focusToProj.x, -orthoCam.viewportWidth, orthoCam.viewportWidth);
-			MathUtils.clamp(focusToProj.y, -orthoCam.viewportHeight, orthoCam.viewportHeight);
+			MathUtils.clamp(focusToProj.x, -viewportWidth, viewportWidth);
+			MathUtils.clamp(focusToProj.y, -viewportHeight, viewportHeight);
 			
-			orthoCam.position.x = Tools.lerp(orthoCam.position.x, focusEntity.getCenterX() + dx, 0.05f);
-			orthoCam.position.y = Tools.lerp(orthoCam.position.y, focusEntity.getCenterY() + dy, 0.05f);
+			position.x = Tools.lerp(position.x, focusEntity.getCenterX() + dx, 0.05f);
+			position.y = Tools.lerp(position.y, focusEntity.getCenterY() + dy, 0.05f);
 			
-			if(orthoCam.position.x < xcorner) orthoCam.position.x = xcorner;
-			else if(orthoCam.position.x + xcorner > GameWorld.map.getWidth()){
-				orthoCam.position.x = GameWorld.map.getWidth() - xcorner;
+			if(position.x < xcorner) position.x = xcorner;
+			else if(position.x + xcorner > GameWorld.map.getWidth()){
+				position.x = GameWorld.map.getWidth() - xcorner;
 			}
 			
-			if(orthoCam.position.y < ycorner) orthoCam.position.y = ycorner;
-			else if(orthoCam.position.y + ycorner > GameWorld.map.getHeight()){
-				orthoCam.position.y = GameWorld.map.getHeight() - ycorner;
+			if(position.y < ycorner) position.y = ycorner;
+			else if(position.y + ycorner > GameWorld.map.getHeight()){
+				position.y = GameWorld.map.getHeight() - ycorner;
 			}
 			
 		}
@@ -96,14 +93,13 @@ public class Camera {
 	
 	public void focusEntity(Entity entity){ focusEntity = entity; }
 
-    public Vector2 getCenterPosition(){ return new Vector2(orthoCam.position.x - orthoCam.viewportWidth / 2, orthoCam.position.y - orthoCam.viewportHeight); }
+    public Vector2 getCenterPosition(){ return new Vector2(position.x - viewportWidth / 2, position.y - viewportHeight); }
 	public boolean hasFocus(){ return focusEntity != null; }
-	public OrthographicCamera getOrtho(){ return orthoCam; }
 	public Entity getFocusEntity(){ return focusEntity; }
 	public Vector2 getFocusPosition(){ return focusEntity.getCenterPosition(); }
 	public Vector2 getTranslation(){ return new Vector2(getModifiedViewport().add(getModifiedPosition())); }
-	public Vector2 getUnmodifiedPosition(){ return new Vector2(orthoCam.position.x, orthoCam.position.y); }
-	public Vector2 getModifiedPosition(){ return new Vector2(orthoCam.position.x - xcorner, orthoCam.position.y - ycorner); }
-	public Vector2 getModifiedViewport(){ return new Vector2(orthoCam.viewportWidth, orthoCam.viewportHeight); }
+	public Vector2 getUnmodifiedPosition(){ return new Vector2(position.x, position.y); }
+	public Vector2 getModifiedPosition(){ return new Vector2(position.x - xcorner, position.y - ycorner); }
+	public Vector2 getModifiedViewport(){ return new Vector2(viewportWidth, viewportHeight); }
 
 }

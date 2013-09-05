@@ -174,7 +174,9 @@ public class ClientIncoming extends Listener {
 			Player player = game.world.getPlayers().get(disconnect.id);
 			
 			Gdx.app.debug("Network [Disconnect]", "player " + player + " disconnected. killed ship(" + player.ship+ ")");
-			player.ship.kill(null);
+            if(player.ship != null){
+			    player.ship.kill(null);
+            }
 			game.world.getPlayers().remove(disconnect.id);
 			
 		}

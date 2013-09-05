@@ -33,23 +33,20 @@ public class Revert implements ApplicationListener {
 
 	public static AssetManager assets = new AssetManager();
 	public static HashMap<String, Animation> animations = new HashMap<String, Animation>();
-	public static final boolean DESKTOP = true;
+    public static BitmapFont lFont, sFont, tFont;
 
-	public GameWorldClient world;
-	
-	private MainMenu menuScreen;
-	
-	private Camera gameCamera;
+    public GameWorldClient world;
+
+    private MainMenu menuScreen;
+
+    private Camera gameCamera;
 	private OrthographicCamera uiCamera;
 	private SpriteBatch sb;
-
     private Hud hud;
 	private ShapeRenderer debugRenderer;
-	
 	private RevertClient client;
-	
-	public static BitmapFont lFont, sFont, tFont;
-	
+    private ToggleHandler toggleHandler;
+
 	private GAME_STATES currentGameState = null;
 	
 	public enum GAME_STATES {
@@ -69,6 +66,8 @@ public class Revert implements ApplicationListener {
 		Network.clientSide = true;
 		
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
+        toggleHandler = new ToggleHandler(this);
 
 		initLoad();
 		
@@ -118,7 +117,7 @@ public class Revert implements ApplicationListener {
 		gameCamera.update();
 		uiCamera.update();
 
-		sb.setProjectionMatrix(gameCamera.getOrtho().combined);
+		sb.setProjectionMatrix(gameCamera.combined);
 		
 		if(currentGameState == GAME_STATES.MENU){
 			
@@ -166,6 +165,7 @@ public class Revert implements ApplicationListener {
             }
 				
 			if(client.isHandshakeComplete()){
+                Gdx.input.setInputProcessor(toggleHandler);
 				setGameState(GAME_STATES.PLAY);
 			}
 			
@@ -225,13 +225,13 @@ public class Revert implements ApplicationListener {
 			if(localShip != null){
 				
 				Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-				getCamera().getOrtho().unproject(mouse);
+				getCamera().unproject(mouse);
 				
 				float direction = (float) -(Math.atan2(mouse.x - localShip.getCenterX(), 
 													  mouse.y - localShip.getCenterY()) * (180 / Math.PI));
 				
                 localShip.rotateTo(direction);
-                localShip.moveUp(Gdx.input.isKeyPressed(Input.Keys.W | Input.Keys.UP));
+                localShip.moveUp(Gdx.input.isKeyPressed(Input.Keys.W));
                 localShip.moveLeft(Gdx.input.isKeyPressed(Input.Keys.A));
                 localShip.moveDown(Gdx.input.isKeyPressed(Input.Keys.S));
                 localShip.moveRight(Gdx.input.isKeyPressed(Input.Keys.D));
@@ -240,28 +240,12 @@ public class Revert implements ApplicationListener {
                 boolean shoot = Gdx.input.isButtonPressed(Buttons.LEFT);
 
                 if(localShip.isShooting() != shoot){
-
                     world.forceNextNetSend();
-
-                    /*
-                    Network.UnitShoot updaterShoot = new Network.UnitShoot();
-                    updaterShoot.shooting = shoot;
-                    getClient().getRawClient().sendTCP(updaterShoot);
-                    */
                 }
 
                 localShip.setShooting(Gdx.input.isButtonPressed(Buttons.LEFT));
-
-                if(!localShip.isAlive()){
-                    if(Gdx.input.isKeyPressed(Input.Keys.ENTER)){
-
-                    }
-                }
-
             }
-		
 		}
-		
 	}
 	
 	private void loadAssets(){

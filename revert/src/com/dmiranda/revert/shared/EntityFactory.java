@@ -82,6 +82,13 @@ public class EntityFactory {
 				spaceStation.addTurret(360 - 40, 80);
 				
 				break;
+            case Unit.UT_SATGUN:
+
+                if(side == CLIENT_SIDE){
+                    entity.setTexture(Revert.getLoadedTexture("satgun.png"));
+                }
+
+                break;
 		}
 
 

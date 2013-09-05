@@ -14,7 +14,8 @@ import com.dmiranda.revert.shared.weapon.Weapon;
 public class Unit extends Entity {
 	
 	public static final int UT_SPACESTATION = 1,
-							UT_FIGHTER = 2;
+							UT_FIGHTER = 2,
+                            UT_SATGUN = 3;
 	
 	protected float health, maxHealth;
 	protected float rotationSpeed;

@@ -5,9 +5,9 @@ public class SpaceStation extends Building {
 	public SpaceStation(Player owner, float x, float y) {
 		super(owner, x, y, 256, 256);
 		super.setOwnerPlayer(owner);
-		
+
 		setHealth(5250, 5250);
-		createCollisionCircle(50);
+        createCollisionCircle(50);
 		
 	}
 
