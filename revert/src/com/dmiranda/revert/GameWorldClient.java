@@ -52,7 +52,7 @@ public class GameWorldClient extends GameWorld {
         lightWorld = new World(new Vector2(), true);
         rayHandler = new RayHandler(lightWorld);
         rayHandler.setShadows(false);
-        rayHandler.setCombinedMatrix(game.getCamera().getOrtho().combined);
+        rayHandler.setCombinedMatrix(game.getCamera().combined);
         rayHandler.setCulling(true);
         rayHandler.setBlurNum(1);
 
@@ -133,12 +133,12 @@ public class GameWorldClient extends GameWorld {
         sb.disableBlending();
         sb.begin();
         sb.setProjectionMatrix(camera.calculateParallaxMatrix(0.1f, 0.1f));
-        sb.draw(background, -game.getCamera().getOrtho().viewportWidth / 2, -game.getCamera().getOrtho().viewportHeight / 2);
+        sb.draw(background, -game.getCamera().viewportWidth / 2, -game.getCamera().viewportHeight / 2);
         sb.end();
 
         // Draw world
         sb.enableBlending();
-        sb.setProjectionMatrix(game.getCamera().getOrtho().combined);
+        sb.setProjectionMatrix(game.getCamera().combined);
         sb.begin();
 
         particleSystem.render(sb, Gdx.graphics.getDeltaTime());
@@ -161,7 +161,7 @@ public class GameWorldClient extends GameWorld {
         sb.end();
 
         // Draw lights
-        OrthographicCamera cam = game.getCamera().getOrtho();
+        OrthographicCamera cam = game.getCamera();
         rayHandler.setCombinedMatrix(cam.combined, cam.position.x, cam.position.y, cam.viewportWidth, cam.viewportHeight);
 
         lightWorld.step(Gdx.graphics.getDeltaTime(), 8, 3);
