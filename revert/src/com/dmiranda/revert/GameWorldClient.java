@@ -148,6 +148,7 @@ public class GameWorldClient extends GameWorld {
             if (entities[i] == null) continue;
 
             entities[i].render(sb);
+            entityRenderer.render(sb, entities[i]);
 
         }
 

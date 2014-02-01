@@ -10,7 +10,7 @@ import com.esotericsoftware.kryonet.EndPoint;
 public class Network {
 
 	public static final int CLIENT_SEND_INTERVAL = 6;
-	public static final String DEFAULT_HOST = "174.5.134.70";
+	public static final String DEFAULT_HOST = "127.0.0.1";
 	public static final int PORT_TCP = 19555;
 	public static final int PORT_UDP = 19777;
 	public static final boolean RUN_WITH_SERVER = true;
