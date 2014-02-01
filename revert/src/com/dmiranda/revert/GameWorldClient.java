@@ -132,7 +132,7 @@ public class GameWorldClient extends GameWorld {
         // Draw the background
         sb.disableBlending();
         sb.begin();
-        sb.setProjectionMatrix(camera.calculateParallaxMatrix(0.1f, 0.1f));
+        sb.setProjectionMatrix(camera.calculateParallaxMatrix(0.01f, 0.01f));
         sb.draw(background, -game.getCamera().viewportWidth / 2, -game.getCamera().viewportHeight / 2);
         sb.end();
 
