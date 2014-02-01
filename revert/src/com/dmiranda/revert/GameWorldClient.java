@@ -7,8 +7,10 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.dmiranda.revert.effects.Effect;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Asteroid;
 import com.dmiranda.revert.shared.Entity;
@@ -69,7 +71,25 @@ public class GameWorldClient extends GameWorld {
     public void entityDeath(Entity entity) {
 
         if (entity instanceof Unit) {
+
             particleSystem.addNewEffect("expo1", entity.getId(), entity.getCenterX(), entity.getCenterY());
+
+            if(entity instanceof Ship){
+
+                for(int i = 0 ; i < MathUtils.random(4)+2; i++){
+
+                    Effect effect = new Effect(entity.getCenterX(), entity.getCenterY(), (int)(entity.getWidth() * (MathUtils.random() * 0.5f)),
+                            (int)(entity.getHeight() * (MathUtils.random() * 0.5f)), 3500f);
+                    effect.setTexture(Revert.getLoadedTexture("fighter-wreck.png"));
+                    effect.setRotationSpeed(MathUtils.random() * 15);
+                    effect.rotateTo(MathUtils.random(360) + 60);
+                    effect.setVelocity(entity.getVelocity().x * (MathUtils.random() * 0.5f ) + 0.5f, entity.getVelocity().y * (MathUtils.random() * 0.5f) + 0.5f);
+                    particleSystem.addNewEffectFollower("smoke-trail", effect);
+
+
+                    entityManager.addLocalEntity(effect);
+                }
+            }
         }
 
     }

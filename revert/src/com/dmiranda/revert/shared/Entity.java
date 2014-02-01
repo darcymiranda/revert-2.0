@@ -10,6 +10,8 @@ public class Entity {
 	protected Vector2 velocity; 
 	protected int width, height;
 	protected float rotation;
+    protected float rotationSpeed;
+    protected float rotateTo;
 	
 	protected Entity ownerEntity;
 	protected Player ownerPlayer;
@@ -49,6 +51,14 @@ public class Entity {
 		
 		if(rotation > 360) rotation -= 360;
 		else if(rotation < 0) rotation += 360;
+
+        // Rotate based on the rotation speed
+        float d = rotateTo - rotation;
+        if(d > 180)
+            d -= 360;
+        else if(d < -180)
+            d += 360;
+        rotation += d * rotationSpeed * delta;
 		
 		if(collisionCircle != null){
 			
@@ -115,6 +125,14 @@ public class Entity {
 	protected void onDeath(Entity killer){}
     protected void onCreateClient(){}
 
+    public void setRotationSpeed(float rotationSpeed){ this.rotationSpeed = rotationSpeed; }
+    public void rotateTo(float rotateTo){
+        if(rotateTo > 360) rotateTo -= 360;
+        else if(rotateTo < 0) rotateTo += 360;
+        this.rotateTo = rotateTo;
+    }
+    public float getRotateTo(){ return rotateTo; }
+
 	public void setTexture(TextureRegion texture){ this.texture = texture; }
 	public void setNetworkEnabled(boolean net){ this.net = net; }
 	public void setId(int id){ this.id = id; }
@@ -126,7 +144,8 @@ public class Entity {
 	public void setVelocity(float x, float y){ this.velocity = new Vector2(x, y); }
 	public void setRotation(float r){ this.rotation = r; }
 	public void setType(int type){ this.type = type; }
-	
+
+    public TextureRegion getTexture(){ return texture; }
 	public boolean isNetworkEnabled(){ return net; }
 	public Vector2 getVelocity(){ return velocity; }
 	public Vector2 getPosition(){ return position; }

@@ -19,7 +19,7 @@ import com.dmiranda.revert.shared.Unit;
 
 public class ParticleSystem {
 	
-	private HashMap<Unit, ParticleEffectFollower> effectsFollower = new HashMap<Unit, ParticleEffectFollower>();
+	private HashMap<Entity, ParticleEffectFollower> effectsFollower = new HashMap<Entity, ParticleEffectFollower>();
 	private HashMap<String, ParticleEffect> effects = new HashMap<String, ParticleEffect>();
 	private HashMap<String, ParticleEffect> cache = new HashMap<String, ParticleEffect>();
 	
@@ -53,9 +53,9 @@ public class ParticleSystem {
 			effect.draw(sb, delta);
 		}
 		
-		Iterator<Entry<Unit, ParticleEffectFollower>> itF = effectsFollower.entrySet().iterator();
+		Iterator<Entry<Entity, ParticleEffectFollower>> itF = effectsFollower.entrySet().iterator();
 		while(itF.hasNext()){
-			Map.Entry<Unit, ParticleEffectFollower> pairs = itF.next();
+			Map.Entry<Entity, ParticleEffectFollower> pairs = itF.next();
 			Entity key = pairs.getKey();
 			ParticleEffectFollower effectFollower = pairs.getValue();
 			
@@ -81,11 +81,11 @@ public class ParticleSystem {
 		return null;
 	}
 	
-	public void addNewEffectFollower(String name, Unit entity){
+	public void addNewEffectFollower(String name, Entity entity){
 		addNewEffectFollower(name, entity, new Vector2(), false);
 	}
 	
-	public void addNewEffectFollower(String name, Unit entity, Vector2 offset, boolean matchRotation){
+	public void addNewEffectFollower(String name, Entity entity, Vector2 offset, boolean matchRotation){
 		
 		ParticleEffect effect = new ParticleEffect(cache.get(name));
 		effectsFollower.put(entity, new ParticleEffectFollower(effect, entity, offset, matchRotation));
@@ -102,25 +102,25 @@ public class ParticleSystem {
 	}
 	
 	public void addNewEffect(String name, int uid, float x, float y){
-		
+
 		ParticleEffect effect = new ParticleEffect(cache.get(name));
-		
+
 		effect.setPosition(x, y);
 		effect.start();
 		effects.put(name + uid, effect);
 	}
 	
 	public HashMap<String, ParticleEffect> getEffects(){ return effects; }
-	public HashMap<Unit, ParticleEffectFollower> getEffectsFollow(){ return effectsFollower; }
+	public HashMap<Entity, ParticleEffectFollower> getEffectsFollow(){ return effectsFollower; }
 	
 	public class ParticleEffectFollower {
 		
 		private ParticleEffect effect;
-		private Unit follower;
+		private Entity follower;
 		private Vector2 offset;
 		private boolean matchRotation;
 		
-		public ParticleEffectFollower(ParticleEffect effect, Unit follower, Vector2 offset, boolean matchRotation){
+		public ParticleEffectFollower(ParticleEffect effect, Entity follower, Vector2 offset, boolean matchRotation){
 			this.effect = effect;
 			this.follower = follower;
 			this.offset = offset;

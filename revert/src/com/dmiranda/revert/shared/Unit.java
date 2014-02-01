@@ -18,8 +18,6 @@ public class Unit extends Entity {
                             UT_SATGUN = 3;
 	
 	protected float health, maxHealth;
-	protected float rotationSpeed;
-	protected float rotateTo;
 	
 	protected boolean shooting;
 	
@@ -49,16 +47,7 @@ public class Unit extends Entity {
 			clientNetSim.update(delta);
 		}
 		
-		// Rotate based on the rotation speed
-		float d = rotateTo - rotation;
-		if(d > 180){
-			d -= 360;
-		}
-		else if(d < -180){
-			d += 360;
-		}
-		
-		rotation += d * rotationSpeed * delta;
+
 		
 		for(int i = 0; i < weapons.size(); i++){
 			
@@ -149,13 +138,6 @@ public class Unit extends Entity {
 	
 	public boolean isShooting(){ return shooting; }
 	public void setShooting(boolean shooting){ this.shooting = shooting; }
-	
-	public void rotateTo(float rotateTo){ 
-		if(rotateTo > 360) rotateTo -= 360;
-		else if(rotateTo < 0) rotateTo += 360;
-		this.rotateTo = rotateTo; 
-	}
-	public float getRotateTo(){ return rotateTo; }
 	
 
 }
