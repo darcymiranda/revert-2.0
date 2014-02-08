@@ -47,8 +47,6 @@ public class RevertServer extends Thread {
 
     }
 
-    long time;
-
     public void run(){
 
 		while(true){

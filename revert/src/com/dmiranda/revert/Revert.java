@@ -20,7 +20,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
-import com.dmiranda.revert.client.InputReconciliation;
 import com.dmiranda.revert.client.RevertClient;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.*;
@@ -212,8 +211,6 @@ public class Revert implements ApplicationListener {
 		Gdx.app.log("Game State Change", currentGameState + " to " + state);
 		currentGameState = state;
 	}
-
-    private InputReconciliation inputReconciliation = new InputReconciliation();
 	
 	private void doInputs(){
 		
@@ -230,16 +227,6 @@ public class Revert implements ApplicationListener {
 				float direction = (float) -(Math.atan2(mouse.x - localShip.getCenterX(), 
 													  mouse.y - localShip.getCenterY()) * (180 / Math.PI));
                 localShip.rotateTo(direction);
-
-                inputReconciliation.addInput(
-                        inputReconciliation.new Input(
-                                Gdx.input.isKeyPressed(Input.Keys.W),
-                                Gdx.input.isKeyPressed(Input.Keys.A),
-                                Gdx.input.isKeyPressed(Input.Keys.S),
-                                Gdx.input.isKeyPressed(Input.Keys.D),
-                                Gdx.input.isButtonPressed(Buttons.LEFT)
-                        )
-                );
 
                 // temp client side prediction
                 localShip.moveUp(Gdx.input.isKeyPressed(Input.Keys.W));
