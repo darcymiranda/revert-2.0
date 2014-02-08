@@ -37,7 +37,6 @@ public class RevertServer extends Thread {
         //LagListener lagListener = new LagListener(Network.SIM_LAG_MIN, Network.SIM_LAG_MAX, serverListener);
         //server.addListener(lagListener);
 
-
         server.bind(Network.PORT_TCP, Network.PORT_UDP);
         server.start();
 
