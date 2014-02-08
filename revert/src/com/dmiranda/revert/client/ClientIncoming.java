@@ -20,13 +20,13 @@ import com.dmiranda.revert.shared.Ship;
 import com.dmiranda.revert.shared.SpaceStation;
 import com.dmiranda.revert.shared.Unit;
 import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.FrameworkMessage;
 import com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive;
 import com.esotericsoftware.kryonet.Listener;
 
 public class ClientIncoming extends Listener {
 	
 	private Revert game;
-	private long pingTestTime;
 	
 	public ClientIncoming(Revert revert){
 		this.game = revert;
@@ -46,16 +46,29 @@ public class ClientIncoming extends Listener {
 			for(int i = 0; i < updater.properties.size(); i++){
 				
 				PUnit pUnit = updater.properties.get(i);
+
+                float timeDifference = (float)(System.currentTimeMillis() - updater.timestamp) / 1000;
 				
 				Entity entity = game.world.getEntityManager().getEntityById(pUnit.id);
 				if(entity != null){
 					
 					if(entity instanceof Unit){
+
+                        if(entity instanceof Ship){
+
+                            Ship ship = (Ship)entity;
+
+                            ship.moveUp(pUnit.w);
+                            ship.moveLeft(pUnit.a);
+                            ship.moveRight(pUnit.d);
+                            ship.moveDown(pUnit.s);
+
+                        }
 						
 						Unit unit = (Unit)entity;
 						
 						if(unit.getClientNetSim() != null){
-							unit.getClientNetSim().input(0, pUnit.x, pUnit.y, pUnit.xv, pUnit.yv);
+							unit.getClientNetSim().input(timeDifference, pUnit.x, pUnit.y, pUnit.xv, pUnit.yv);
 						}
 						else{
 							unit.setPosition(pUnit.x, pUnit.y);
@@ -65,17 +78,6 @@ public class ClientIncoming extends Listener {
 						unit.setShooting(pUnit.shooting);
 						unit.rotateTo(pUnit.rt);
 						unit.setHealth(pUnit.health);
-						
-					}
-					
-					if(entity instanceof Ship){
-						
-						Ship ship = (Ship)entity;
-						
-						ship.moveUp(pUnit.w);
-						ship.moveLeft(pUnit.a);
-						ship.moveRight(pUnit.d);
-						ship.moveDown(pUnit.s);
 						
 					}
 					
@@ -97,26 +99,17 @@ public class ClientIncoming extends Listener {
 				}
 			}
 		}
-		else if(object instanceof KeepAlive){
-			sendPingTest();
-		}
-		else if(object instanceof PingTest){
-			PingTest pingTest = (PingTest)object;
-			if(pingTest.reply){
-				long current = System.currentTimeMillis();
-				long delay = current - pingTestTime;
-				game.getClient().setLatency(delay);
-				
-			} else {
-				pingTest.reply = true;
-				game.getClient().getRawClient().sendTCP(pingTest);
-			}
-		}
+        else if(object instanceof FrameworkMessage.Ping){
+            FrameworkMessage.Ping ping = (FrameworkMessage.Ping)object;
+
+            if(ping.isReply){
+                game.getClient().setLatency(connection.getReturnTripTime());
+                game.getClient().getRawClient().updateReturnTripTime();
+            }
+        }
 		else if(object instanceof MapProperties){
 			MapProperties prop = (MapProperties)object;
-			
-			
-			
+
 			if(prop.asteroidProperties != null){
 				
 				for(int i = 0; i < prop.asteroidProperties.size(); i++){
@@ -186,9 +179,9 @@ public class ClientIncoming extends Listener {
 	@Override
 	public void connected(Connection connection){
 		super.connected(connection);
-		
+
+        game.getClient().getRawClient().updateReturnTripTime();
 		game.getClient().setSessionId(connection.getID());
-		sendPingTest();
 
 	}
 	
@@ -198,11 +191,6 @@ public class ClientIncoming extends Listener {
 		
 		game.getClient().setHandshakeStatus(false);
 		
-	}
-	
-	private void sendPingTest(){
-		pingTestTime = System.currentTimeMillis();
-		game.getClient().getRawClient().sendTCP(new PingTest());
 	}
 
 }

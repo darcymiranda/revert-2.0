@@ -38,20 +38,8 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="kryonet-2.18-all.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/kryonet-2.18-all.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="file://$MODULE_DIR$/../../Libraries/kryonet-2.20/javadoc" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../Libraries/kryonet-2.20/java/src" />
-        </SOURCES>
-      </library>
-    </orderEntry>
     <orderEntry type="library" exported="" name="box2dlights" level="project" />
+    <orderEntry type="library" name="kryonet-2.21-all" level="project" />
   </component>
 </module>
 

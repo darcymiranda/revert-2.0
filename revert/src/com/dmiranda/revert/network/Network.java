@@ -14,6 +14,7 @@ public class Network {
 	public static final int PORT_TCP = 19555;
 	public static final int PORT_UDP = 19777;
 	public static final boolean RUN_WITH_SERVER = true;
+    public static final int SIM_LAG_MIN = 100, SIM_LAG_MAX = 300;
 	
 	public static boolean clientSide;
 	
@@ -50,11 +51,13 @@ public class Network {
 	
 	public static class UnitUpdate {
 		public ArrayList<PUnit> properties;
+        public long timestamp;
 		public UnitUpdate(){ properties = new ArrayList<PUnit>(); }
 	}
 	
 	public static class SingleUnitUpdate {
 		public int id, playerid, type;
+        public long timestamp;
 		public float x,y,xv,yv,r,rt;
 		public float health;
 		public boolean w,s,d,a;

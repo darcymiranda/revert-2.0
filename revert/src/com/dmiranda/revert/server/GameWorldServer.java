@@ -66,6 +66,7 @@ public class GameWorldServer extends GameWorld {
 	public void update(float delta){
 		
 		unitUpdate.properties.clear();
+        unitUpdate.timestamp = System.currentTimeMillis();
 		
 		entityManager.update(delta);
 		
@@ -122,7 +123,7 @@ public class GameWorldServer extends GameWorld {
 				if(tickTime < 1){
 					
 					PUnit pUnit = new PUnit();
-					
+
 					pUnit.playerid = unit.getOwnerPlayer().id;
 					pUnit.type = unit.getType();
 					pUnit.id = unit.getId();

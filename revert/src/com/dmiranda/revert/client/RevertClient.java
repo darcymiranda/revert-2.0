@@ -1,6 +1,7 @@
 package com.dmiranda.revert.client;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.dmiranda.revert.Revert;
@@ -16,7 +17,10 @@ public class RevertClient {
 	private boolean handShakeStatus;
 	private boolean connecting;
     private int session;
-	private long latency;
+
+    private final int ROLLING_LATENCY_BUFFER_SIZE = 15;
+    private ArrayList<Integer> rollingLatency = new ArrayList<Integer>();
+	private int latency;
 
 	private String status = "";
 	
@@ -30,7 +34,7 @@ public class RevertClient {
 		
 		ThreadedListener listener = new ThreadedListener(new ClientIncoming(game));
 		client.addListener(listener);
-		//LagListener lagListener = new LagListener(30, 300, listener);
+		//LagListener lagListener = new LagListener(Network.SIM_LAG_MIN, Network.SIM_LAG_MAX, listener);
 		//client.addListener(lagListener);
 		
 	}
@@ -83,6 +87,20 @@ public class RevertClient {
 	public Client getRawClient(){ return client; }
 	
 	public long getLatency(){ return latency; }
-	public void setLatency(long latency){ this.latency = latency; }
+	public void setLatency(int latency){
+
+        rollingLatency.add(latency);
+        if(rollingLatency.size() > ROLLING_LATENCY_BUFFER_SIZE){
+            rollingLatency.remove(rollingLatency.size() - 1);
+        }
+
+        int average = 0;
+        for(Integer l : rollingLatency){
+            average += l.intValue();
+        }
+        average /= rollingLatency.size();
+
+        this.latency = average;
+    }
 
 }

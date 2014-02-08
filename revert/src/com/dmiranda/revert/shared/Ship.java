@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.GameWorldClient;
 import com.dmiranda.revert.Revert;
+import com.dmiranda.revert.client.InputReconciliation;
 
 public class Ship extends Unit {
 	
@@ -121,6 +122,14 @@ public class Ship extends Unit {
         if(w || a || s || d){
             shipEngine.booster(booster);
         }
+    }
+
+    public void applyInput(InputReconciliation.Input input){
+        this.w = input.w;
+        this.a = input.a;
+        this.s = input.s;
+        this.d = input.d;
+        this.shooting = input.shooting;
     }
 	
 /*	private void setDirectionVelocity(float acceleration, float maxSpeed){

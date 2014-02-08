@@ -110,34 +110,29 @@ public class ServerIncoming extends Listener {
 			SingleUnitUpdate updater = (SingleUnitUpdate)object;
 			
 			if(currentPlayer.ship != null){
-			
+
 				Vector2 newPosition = new Vector2(updater.x, updater.y);
-				
-				float distance = currentPlayer.ship.getPosition().dst2(newPosition.x, newPosition.y);
-				if(distance > 5000 || distance < -5000){
-					
-					System.err.println(currentPlayer + "  " + currentPlayer.ship + " moved too quickly of " + distance + " units.");
-					
-				} else {
-				
-					currentPlayer.ship.setPosition(updater.x, updater.y);
-					currentPlayer.ship.setVelocity(updater.xv, updater.yv);
-					
-				}
-				
+
+                float diff = (float)(System.currentTimeMillis() - updater.timestamp) / 1000;
+
 				currentPlayer.ship.setShooting(updater.shooting);
 				currentPlayer.ship.rotateTo(updater.rt);
 				currentPlayer.ship.moveUp(updater.w);
 				currentPlayer.ship.moveLeft(updater.a);
 				currentPlayer.ship.moveRight(updater.d);
 				currentPlayer.ship.moveDown(updater.s);
+
+                currentPlayer.ship.setPosition(updater.x + (updater.xv * diff), updater.y + (updater.yv * diff));
+                currentPlayer.ship.setVelocity(updater.xv, updater.yv);
+
+                float distance = currentPlayer.ship.getPosition().dst2(newPosition.x, newPosition.y);
+                if(distance > 5000 || distance < -5000){
+
+                    System.err.println(currentPlayer + "  " + currentPlayer.ship + " moved too quickly of " + distance + " units.");
+
+                }
 					
 			}
-		}
-		else if(object instanceof PingTest){
-			PingTest pingTest = (PingTest)object;
-			pingTest.reply = true;
-			game.server.sendToTCP(currentConnection.getID(), pingTest);
 		}
 	}
 	

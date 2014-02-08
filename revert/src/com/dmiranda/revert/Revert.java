@@ -10,6 +10,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,12 +20,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.dmiranda.revert.client.InputReconciliation;
 import com.dmiranda.revert.client.RevertClient;
 import com.dmiranda.revert.network.Network;
-import com.dmiranda.revert.shared.Entity;
-import com.dmiranda.revert.shared.GameWorld;
-import com.dmiranda.revert.shared.Player;
-import com.dmiranda.revert.shared.Ship;
+import com.dmiranda.revert.shared.*;
 import com.dmiranda.revert.ui.Hud;
 import com.dmiranda.revert.ui.MainMenu;
 import com.dmiranda.revert.ui.MiniMap;
@@ -180,18 +179,18 @@ public class Revert implements ApplicationListener {
 
 			hud.render(sb);
 
-			/*
 			// Render debug info
 			Entity[] entities = GameWorld.entityManager.getEntities();
-			debugRenderer.setProjectionMatrix(gameCamera.getOrtho().combined);
+			debugRenderer.setProjectionMatrix(gameCamera.combined);
 			debugRenderer.setColor(Color.WHITE);
-			debugRenderer.begin(ShapeType.Circle);
+			debugRenderer.begin(ShapeRenderer.ShapeType.Line);
 			{
 				for(int i = 0; i < entities.length; i++){
 					if(entities[i] == null) continue;
 					
 					if(entities[i] instanceof Unit){
 						Unit unit = (Unit)entities[i];
+                        if(unit.getClientNetSim() == null) continue;
 						
 						debugRenderer.circle(unit.getClientNetSim().getRawServerPosition().x + unit.getWidth() / 2,
 								unit.getClientNetSim().getRawServerPosition().y + unit.getHeight() / 2,
@@ -202,7 +201,6 @@ public class Revert implements ApplicationListener {
 				}
 			}
 			debugRenderer.end();
-			*/
 			
 			
 		}
@@ -214,6 +212,8 @@ public class Revert implements ApplicationListener {
 		Gdx.app.log("Game State Change", currentGameState + " to " + state);
 		currentGameState = state;
 	}
+
+    private InputReconciliation inputReconciliation = new InputReconciliation();
 	
 	private void doInputs(){
 		
@@ -229,14 +229,24 @@ public class Revert implements ApplicationListener {
 				
 				float direction = (float) -(Math.atan2(mouse.x - localShip.getCenterX(), 
 													  mouse.y - localShip.getCenterY()) * (180 / Math.PI));
-				
                 localShip.rotateTo(direction);
+
+                inputReconciliation.addInput(
+                        inputReconciliation.new Input(
+                                Gdx.input.isKeyPressed(Input.Keys.W),
+                                Gdx.input.isKeyPressed(Input.Keys.A),
+                                Gdx.input.isKeyPressed(Input.Keys.S),
+                                Gdx.input.isKeyPressed(Input.Keys.D),
+                                Gdx.input.isButtonPressed(Buttons.LEFT)
+                        )
+                );
+
+                // temp client side prediction
                 localShip.moveUp(Gdx.input.isKeyPressed(Input.Keys.W));
                 localShip.moveLeft(Gdx.input.isKeyPressed(Input.Keys.A));
                 localShip.moveDown(Gdx.input.isKeyPressed(Input.Keys.S));
                 localShip.moveRight(Gdx.input.isKeyPressed(Input.Keys.D));
                 localShip.enableBooster(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
-
                 boolean shoot = Gdx.input.isButtonPressed(Buttons.LEFT);
 
                 if(localShip.isShooting() != shoot){

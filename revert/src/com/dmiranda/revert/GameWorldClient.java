@@ -121,6 +121,7 @@ public class GameWorldClient extends GameWorld {
             if (tickTime < 1) {
 
                 Network.SingleUnitUpdate updater = new Network.SingleUnitUpdate();
+                updater.timestamp = System.currentTimeMillis();
                 updater.playerid = ship.getOwnerPlayer().id;
                 updater.id = ship.getId();
                 updater.rt = ship.getRotateTo();

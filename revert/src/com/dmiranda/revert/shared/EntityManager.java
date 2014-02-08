@@ -124,9 +124,9 @@ public class EntityManager {
 				}
 				
 			}
-			
-			world.entityUpdate(entity);
+
 			entity.update(delta);
+            world.entityUpdate(entity);
 			
 		}
 		
@@ -154,9 +154,9 @@ public class EntityManager {
 			if(entity.getCollisionCircle() != null){
 				doCollision(entity);
 			}
-			
-			world.entityUpdate(entity);
+
 			entity.update(delta);
+            world.entityUpdate(entity);
 			
 		}
 		
