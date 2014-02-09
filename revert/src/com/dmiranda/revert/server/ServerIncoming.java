@@ -133,9 +133,6 @@ public class ServerIncoming extends Listener {
                 currentPlayer.ship.setPosition(updater.x + (updater.xv * diff), updater.y + (updater.yv * diff));
                 currentPlayer.ship.setVelocity(updater.xv, updater.yv);
 
-                //System.out.println(currentPlayer.ship.getVelocity());
-                //System.out.println(currentPlayer.ship.getPosition());
-
 			}
 		}
 	}

@@ -54,7 +54,7 @@ public class NetSimulateState {
         render.position = new Vector2(entity.getPosition()).lerp(simulate.position, smoothing);
 
         float distance = render.getPosition().dst2(serverPosition);
-        if(distance > 15000 + (latency * 100) || distance < -15000 - (latency * 100) ){
+        if(distance > 5000 + (latency * 100) || distance < -5000 - (latency * 100) ){
             entity.setPosition(render.position);
             entity.setVelocity(render.velocity);
         }

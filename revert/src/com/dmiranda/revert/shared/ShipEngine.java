@@ -46,7 +46,6 @@ public class ShipEngine {
         posOffset.x = -MathUtils.sinDeg(owner.getRotation() + 180) * locationOffset;
         posOffset.y = MathUtils.cosDeg(owner.getRotation() + 180) * locationOffset;
 
-        GameWorldClient.particleSystem.addNewEffectFollower("ship_engine2", owner, posOffset, true);
 	}
 
     public void onCreateClient(){
