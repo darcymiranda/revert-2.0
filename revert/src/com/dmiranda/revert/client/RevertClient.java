@@ -50,7 +50,7 @@ public class RevertClient {
 		try {
 
             connecting = true;
-			client.connect(5000, host, portTcp, portUdp);
+			client.connect(5000, host, portTcp, portTcp);
 			
 		} catch (IOException e) {
 			
@@ -86,9 +86,12 @@ public class RevertClient {
 	public int getSessionId(){ return session; }
 	public Client getRawClient(){ return client; }
 	
-	public long getLatency(){ return latency; }
+	public int getLatency(){ return latency; }
 	public void setLatency(int latency){
 
+        this.latency = latency;
+
+        /*
         rollingLatency.add(latency);
         if(rollingLatency.size() > ROLLING_LATENCY_BUFFER_SIZE){
             rollingLatency.remove(rollingLatency.size() - 1);
@@ -97,10 +100,12 @@ public class RevertClient {
         int average = 0;
         for(Integer l : rollingLatency){
             average += l.intValue();
+            System.out.println(l.intValue());
         }
         average /= rollingLatency.size();
 
         this.latency = average;
+        */
     }
 
 }

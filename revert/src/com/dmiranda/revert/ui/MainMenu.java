@@ -22,10 +22,10 @@ public class MainMenu {
 		
 		stage = new Stage();
 		
-		atlas = new TextureAtlas(Gdx.files.internal("./assets/data/skins/gui-assets.txt"));
+		atlas = new TextureAtlas(Gdx.files.internal("assets/data/skins/gui-assets.txt"));
 		
-		playButtonSkin = new Skin(Gdx.files.internal("./assets/data/skins/button-play.json"), atlas);
-		quitButtonSkin = new Skin(Gdx.files.internal("./assets/data/skins/button-quit.json"), atlas);
+		playButtonSkin = new Skin(Gdx.files.internal("assets/data/skins/button-play.json"), atlas);
+		quitButtonSkin = new Skin(Gdx.files.internal("assets/data/skins/button-quit.json"), atlas);
 		
 		playButton = new ImageButton(playButtonSkin);
 		playButton.setPosition(Gdx.graphics.getWidth() * 0.5f - (110 * 0.5f), Gdx.graphics.getHeight() * 0.75f);

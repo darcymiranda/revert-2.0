@@ -47,8 +47,6 @@ public class Unit extends Entity {
 			clientNetSim.update(delta);
 		}
 		
-
-		
 		for(int i = 0; i < weapons.size(); i++){
 			
 			Weapon weapon = weapons.get(i);

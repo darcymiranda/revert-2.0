@@ -2,6 +2,7 @@ package com.dmiranda.revert.effects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.dmiranda.revert.shared.Entity;
 
 /**
  * User: dmiranda
@@ -16,8 +17,8 @@ public class LightExpire extends LightBase {
     private float lifeTick;
     private float life;
 
-    public LightExpire(Color color, float distance, float life) {
-        super(color, distance, 0, 0);
+    public LightExpire(Color color, int rays, float distance, float life) {
+        super(color, rays, distance);
         this.life = life;
     }
 
@@ -31,7 +32,7 @@ public class LightExpire extends LightBase {
             remove();
         }
         else if(expireOption == TURN_OFF){
-            activate(false);
+            setActive(false);
             lifeTick = life;
         }
 
@@ -41,7 +42,7 @@ public class LightExpire extends LightBase {
     public void update(){
         super.update();
 
-        if(light.isActive()){
+        if(isActive()){
 
             if(lifeTick < 0 ){
                 expire();

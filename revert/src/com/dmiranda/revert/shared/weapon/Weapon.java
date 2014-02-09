@@ -255,7 +255,7 @@ public class Weapon {
     }
 
     public void onClientCreate(){
-        light = new LightExpire(new Color(1.0f, 1.0f, 0, 0.7f), 45, 16);
+        light = new LightExpire(new Color(1.0f, 1.0f, 0, 0.7f), 4, 65, 16);
         light.setExpireOption(LightExpire.TURN_OFF);
     }
 	
@@ -270,7 +270,7 @@ public class Weapon {
 
                 Vector2 r = getRelativeLocation();
 
-                light.activate(true);
+                light.setActive(true);
                 light.setPosition(r.x, r.y);
 
             }

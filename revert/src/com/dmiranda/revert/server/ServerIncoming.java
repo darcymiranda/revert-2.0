@@ -19,6 +19,7 @@ import com.dmiranda.revert.shared.GameWorld;
 import com.dmiranda.revert.shared.Player;
 import com.dmiranda.revert.shared.Unit;
 import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.FrameworkMessage;
 import com.esotericsoftware.kryonet.Listener;
 
 public class ServerIncoming extends Listener {
@@ -111,9 +112,7 @@ public class ServerIncoming extends Listener {
 			
 			if(currentPlayer.ship != null){
 
-				Vector2 newPosition = new Vector2(updater.x, updater.y);
-
-                float diff = (float)(System.currentTimeMillis() - updater.timestamp) / 1000;
+                float diff = updater.latency * 0.001f;
 
 				currentPlayer.ship.setShooting(updater.shooting);
 				currentPlayer.ship.rotateTo(updater.rt);
@@ -122,16 +121,21 @@ public class ServerIncoming extends Listener {
 				currentPlayer.ship.moveRight(updater.d);
 				currentPlayer.ship.moveDown(updater.s);
 
-                currentPlayer.ship.setPosition(updater.x + (updater.xv * diff), updater.y + (updater.yv * diff));
-                currentPlayer.ship.setVelocity(updater.xv, updater.yv);
+                Vector2 newPosition = new Vector2(updater.x + (updater.xv * diff), updater.y + (updater.yv * diff));
 
                 float distance = currentPlayer.ship.getPosition().dst2(newPosition.x, newPosition.y);
-                if(distance > 5000 || distance < -5000){
+                if(distance > 15000 + (updater.latency * 100) || distance < -15000 - (updater.latency * 100) ){
 
                     System.err.println(currentPlayer + "  " + currentPlayer.ship + " moved too quickly of " + distance + " units.");
 
                 }
-					
+
+                currentPlayer.ship.setPosition(updater.x + (updater.xv * diff), updater.y + (updater.yv * diff));
+                currentPlayer.ship.setVelocity(updater.xv, updater.yv);
+
+                //System.out.println(currentPlayer.ship.getVelocity());
+                //System.out.println(currentPlayer.ship.getPosition());
+
 			}
 		}
 	}

@@ -16,9 +16,17 @@ public class LightBase {
     protected Light light;
     protected Entity owner;
 
-    public LightBase(Color color, float distance, float x, float y) {
-        light = new PointLight(GameWorldClient.rayHandler, 8, color, distance, 0, 0);
+    private Color originalColor;
+    private float originalDistance;
+
+    public LightBase(Color color, int rays, float distance) {
+        this.originalColor = color;
+        this.originalDistance = distance;
+
+        light = new PointLight(GameWorldClient.rayHandler, rays, color, distance, 0, 0);
         light.setXray(true);
+        light.setSoft(true);
+        light.setSoftnessLenght(10);
     }
 
     public void update(){
@@ -29,6 +37,12 @@ public class LightBase {
 
     }
 
+    public void setIntensity(float intensity){
+        //Color temp = new Color(originalColor);
+        //light.setColor(temp.mul(intensity, intensity, intensity, 1));
+        light.setDistance(originalDistance * intensity);
+    }
+
     public void setColor(float r, float g, float b, float a){
         light.setColor(r, g, b, a);
     }
@@ -37,7 +51,11 @@ public class LightBase {
         light.setColor(color);
     }
 
-    public void attachToEntity(Entity owner){
+    public Color getColor(){
+        return light.getColor();
+    }
+
+    public void attach(Entity owner){
         this.owner = owner;
     }
 
@@ -45,8 +63,12 @@ public class LightBase {
         light.setPosition(x, y);
     }
 
-    public void activate(boolean activate){
+    public void setActive(boolean activate){
         light.setActive(activate);
+    }
+
+    public boolean isActive(){
+        return light.isActive();
     }
 
     public void remove(){
