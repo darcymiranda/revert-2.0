@@ -56,6 +56,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="kryonet-2.21-all" level="project" />
   </component>
 </module>
 
