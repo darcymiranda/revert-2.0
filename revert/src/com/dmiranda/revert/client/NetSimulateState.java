@@ -1,6 +1,5 @@
 package com.dmiranda.revert.client;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.EntityState;
 import com.dmiranda.revert.network.Network;
@@ -13,7 +12,7 @@ public class NetSimulateState {
 	private Vector2 serverPosition;
 	private Vector2 serverVelocity;
 	private float smoothing;
-	private float lag;
+	private float latency;
 	private boolean onlySync;
 	private float delta;
 	
@@ -26,12 +25,14 @@ public class NetSimulateState {
 		serverVelocity = new Vector2(entity.getVelocity());
 	}
 	
-	public void input(float timeDifference, float x, float y, float vx, float vy){
+	public void input(float latency, float x, float y, float vx, float vy){
+
+        this.latency = latency;
 		
 		smoothing = 1;
 
-		serverPosition.x = x + (vx * timeDifference);
-		serverPosition.y = y + (vy * timeDifference);
+		serverPosition.x = x + (vx * latency * 0.001f);
+		serverPosition.y = y + (vy * latency * 0.001f);
 		serverVelocity.x = vx;
 		serverVelocity.y = vy;
 		
@@ -40,60 +41,29 @@ public class NetSimulateState {
 		simulate.setPosition(serverPosition.x, serverPosition.y);
 		simulate.setVelocity(vx, vy);
 
-		simulate.update(delta + timeDifference);
+		simulate.update(delta);
 
-
-		//entity.getPosition().lerp(serverPosition, lag);
-		//entity.getVelocity().lerp(serverVelocity, lag);
-
-		float distance = entity.getPosition().dst2(serverPosition);
-		if(distance > 15000 || distance < -15000 ){
-		
-			Gdx.app.log("Simulation", "Teleported " + entity + " because it was " + distance + " behind from server.");
-			entity.setPosition(serverPosition.x, serverPosition.y);
-			entity.setVelocity(serverVelocity.x, serverVelocity.y);
-		
-		}
-		
 	}
 
 	public void update(float delta){
 		
-		this.delta = delta;
-		
 		smoothing -= 1f / Network.CLIENT_SEND_INTERVAL;
 		if(smoothing < 0 ) smoothing = 0;
 
+        render.velocity = new Vector2(entity.getVelocity()).lerp(simulate.velocity, smoothing);
+        render.position = new Vector2(entity.getPosition()).lerp(simulate.position, smoothing);
 
-		//render.velocity = simulate.velocity;
-		
-		// interpolate
-		//render.position = new Vector2(previous.position.lerp(simulate.position, smoothing));
-		render.velocity = new Vector2(previous.velocity.lerp(simulate.velocity, smoothing));
+        float distance = render.getPosition().dst2(serverPosition);
+        if(distance > 15000 + (latency * 100) || distance < -15000 - (latency * 100) ){
+            entity.setPosition(render.position);
+            entity.setVelocity(render.velocity);
+        }
 
         if(!onlySync){
             entity.setVelocity(render.velocity);
-            //entity.setPosition(render.position);
         }
-		
-		/*
-		if(!onlySync){
-			
-			entity.setVelocity(render.velocity);
-			
-			//System.err.println(previous + "           " + simulate);
-			//System.out.println(render + "    " + entity.getPosition() + " - " + entity.getVelocity());
-		
-			//entity.getPosition().lerp(render.position, smoothing);
 
-			
-			// set new positions
-			//entity.setPosition(render.position);
-			//entity.setVelocity(render.velocity);
-			//entity.setRotation(render.rotation);
-		
-		}
-		*/
+        this.delta = delta;
 		
 	}
 	

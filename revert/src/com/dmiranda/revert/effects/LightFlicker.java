@@ -2,6 +2,7 @@ package com.dmiranda.revert.effects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.dmiranda.revert.shared.Entity;
 
 /**
  * User: dmiranda
@@ -16,19 +17,19 @@ public class LightFlicker extends LightBase {
     private float flickerTick;
     private float flickerSpeed;
 
-    public LightFlicker(Color color, float flickerDistance, float flickerMultiplier, float flickerSpeed) {
-        super(color, flickerDistance, 0, 0);
+    public LightFlicker(Color color, int rays, float flickerDistance, float flickerMultiplier, float flickerSpeed) {
+        super(color, rays, flickerDistance);
         this.flickerDistance = flickerDistance;
         this.flickerSpeed = flickerSpeed;
         this.flickerMultiplier = flickerMultiplier;
     }
 
-    public LightFlicker(Color color, float distance, float flickerSpeed){
-        this(color, distance, 0.75f, flickerSpeed);
+    public LightFlicker(Color color, int rays, float distance, float flickerSpeed){
+        this(color, rays, distance, 0.75f, flickerSpeed);
     }
 
-    public LightFlicker(Color color, float distance){
-        this(color, distance, 16f);
+    public LightFlicker(int rays, Color color, float distance){
+        this(color, rays, distance, 16f);
     }
 
     @Override

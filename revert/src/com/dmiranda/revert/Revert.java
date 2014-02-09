@@ -92,9 +92,9 @@ public class Revert implements ApplicationListener {
 	
 	private void initLoad(){
 		
-		lFont = new BitmapFont(Gdx.files.internal("./assets/data/fonts/mlarge.fnt"), Gdx.files.internal("./assets/data/fonts/mlarge.png"), true);
-		sFont = new BitmapFont(Gdx.files.internal("./assets/data/fonts/msmall.fnt"), Gdx.files.internal("./assets/data/fonts/msmall.png"), true);
-		tFont = new BitmapFont(Gdx.files.internal("./assets/data/fonts/mtiny.fnt"), Gdx.files.internal("./assets/data/fonts/mtiny.png"), true);
+		lFont = new BitmapFont(Gdx.files.internal("assets/data/fonts/mlarge.fnt"), Gdx.files.internal("assets/data/fonts/mlarge.png"), true);
+		sFont = new BitmapFont(Gdx.files.internal("assets/data/fonts/msmall.fnt"), Gdx.files.internal("assets/data/fonts/msmall.png"), true);
+		tFont = new BitmapFont(Gdx.files.internal("assets/data/fonts/mtiny.fnt"), Gdx.files.internal("assets/data/fonts/mtiny.png"), true);
 		
 		loadAssets();
 		
@@ -159,7 +159,7 @@ public class Revert implements ApplicationListener {
 			sb.end();
 
             if(!client.isConnecting()){
-                client.connect(Network.DEFAULT_HOST, Network.PORT_TCP, Network.PORT_UDP, tempHostName);
+                client.connect(Network.DEFAULT_HOST, Network.PORT_TCP, Network.PORT_TCP, tempHostName);
             }
 				
 			if(client.isHandshakeComplete()){
@@ -252,7 +252,7 @@ public class Revert implements ApplicationListener {
 			dirHandle = Gdx.files.internal("/");
 		}
 		else{
-			dirHandle = Gdx.files.internal("./assets/textures");
+			dirHandle = Gdx.files.internal("./assets/textures/");
 		}
 		
 		for(FileHandle handle : dirHandle.list()){

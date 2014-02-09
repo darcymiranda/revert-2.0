@@ -76,14 +76,15 @@ public class GameWorldClient extends GameWorld {
 
             if(entity instanceof Ship){
 
-                for(int i = 0 ; i < MathUtils.random(4)+2; i++){
+                for(int i = 0 ; i < MathUtils.random(4)+3; i++){
 
-                    Effect effect = new Effect(entity.getCenterX(), entity.getCenterY(), (int)(entity.getWidth() * (MathUtils.random() * 0.5f)),
-                            (int)(entity.getHeight() * (MathUtils.random() * 0.5f)), 3500f);
+                    Effect effect = new Effect(entity.getCenterX(), entity.getCenterY(), (int)(entity.getWidth() * (MathUtils.random() * 0.8f)),
+                            (int)(entity.getHeight() * (MathUtils.random() * 0.8f)), 3800f);
                     effect.setTexture(Revert.getLoadedTexture("fighter-wreck.png"));
                     effect.setRotationSpeed(MathUtils.random() * 15);
-                    effect.rotateTo(MathUtils.random(360) + 60);
-                    effect.setVelocity(entity.getVelocity().x * (MathUtils.random() * 0.5f ) + 0.5f, entity.getVelocity().y * (MathUtils.random() * 0.5f) + 0.5f);
+                    effect.rotateTo(MathUtils.random(360) + 30);
+                    effect.setVelocity(entity.getVelocity().x * (MathUtils.random()) + (MathUtils.random() * -0.5f * 35f) + 10,
+                            entity.getVelocity().y * (MathUtils.random()) + (MathUtils.random() * -0.5f * 35f) + 10);
                     particleSystem.addNewEffectFollower("smoke-trail", effect);
 
 
@@ -121,8 +122,8 @@ public class GameWorldClient extends GameWorld {
             if (tickTime < 1) {
 
                 Network.SingleUnitUpdate updater = new Network.SingleUnitUpdate();
-                updater.timestamp = System.currentTimeMillis();
                 updater.playerid = ship.getOwnerPlayer().id;
+                updater.latency = game.getClient().getLatency();
                 updater.id = ship.getId();
                 updater.rt = ship.getRotateTo();
                 updater.x = ship.getPosition().x;
@@ -162,8 +163,6 @@ public class GameWorldClient extends GameWorld {
         sb.setProjectionMatrix(game.getCamera().combined);
         sb.begin();
 
-        particleSystem.render(sb, Gdx.graphics.getDeltaTime());
-
         Entity[] entities = entityManager.getEntities();
         for (int i = 0; i < entities.length; i++) {
             if (entities[i] == null) continue;
@@ -179,6 +178,8 @@ public class GameWorldClient extends GameWorld {
 
             localEntities[i].render(sb);
         }
+
+        particleSystem.render(sb, Gdx.graphics.getDeltaTime());
 
         sb.end();
 

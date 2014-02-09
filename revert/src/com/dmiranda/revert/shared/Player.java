@@ -9,7 +9,7 @@ public class Player {
 	public boolean local;
 	public int id;
 	public int team; // 0 red, 1 blue
-    public int serverSequenceNo = 0;
+    public int latency;
 	
 	public Ship ship;
 	

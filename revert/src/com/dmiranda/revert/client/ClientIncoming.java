@@ -46,8 +46,6 @@ public class ClientIncoming extends Listener {
 			for(int i = 0; i < updater.properties.size(); i++){
 				
 				PUnit pUnit = updater.properties.get(i);
-
-                float timeDifference = (float)(System.currentTimeMillis() - updater.timestamp) / 1000;
 				
 				Entity entity = game.world.getEntityManager().getEntityById(pUnit.id);
 				if(entity != null){
@@ -57,18 +55,16 @@ public class ClientIncoming extends Listener {
                         if(entity instanceof Ship){
 
                             Ship ship = (Ship)entity;
-
                             ship.moveUp(pUnit.w);
                             ship.moveLeft(pUnit.a);
                             ship.moveRight(pUnit.d);
                             ship.moveDown(pUnit.s);
-
                         }
 						
 						Unit unit = (Unit)entity;
 						
 						if(unit.getClientNetSim() != null){
-							unit.getClientNetSim().input(timeDifference, pUnit.x, pUnit.y, pUnit.xv, pUnit.yv);
+							unit.getClientNetSim().input(game.getClient().getLatency(), pUnit.x, pUnit.y, pUnit.xv, pUnit.yv);
 						}
 						else{
 							unit.setPosition(pUnit.x, pUnit.y);
