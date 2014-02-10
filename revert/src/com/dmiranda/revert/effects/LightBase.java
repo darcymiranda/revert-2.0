@@ -11,16 +11,16 @@ import com.dmiranda.revert.shared.Entity;
  * Date: 8/30/13
  * Time: 3:49 PM
  */
-public class LightBase {
+public class LightBase extends Entity {
 
     protected Light light;
     protected Entity owner;
 
-    private Color originalColor;
     private float originalDistance;
 
-    public LightBase(Color color, int rays, float distance) {
-        this.originalColor = color;
+    public LightBase(Color color, int rays, float distance, float x, float y) {
+        super(x, y, (int)(distance * 0.5f), (int)(distance * 0.5f));
+
         this.originalDistance = distance;
 
         light = new PointLight(GameWorldClient.rayHandler, rays, color, distance, 0, 0);
@@ -29,17 +29,28 @@ public class LightBase {
         light.setSoftnessLenght(10);
     }
 
-    public void update(){
+    @Override
+    public void update(float delta){
+        super.update(delta);
 
         if(owner != null){
             light.setPosition(owner.getCenterX(), owner.getCenterY());
+
+            if(!owner.isAlive()){
+                light.remove();
+                owner = null;
+            }
         }
 
     }
 
+    @Override
+    protected void onDeath(Entity killer) {
+        super.onDeath(killer);
+        light.remove();
+    }
+
     public void setIntensity(float intensity){
-        //Color temp = new Color(originalColor);
-        //light.setColor(temp.mul(intensity, intensity, intensity, 1));
         light.setDistance(originalDistance * intensity);
     }
 
@@ -69,10 +80,6 @@ public class LightBase {
 
     public boolean isActive(){
         return light.isActive();
-    }
-
-    public void remove(){
-        light.remove();
     }
 
 }

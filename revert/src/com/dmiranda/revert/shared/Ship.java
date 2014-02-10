@@ -117,6 +117,11 @@ public class Ship extends Unit {
 		
 	}
 
+    @Override
+    public void onDeath(Entity killer){
+        shipEngine.dispose();
+    }
+
     public void enableBooster(boolean booster){
         if(w || a || s || d){
             shipEngine.booster(booster);

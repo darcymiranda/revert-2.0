@@ -17,8 +17,8 @@ public class LightExpire extends LightBase {
     private float lifeTick;
     private float life;
 
-    public LightExpire(Color color, int rays, float distance, float life) {
-        super(color, rays, distance);
+    public LightExpire(Color color, int rays, float distance, float life, float x, float y) {
+        super(color, rays, distance, x, y);
         this.life = life;
     }
 
@@ -29,7 +29,7 @@ public class LightExpire extends LightBase {
     private void expire(){
 
         if(expireOption == REMOVE){
-            remove();
+            kill(null);
         }
         else if(expireOption == TURN_OFF){
             setActive(false);
@@ -39,15 +39,15 @@ public class LightExpire extends LightBase {
     }
 
     @Override
-    public void update(){
-        super.update();
+    public void update(float delta){
+        super.update(delta);
 
         if(isActive()){
 
             if(lifeTick < 0 ){
                 expire();
             } else {
-                lifeTick -= Gdx.graphics.getDeltaTime() * 1000;
+                lifeTick -= delta * 1000;
             }
         }
 

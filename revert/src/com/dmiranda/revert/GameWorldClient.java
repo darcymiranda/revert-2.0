@@ -1,16 +1,21 @@
 package com.dmiranda.revert;
 
+import box2dLight.Light;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.environment.BaseLight;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.dmiranda.revert.effects.Effect;
+import com.dmiranda.revert.effects.LightBase;
+import com.dmiranda.revert.effects.LightFlicker;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Asteroid;
 import com.dmiranda.revert.shared.Entity;
@@ -53,7 +58,8 @@ public class GameWorldClient extends GameWorld {
 
         lightWorld = new World(new Vector2(), true);
         rayHandler = new RayHandler(lightWorld);
-        rayHandler.setShadows(false);
+        rayHandler.setShadows(true);
+        rayHandler.setAmbientLight(0.8f);
         rayHandler.setCombinedMatrix(game.getCamera().combined);
         rayHandler.setCulling(true);
         rayHandler.setBlurNum(1);
@@ -85,9 +91,17 @@ public class GameWorldClient extends GameWorld {
                     effect.rotateTo(MathUtils.random(360) + 30);
                     effect.setVelocity(entity.getVelocity().x * (MathUtils.random()) + (MathUtils.random() * -0.5f * 35f) + 10,
                             entity.getVelocity().y * (MathUtils.random()) + (MathUtils.random() * -0.5f * 35f) + 10);
-                    particleSystem.addNewEffectFollower("smoke-trail", effect);
 
+                    ParticleEffect particleEffect = particleSystem.getCachedEffect("smoke-trail");
+                    for(ParticleEmitter emitter : particleEffect.getEmitters()){
+                    }
+                    particleSystem.addNewEffectFollower(particleEffect, effect, true);
 
+                    LightFlicker light = new LightFlicker(new Color(0.8f, 0.2f, 0.2f, 0.5f), 8, 35, 0.5f, 18, entity.getCenterX(), entity.getCenterY());
+                    light.attach(effect);
+                    light.setActive(true);
+
+                    entityManager.addLocalEntity(light);
                     entityManager.addLocalEntity(effect);
                 }
             }
@@ -147,6 +161,10 @@ public class GameWorldClient extends GameWorld {
             tickTime--;
         }
 
+
+        lightWorld.step(delta, 8, 3);
+        rayHandler.update();
+
     }
 
     public void render(SpriteBatch sb, Camera camera) {
@@ -186,9 +204,7 @@ public class GameWorldClient extends GameWorld {
         // Draw lights
         OrthographicCamera cam = game.getCamera();
         rayHandler.setCombinedMatrix(cam.combined, cam.position.x, cam.position.y, cam.viewportWidth, cam.viewportHeight);
-
-        lightWorld.step(Gdx.graphics.getDeltaTime(), 8, 3);
-        rayHandler.updateAndRender();
+        rayHandler.render();
 
     }
 

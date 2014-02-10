@@ -58,10 +58,15 @@ public class ParticleSystem {
 			Map.Entry<Entity, ParticleEffectFollower> pairs = itF.next();
 			Entity key = pairs.getKey();
 			ParticleEffectFollower effectFollower = pairs.getValue();
-			
+
 			if(!key.isAlive()){
-				itF.remove();
-				continue;
+
+                effectFollower.getEffect().allowCompletion();
+
+                if(effectFollower.getEffect().isComplete()){
+                    itF.remove();
+                    continue;
+                }
 			}
 			
 			effectFollower.update();
@@ -80,6 +85,10 @@ public class ParticleSystem {
 		}
 		return null;
 	}
+
+    public void addNewEffectFollower(ParticleEffect effect, Entity entity, boolean matchRotation){
+        effectsFollower.put(entity, new ParticleEffectFollower(effect, entity, new Vector2(), matchRotation));
+    }
 	
 	public void addNewEffectFollower(String name, Entity entity){
 		addNewEffectFollower(name, entity, new Vector2(), false);

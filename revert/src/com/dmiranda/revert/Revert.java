@@ -179,6 +179,7 @@ public class Revert implements ApplicationListener {
 			hud.render(sb);
 
 			// Render debug info
+            /*
 			Entity[] entities = GameWorld.entityManager.getEntities();
 			debugRenderer.setProjectionMatrix(gameCamera.combined);
 			debugRenderer.setColor(Color.WHITE);
@@ -200,11 +201,13 @@ public class Revert implements ApplicationListener {
 				}
 			}
 			debugRenderer.end();
-			
+			*/
 			
 		}
 		
 	}
+
+    int temp;
 
 
 	public void setGameState(GAME_STATES state){
@@ -228,7 +231,6 @@ public class Revert implements ApplicationListener {
 													  mouse.y - localShip.getCenterY()) * (180 / Math.PI));
                 localShip.rotateTo(direction);
 
-                // temp client side prediction
                 localShip.moveUp(Gdx.input.isKeyPressed(Input.Keys.W));
                 localShip.moveLeft(Gdx.input.isKeyPressed(Input.Keys.A));
                 localShip.moveDown(Gdx.input.isKeyPressed(Input.Keys.S));
@@ -241,6 +243,14 @@ public class Revert implements ApplicationListener {
                 }
 
                 localShip.setShooting(Gdx.input.isButtonPressed(Buttons.LEFT));
+
+                //debug
+                if(Gdx.input.isKeyPressed(Input.Keys.M)){
+                    if(localShip != null){
+                        localShip.kill(null);
+                    }
+                }
+
             }
 		}
 	}

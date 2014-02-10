@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.dmiranda.revert.GameWorldClient;
 import com.dmiranda.revert.effects.Effect;
 import com.dmiranda.revert.effects.LightExpire;
 import com.dmiranda.revert.Revert;
@@ -140,6 +141,11 @@ public class Weapon {
 	public void update(float delta){
 		
 		delta *= 1000;
+
+        if(Network.clientSide)
+            if(light != null)
+                light.update(delta);
+
 		
 		locOffset.x = -MathUtils.sinDeg(owner.getRotation() + locOffsetDegree) * locOffsetDistance;
 		locOffset.y = MathUtils.cosDeg(owner.getRotation() + locOffsetDegree) * locOffsetDistance;
@@ -249,14 +255,12 @@ public class Weapon {
 	}
 
     public void render(SpriteBatch sb){
-        if(light != null){
-            light.update();
-        }
     }
 
     public void onClientCreate(){
-        light = new LightExpire(new Color(1.0f, 1.0f, 0, 0.7f), 4, 65, 16);
+        light = new LightExpire(new Color(1.0f, 1.0f, 0, 0.7f), 4, 65, 16, 0, 0);
         light.setExpireOption(LightExpire.TURN_OFF);
+        GameWorldClient.entityManager.addLocalEntity(light);
     }
 	
 	protected Bullet[] onShoot(){
@@ -303,7 +307,7 @@ public class Weapon {
 
     public void remove(){
         if(Network.clientSide){
-            light.remove();
+            light.kill(null);
         }
     }
 	
