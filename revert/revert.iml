@@ -39,7 +39,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="box2dlights" level="project" />
-    <orderEntry type="library" name="kryonet-2.21-all" level="project" />
+    <orderEntry type="library" exported="" name="kryonet-2.21-all" level="project" />
   </component>
 </module>
 
