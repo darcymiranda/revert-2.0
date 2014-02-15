@@ -1,6 +1,5 @@
 package com.dmiranda.revert;
 
-import box2dLight.Light;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -9,12 +8,10 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.environment.BaseLight;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.dmiranda.revert.effects.Effect;
-import com.dmiranda.revert.effects.LightBase;
 import com.dmiranda.revert.effects.LightFlicker;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Asteroid;
@@ -31,7 +28,6 @@ public class GameWorldClient extends GameWorld {
     public static RayHandler rayHandler;
 
     private EntityRenderer entityRenderer;
-    private BackgroundEffect backgroundEffect;
     private TextureRegion background;
     private World lightWorld;
 
@@ -43,14 +39,12 @@ public class GameWorldClient extends GameWorld {
         this.game = game;
 
         entityRenderer = new EntityRenderer(this);
-        backgroundEffect = new BackgroundEffect(game.getCamera());
     }
 
     public void create() {
 
         background = Revert.getLoadedTexture("bg-stars.png");
         entityRenderer.loadGraphics();
-        backgroundEffect.init();
 
         particleSystem = new ParticleSystem();
 

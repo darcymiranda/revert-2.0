@@ -18,8 +18,8 @@ public class RevertClient {
 	private boolean connecting;
     private int session;
 
-    private final int ROLLING_LATENCY_BUFFER_SIZE = 15;
-    private ArrayList<Integer> rollingLatency = new ArrayList<Integer>();
+    //private final int ROLLING_LATENCY_BUFFER_SIZE = 15;
+    //private ArrayList<Integer> rollingLatency = new ArrayList<Integer>();
 	private int latency;
 
 	private String status = "";
@@ -43,25 +43,31 @@ public class RevertClient {
 		return status;
 	}
 	
-	public void connect(String host, int portTcp, int portUdp, String username){
+	public void connect(final String host, final int portTcp, final int portUdp, final String username){
 		
 		status = "Connecting to " + Network.DEFAULT_HOST + " : " + Network.PORT_TCP;
-		
-		try {
 
-            connecting = true;
-			client.connect(5000, host, portTcp, portTcp);
-			
-		} catch (IOException e) {
-			
-			status = e.getMessage();
-            connecting = false;
-		}
-		
-		Network.Connect connect = new Network.Connect();
-		connect.username = username;
-		connect.team = 0;
-		client.sendTCP(connect);
+        new Thread(){
+            public void run(){
+
+                try {
+
+                    connecting = true;
+                    client.connect(5000, host, portTcp, portTcp);
+
+                } catch (IOException e) {
+
+                    status = e.getMessage();
+                    connecting = false;
+                }
+
+                Network.Connect connect = new Network.Connect();
+                connect.username = username;
+                connect.team = 0;
+                client.sendTCP(connect);
+
+            }
+        }.start();
 		
 	}
 	
@@ -70,7 +76,7 @@ public class RevertClient {
 		Gdx.app.log("Network", "Session #" + session);
 	}
 	
-	public boolean isConnect(){ 
+	public boolean isConnected(){
 		return client.isConnected(); 
 	}
 

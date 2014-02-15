@@ -31,7 +31,7 @@ public class Revert implements ApplicationListener {
 
 	public static AssetManager assets = new AssetManager();
 	public static HashMap<String, Animation> animations = new HashMap<String, Animation>();
-    public static BitmapFont lFont, sFont, tFont;
+    public static BitmapFont lFont, sFont, tFont, titleFont;
 
     public GameWorldClient world;
 
@@ -95,6 +95,8 @@ public class Revert implements ApplicationListener {
 		lFont = new BitmapFont(Gdx.files.internal("assets/data/fonts/mlarge.fnt"), Gdx.files.internal("assets/data/fonts/mlarge.png"), true);
 		sFont = new BitmapFont(Gdx.files.internal("assets/data/fonts/msmall.fnt"), Gdx.files.internal("assets/data/fonts/msmall.png"), true);
 		tFont = new BitmapFont(Gdx.files.internal("assets/data/fonts/mtiny.fnt"), Gdx.files.internal("assets/data/fonts/mtiny.png"), true);
+        titleFont = new BitmapFont(Gdx.files.internal("assets/data/fonts/title.fnt"), Gdx.files.internal("assets/data/fonts/title.png"), true);
+
 		
 		loadAssets();
 		
@@ -123,8 +125,8 @@ public class Revert implements ApplicationListener {
 			
 		}
 		else if(currentGameState == GAME_STATES.LOAD_ASSETS){
-			
-			menuScreen.dispose();
+
+            menuScreen.render();
 			
 			if(assets.update()){
 				Gdx.app.log("Assets", "loaded " + assets.getLoadedAssets() + " assets");
@@ -132,11 +134,14 @@ public class Revert implements ApplicationListener {
 			}
 			
 			sb.begin();
-			sFont.draw(sb, "Loading " + Math.round(assets.getProgress()*100) + "%", Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() * 0.75f);
+            String loadText = "Loading " + Math.round(assets.getProgress()*100) + "%";
+			sFont.draw(sb, loadText, Gdx.graphics.getWidth() * 0.5f - loadText.length() * 4, Gdx.graphics.getHeight() * 0.75f);
 			sb.end();
 			
 		}
 		else if(currentGameState == GAME_STATES.LOAD){
+
+            menuScreen.render();
 			
 			animations.put("fighter-engine", new Animation(64,Revert.getLoadedTexture("fighter_engine.png").split(16, 5)[0]));
 			animations.put("fighter-engine-light", new Animation(32, Revert.getLoadedTexture("light.png").split(30, 30)[0]));
@@ -147,15 +152,17 @@ public class Revert implements ApplicationListener {
             client = new RevertClient(this);
 
             sb.begin();
-            sFont.draw(sb, "Connecting...", Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() * 0.75f);
+            sFont.draw(sb, "Connecting...", Gdx.graphics.getWidth() * 0.5f - client.getStatus().length() * 4, Gdx.graphics.getHeight() * 0.75f);
             sb.end();
 
             setGameState(GAME_STATES.NETWORK);
 		}
 		else if(currentGameState == GAME_STATES.NETWORK){
+
+            menuScreen.render();
 			
 			sb.begin();
-			sFont.draw(sb, client.getStatus(), Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() * 0.75f);
+			sFont.draw(sb, client.getStatus(), Gdx.graphics.getWidth() * 0.5f - client.getStatus().length() * 4, Gdx.graphics.getHeight() * 0.75f);
 			sb.end();
 
             if(!client.isConnecting()){
@@ -163,7 +170,7 @@ public class Revert implements ApplicationListener {
             }
 				
 			if(client.isHandshakeComplete()){
-                Gdx.input.setInputProcessor(toggleHandler);
+                menuScreen.dispose();
 				setGameState(GAME_STATES.PLAY);
 			}
 			
