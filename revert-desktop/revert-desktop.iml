@@ -47,16 +47,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library name="kryonet-2.18-all.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/kryonet-2.18-all.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="kryonet-2.21-all" level="project" />
   </component>
 </module>
 
