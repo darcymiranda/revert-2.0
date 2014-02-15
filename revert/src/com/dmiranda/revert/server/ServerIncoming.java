@@ -65,7 +65,7 @@ public class ServerIncoming extends Listener {
 				spawn.id = spawnedEntity.getId();
 				spawn.x = x;		
 				spawn.y = y;
-				spawn.type = Unit.UT_FIGHTER;
+				spawn.type = spawnedEntity.getType();
 				game.server.sendToTCP(currentConnection.getID(), spawn);
 				
 				MapProperties props = new MapProperties();

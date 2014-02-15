@@ -257,6 +257,9 @@ public class Revert implements ApplicationListener {
                         localShip.kill(null);
                     }
                 }
+                if(Gdx.input.isKeyPressed(Input.Keys.T)){
+                    getCamera().shake(1250);
+                }
 
             }
 		}

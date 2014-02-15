@@ -72,6 +72,8 @@ public class GameWorldClient extends GameWorld {
 
         if (entity instanceof Unit) {
 
+            Unit unit = (Unit)entity;
+
             particleSystem.addNewEffect("expo1", entity.getId(), entity.getCenterX(), entity.getCenterY());
 
             if(entity instanceof Ship){
@@ -97,6 +99,14 @@ public class GameWorldClient extends GameWorld {
 
                     entityManager.addLocalEntity(light);
                     entityManager.addLocalEntity(effect);
+                }
+            }
+
+            // Shake nearby local player
+            if(getLocalPlayer().ship != null){
+                float distance = unit.getCenterPosition().dst(localPlayer.ship.getCenterPosition());
+                if(distance < 5000){
+                    game.getCamera().shake(5000 / distance * (unit.getMaxHealth() * 0.25f));
                 }
             }
         }
