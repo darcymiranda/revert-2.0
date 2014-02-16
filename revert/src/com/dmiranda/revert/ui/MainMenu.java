@@ -116,7 +116,7 @@ public class MainMenu {
 
         SpriteBatch sb = stage.getSpriteBatch();
 
-        sb.setProjectionMatrix(camera.calculateParallaxMatrix(0.3f, 0.3f));
+        sb.setProjectionMatrix(camera.calculateParallaxMatrix(0.2f, 0.2f));
         sb.disableBlending();
         sb.begin();
 
