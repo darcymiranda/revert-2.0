@@ -10,7 +10,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -25,7 +24,6 @@ import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.*;
 import com.dmiranda.revert.ui.Hud;
 import com.dmiranda.revert.ui.MainMenu;
-import com.dmiranda.revert.ui.MiniMap;
 
 public class Revert implements ApplicationListener {
 
@@ -46,7 +44,7 @@ public class Revert implements ApplicationListener {
     private ToggleHandler toggleHandler;
 
 	private GAME_STATES currentGameState = null;
-	
+
 	public enum GAME_STATES {
 		NETWORK,
 		LOAD_ASSETS,
@@ -73,8 +71,8 @@ public class Revert implements ApplicationListener {
 
 		uiCamera = new OrthographicCamera();
 		uiCamera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		uiCamera.position.x = Gdx.graphics.getWidth() / 2;
-		uiCamera.position.y = Gdx.graphics.getHeight() / 2;
+		uiCamera.position.x = Gdx.graphics.getWidth() * 0.5f;
+		uiCamera.position.y = Gdx.graphics.getHeight() * 0.5f;
 		
 		sb = new SpriteBatch();
 		gameCamera = new Camera();
@@ -82,7 +80,7 @@ public class Revert implements ApplicationListener {
         hud = new Hud(this);
 
 		debugRenderer = new ShapeRenderer();
-		
+
 		menuScreen = new MainMenu(this);
 		
 		try{tempHostName = java.net.InetAddress.getLocalHost().getHostName();}catch(Exception e){}
@@ -97,9 +95,7 @@ public class Revert implements ApplicationListener {
 		tFont = new BitmapFont(Gdx.files.internal("assets/data/fonts/mtiny.fnt"), Gdx.files.internal("assets/data/fonts/mtiny.png"), true);
         titleFont = new BitmapFont(Gdx.files.internal("assets/data/fonts/title.fnt"), Gdx.files.internal("assets/data/fonts/title.png"), true);
 
-		
 		loadAssets();
-		
 	}
 
 	@Override
@@ -171,6 +167,7 @@ public class Revert implements ApplicationListener {
 				
 			if(client.isHandshakeComplete()){
                 menuScreen.dispose();
+                Gdx.input.setInputProcessor(toggleHandler);
 				setGameState(GAME_STATES.PLAY);
 			}
 			
@@ -213,9 +210,6 @@ public class Revert implements ApplicationListener {
 		}
 		
 	}
-
-    int temp;
-
 
 	public void setGameState(GAME_STATES state){
 		Gdx.app.log("Game State Change", currentGameState + " to " + state);
@@ -296,7 +290,6 @@ public class Revert implements ApplicationListener {
 
 	@Override
 	public void resize(int width, int height) {
-		gameCamera.zoom(1);
 	}
 
 	@Override

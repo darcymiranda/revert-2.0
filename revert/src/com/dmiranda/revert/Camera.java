@@ -13,6 +13,8 @@ import com.dmiranda.revert.tools.Tools;
 import java.util.ArrayList;
 
 public class Camera extends OrthographicCamera {
+
+    public static final float DEFAULT_ZOOM_LEVEL = 1.3f;
 	
 	private Entity focusEntity;
 
@@ -21,6 +23,8 @@ public class Camera extends OrthographicCamera {
     private ArrayList<Vector2> shakeOffset = new ArrayList<Vector2>();
 	
 	private final float MAX_DIST = 250;
+    private final float MAX_ZOOM = 1.5f;
+    private final float MIN_ZOOM = 0.85f;
 
     Matrix4 parallaxView = new Matrix4();
     Matrix4 parallaxCombined = new Matrix4();
@@ -28,22 +32,18 @@ public class Camera extends OrthographicCamera {
     Vector3 tmp2 = new Vector3();
 	
 	public Camera(){
+        super();
 
 		setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		position.x = xcorner;
 		position.y = ycorner;
-		zoom(1f);
-		
+        zoom = DEFAULT_ZOOM_LEVEL;
+
 	}
 	
-	public void zoom(float zoom){
-
-		xcorner = Gdx.graphics.getWidth() * 0.5f * zoom;
-		ycorner = Gdx.graphics.getHeight() * 0.5f * zoom;
-		
-		viewportWidth = Gdx.graphics.getWidth();
-		viewportHeight = Gdx.graphics.getHeight();
-		
+	public void zoomAdjust(float zoomAmount){
+        zoom += zoomAmount;
+        zoom = MathUtils.clamp(zoom, MIN_ZOOM, MAX_ZOOM);
 	}
 
     public void shake(float intensity){
@@ -103,20 +103,23 @@ public class Camera extends OrthographicCamera {
 			Vector3 focusToProj = new Vector3(focusEntity.getCenterX() - focusEntity.getVelocity().x, focusEntity.getCenterY() - focusEntity.getVelocity().y, 0);
             project(focusToProj);
 			
-			MathUtils.clamp(focusToProj.x, -viewportWidth, viewportWidth);
-			MathUtils.clamp(focusToProj.y, -viewportHeight, viewportHeight);
+			MathUtils.clamp(focusToProj.x, -viewportWidth * zoom, viewportWidth * zoom);
+			MathUtils.clamp(focusToProj.y, -viewportHeight * zoom, viewportHeight * zoom);
 			
 			position.x = Tools.lerp(position.x, focusEntity.getCenterX() + dx, 0.05f) + currentShakeOffset.x;
 			position.y = Tools.lerp(position.y, focusEntity.getCenterY() + dy, 0.05f) + currentShakeOffset.y;
-			
-			if(position.x < xcorner) position.x = xcorner;
-			else if(position.x + xcorner > GameWorld.map.getWidth()){
-				position.x = GameWorld.map.getWidth() - xcorner;
+
+            float xcornerz = xcorner * zoom;
+            float ycornerz = ycorner * zoom;
+
+			if(position.x < xcornerz) position.x = xcornerz;
+			else if(position.x + xcornerz > GameWorld.map.getWidth()){
+				position.x = GameWorld.map.getWidth() - xcornerz;
 			}
 			
-			if(position.y < ycorner) position.y = ycorner;
-			else if(position.y + ycorner > GameWorld.map.getHeight()){
-				position.y = GameWorld.map.getHeight() - ycorner;
+			if(position.y < ycornerz) position.y = ycornerz;
+			else if(position.y + ycornerz > GameWorld.map.getHeight()){
+				position.y = GameWorld.map.getHeight() - ycornerz;
 			}
 			
 		}

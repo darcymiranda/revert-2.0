@@ -90,6 +90,7 @@ public class GameWorldClient extends GameWorld {
 
                     ParticleEffect particleEffect = particleSystem.getCachedEffect("smoke-trail");
                     for(ParticleEmitter emitter : particleEffect.getEmitters()){
+                        emitter.getScale().setHigh((effect.getWidth() + effect.getHeight()) * 0.5f);
                     }
                     particleSystem.addNewEffectFollower(particleEffect, effect, true);
 
@@ -173,16 +174,20 @@ public class GameWorldClient extends GameWorld {
 
     public void render(SpriteBatch sb, Camera camera) {
 
+        Camera bgCam = new Camera();
+        bgCam.focusEntity(camera.getFocusEntity());
+        bgCam.zoom = 1f;
+
         // Draw the background
         sb.disableBlending();
         sb.begin();
-        sb.setProjectionMatrix(camera.calculateParallaxMatrix(0.01f, 0.01f));
-        sb.draw(background, -game.getCamera().viewportWidth / 2, -game.getCamera().viewportHeight / 2);
+        sb.setProjectionMatrix(bgCam.calculateParallaxMatrix(0.01f, 0.01f));
+        sb.draw(background, -bgCam.viewportWidth * 0.5f * bgCam.zoom, -bgCam.viewportHeight * 0.5f * bgCam.zoom);
         sb.end();
 
         // Draw world
         sb.enableBlending();
-        sb.setProjectionMatrix(game.getCamera().combined);
+        sb.setProjectionMatrix(camera.combined);
         sb.begin();
 
         Entity[] entities = entityManager.getEntities();
@@ -207,7 +212,7 @@ public class GameWorldClient extends GameWorld {
 
         // Draw lights
         OrthographicCamera cam = game.getCamera();
-        rayHandler.setCombinedMatrix(cam.combined, cam.position.x, cam.position.y, cam.viewportWidth, cam.viewportHeight);
+        rayHandler.setCombinedMatrix(cam.combined, cam.position.x, cam.position.y, cam.viewportWidth * cam.zoom, cam.viewportHeight * cam.zoom);
         rayHandler.render();
 
     }

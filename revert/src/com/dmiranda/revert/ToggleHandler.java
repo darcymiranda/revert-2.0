@@ -1,14 +1,8 @@
 package com.dmiranda.revert;
 
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.InputAdapter;
 
-/**
- * User: dmiranda
- * Date: 9/4/13
- * Time: 7:20 PM
- */
-public class ToggleHandler implements InputProcessor {
+public class ToggleHandler extends InputAdapter {
 
     private Revert game;
 
@@ -17,42 +11,13 @@ public class ToggleHandler implements InputProcessor {
     }
 
     @Override
-    public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    @Override
     public boolean keyUp(int keycode) {
         return false;
     }
 
     @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
     public boolean scrolled(int amount) {
-        return false;
+        game.getCamera().zoomAdjust(amount * 0.05f);
+        return true;
     }
 }

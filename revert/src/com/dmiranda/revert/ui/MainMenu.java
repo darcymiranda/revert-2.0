@@ -44,6 +44,7 @@ public class MainMenu {
 
         camera = new Camera();
         camera.translate(Gdx.graphics.getWidth() * 0.5f, Gdx.graphics.getHeight() * 0.5f);
+        camera.zoom = 1;
 
         TextureRegion tr = new TextureRegion(new Texture(Gdx.files.internal("assets/textures/bg-stars.png")));
         background = new Image();
