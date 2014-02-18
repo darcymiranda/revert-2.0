@@ -1,11 +1,15 @@
 package com.dmiranda.revert.shared;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.GameWorldClient;
 import com.dmiranda.revert.Revert;
+import com.dmiranda.revert.effects.Effect;
+import com.dmiranda.revert.effects.LightFlicker;
 
 public class Ship extends Unit {
 	
@@ -119,7 +123,39 @@ public class Ship extends Unit {
 
     @Override
     public void onDeath(Entity killer){
+        super.onDeath(killer);
+
         shipEngine.dispose();
+
+        for(int i = 0 ; i < MathUtils.random(4)+3; i++){
+
+            float cx = getCenterX(), cy = getCenterY();
+
+            Effect effect = new Effect(cx, cy, (int)(getWidth() * (MathUtils.random() * 0.8f)),
+                    (int)(getHeight() * (MathUtils.random() * 0.8f)), 3800f);
+            effect.setTexture(Revert.getLoadedTexture("fighter-wreck.png"));
+            effect.setRotationSpeed(MathUtils.random() * 15);
+            effect.rotateTo(MathUtils.random(360) + 30);
+            effect.setVelocity(getVelocity().x * (MathUtils.random()) + (MathUtils.random() * -0.5f * 35f) + 10,
+                    getVelocity().y * (MathUtils.random()) + (MathUtils.random() * -0.5f * 35f) + 10);
+
+            float size = (effect.getWidth() + effect.getHeight()) * 0.5f;
+
+            ParticleEffect particleEffect = GameWorldClient.particleSystem.getCachedEffect("smoke-trail");
+            for(ParticleEmitter emitter : particleEffect.getEmitters()){
+                emitter.getScale().setHigh(size);
+            }
+
+            GameWorldClient.particleSystem.addNewEffectFollower(particleEffect, effect, true);
+
+            LightFlicker light = new LightFlicker(new Color(0.8f, 0.2f, 0.2f, 0.5f), 8, size, 0.5f, 18, cx, cy);
+            light.setOwnerEntity(effect);
+            light.setActive(true);
+
+            GameWorld.entityManager.addLocalEntity(light);
+            GameWorld.entityManager.addLocalEntity(effect);
+        }
+
     }
 
     public void enableBooster(boolean booster){

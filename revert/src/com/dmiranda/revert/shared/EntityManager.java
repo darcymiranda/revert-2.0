@@ -81,7 +81,6 @@ public class EntityManager {
 			
 			Entity entity = localEntities[i];
 			
-			
 			if(!entity.isAlive()){
 				
 				world.entityDeath(entity);
@@ -239,6 +238,7 @@ public class EntityManager {
 				entity.setId(i);
 				entity.setNetworkEnabled(false);
 				localEntities[i] = entity;
+                System.out.println(localEntities[i]);
 				return i;
 			}
 		}

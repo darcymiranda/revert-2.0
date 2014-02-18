@@ -258,7 +258,7 @@ public class Weapon {
     }
 
     public void onClientCreate(){
-        light = new LightExpire(new Color(1.0f, 1.0f, 0, 0.7f), 4, 65, 16, 0, 0);
+        light = new LightExpire(new Color(1.0f, 1.0f, 0, 0.7f), 6, 64, 16, 0, 0);
         light.setExpireOption(LightExpire.TURN_OFF);
         GameWorldClient.entityManager.addLocalEntity(light);
     }

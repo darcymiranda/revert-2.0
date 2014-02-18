@@ -1,14 +1,7 @@
 package com.dmiranda.revert.effects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.dmiranda.revert.shared.Entity;
 
-/**
- * User: dmiranda
- * Date: 8/30/13
- * Time: 3:48 PM
- */
 public class LightExpire extends LightBase {
 
     public static final int REMOVE = 0, TURN_OFF = 1;
@@ -52,5 +45,7 @@ public class LightExpire extends LightBase {
         }
 
     }
+
+    public float getLife(){ return life; }
 
 }

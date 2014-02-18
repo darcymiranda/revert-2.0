@@ -25,7 +25,7 @@ public class ShipEngine {
 	private Vector2 posOffset;
     private float locationOffset;
 
-    private LightFlicker light;
+    private LightBase light;
     private ConeLight lightBooster;
     private float lightFlickerSpeed;
     private float lightFlickerDistance;
@@ -41,8 +41,8 @@ public class ShipEngine {
 
 		posOffset = new Vector2();
 
-        lightFlickerSpeed = 16;
-        lightFlickerDistance = 65f;
+        lightFlickerSpeed = 1;
+        lightFlickerDistance = 35f;
 
         posOffset.x = -MathUtils.sinDeg(owner.getRotation() + 180) * locationOffset;
         posOffset.y = MathUtils.cosDeg(owner.getRotation() + 180) * locationOffset;
@@ -53,7 +53,7 @@ public class ShipEngine {
         lightBooster = new ConeLight(GameWorldClient.rayHandler, 32, new Color(1f, 0.8f, 0.8f, 1), lightFlickerDistance * 3.7f, owner.getCenterX(), owner.getCenterY(), owner.getRotation(), 25);
         lightBooster.setSoft(false);
         lightBooster.setActive(false);
-        light = new LightFlicker(new Color(1f, 0.5f, 0.1f, 0.8f), 16, lightFlickerDistance, 0.5f, lightFlickerSpeed, 0, 0);
+        light = new LightBase(new Color(1f, 0.5f, 0.1f, 1f), 16, lightFlickerDistance, 0, 0);
         light.setActive(false);
         GameWorldClient.entityManager.addLocalEntity(light);
     }

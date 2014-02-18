@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.dmiranda.revert.effects.Effect;
+import com.dmiranda.revert.effects.LightExpire;
 import com.dmiranda.revert.effects.LightFlicker;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Asteroid;
@@ -70,44 +71,13 @@ public class GameWorldClient extends GameWorld {
     @Override
     public void entityDeath(Entity entity) {
 
-        if (entity instanceof Unit) {
-
+        // Shake nearby local player
+        if(entity instanceof Unit){
             Unit unit = (Unit)entity;
-
-            particleSystem.addNewEffect("expo1", entity.getId(), entity.getCenterX(), entity.getCenterY());
-
-            if(entity instanceof Ship){
-
-                for(int i = 0 ; i < MathUtils.random(4)+3; i++){
-
-                    Effect effect = new Effect(entity.getCenterX(), entity.getCenterY(), (int)(entity.getWidth() * (MathUtils.random() * 0.8f)),
-                            (int)(entity.getHeight() * (MathUtils.random() * 0.8f)), 3800f);
-                    effect.setTexture(Revert.getLoadedTexture("fighter-wreck.png"));
-                    effect.setRotationSpeed(MathUtils.random() * 15);
-                    effect.rotateTo(MathUtils.random(360) + 30);
-                    effect.setVelocity(entity.getVelocity().x * (MathUtils.random()) + (MathUtils.random() * -0.5f * 35f) + 10,
-                            entity.getVelocity().y * (MathUtils.random()) + (MathUtils.random() * -0.5f * 35f) + 10);
-
-                    ParticleEffect particleEffect = particleSystem.getCachedEffect("smoke-trail");
-                    for(ParticleEmitter emitter : particleEffect.getEmitters()){
-                        emitter.getScale().setHigh((effect.getWidth() + effect.getHeight()) * 0.5f);
-                    }
-                    particleSystem.addNewEffectFollower(particleEffect, effect, true);
-
-                    LightFlicker light = new LightFlicker(new Color(0.8f, 0.2f, 0.2f, 0.5f), 8, 35, 0.5f, 18, entity.getCenterX(), entity.getCenterY());
-                    light.attach(effect);
-                    light.setActive(true);
-
-                    entityManager.addLocalEntity(light);
-                    entityManager.addLocalEntity(effect);
-                }
-            }
-
-            // Shake nearby local player
             if(getLocalPlayer().ship != null){
-                float distance = unit.getCenterPosition().dst(localPlayer.ship.getCenterPosition());
+                float distance = entity.getCenterPosition().dst(localPlayer.ship.getCenterPosition());
                 if(distance < 5000){
-                    game.getCamera().shake(5000 / distance * (unit.getMaxHealth() * 0.25f));
+                    game.getCamera().shake(5000 / distance * (unit.getMaxHealth() * 2));
                 }
             }
         }
@@ -117,22 +87,14 @@ public class GameWorldClient extends GameWorld {
     @Override
     public void bulletCollision(Bullet bullet) {
 
-        ParticleEffect effect = particleSystem.getCachedEffect("hit");
-        ParticleEmitter emitter = effect.getEmitters().first();
-        emitter.getLife().setHigh(150);
-        emitter.setPosition(bullet.getCenterX() + (bullet.getVelocity().x * Gdx.graphics.getDeltaTime()),
-                bullet.getCenterY() + (bullet.getVelocity().y * Gdx.graphics.getDeltaTime()));
-        emitter.getAngle().setHigh(bullet.getRotation() - 70, bullet.getRotation() - 110);
-        emitter.getAngle().setLow(bullet.getRotation() - 70, bullet.getRotation() - 110);
-
-        particleSystem.addNewEffect(effect, "hit", bullet.getId());
-
     }
 
     @Override
     public void update(float delta) {
 
         entityManager.update(delta);
+        lightWorld.step(delta, 8, 3);
+        rayHandler.update();
 
         if (localPlayer != null && localPlayer.ship != null && localPlayer.ship.isAlive()) {
 
@@ -166,10 +128,6 @@ public class GameWorldClient extends GameWorld {
             tickTime--;
         }
 
-
-        lightWorld.step(delta, 8, 3);
-        rayHandler.update();
-
     }
 
     public void render(SpriteBatch sb, Camera camera) {
@@ -181,7 +139,7 @@ public class GameWorldClient extends GameWorld {
         // Draw the background
         sb.disableBlending();
         sb.begin();
-        sb.setProjectionMatrix(bgCam.calculateParallaxMatrix(0.01f, 0.01f));
+        sb.setProjectionMatrix(bgCam.calculateParallaxMatrix(0.04f, 0.04f));
         sb.draw(background, -bgCam.viewportWidth * 0.5f * bgCam.zoom, -bgCam.viewportHeight * 0.5f * bgCam.zoom);
         sb.end();
 
