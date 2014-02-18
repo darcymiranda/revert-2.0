@@ -77,7 +77,7 @@ public class GameWorldClient extends GameWorld {
             if(getLocalPlayer().ship != null){
                 float distance = entity.getCenterPosition().dst(localPlayer.ship.getCenterPosition());
                 if(distance < 5000){
-                    game.getCamera().shake(5000 / distance * (unit.getMaxHealth() * 2));
+                    game.getCamera().shake(5000 / distance * (unit.getMaxHealth() * 0.15f));
                 }
             }
         }

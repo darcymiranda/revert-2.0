@@ -1,7 +1,5 @@
 package com.dmiranda.revert.shared;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.shared.bullet.Bullet;
@@ -238,7 +236,6 @@ public class EntityManager {
 				entity.setId(i);
 				entity.setNetworkEnabled(false);
 				localEntities[i] = entity;
-                System.out.println(localEntities[i]);
 				return i;
 			}
 		}
