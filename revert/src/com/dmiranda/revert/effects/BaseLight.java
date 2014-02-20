@@ -17,11 +17,7 @@ public class BaseLight extends PointLight {
     }
 
     public void update(float delta){
-
-        delta *= 1000;
-
         flickerUpdate(delta);
-
     }
 
     private void flickerUpdate(float delta){
