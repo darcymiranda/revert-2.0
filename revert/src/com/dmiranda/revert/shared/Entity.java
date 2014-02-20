@@ -15,10 +15,10 @@ public class Entity {
 	
 	protected Entity ownerEntity;
 	protected Player ownerPlayer;
-	
 	protected EntityActionState actionState;
 	
 	protected TextureRegion texture;
+    private boolean hide;
 	
 	private CollisionCircle collisionCircle;
 	private boolean net = true;
@@ -73,7 +73,7 @@ public class Entity {
 	}
 	
 	public void render(SpriteBatch sb){
-		if(texture != null){
+		if(texture != null && !hide){
 			sb.draw(texture,
 					getPosition().x,
 					getPosition().y, 
@@ -133,6 +133,8 @@ public class Entity {
     }
     public float getRotateTo(){ return rotateTo; }
 
+    public void hide(){ this.hide = true; }
+    public void show(){ this.hide = false; }
 	public void setTexture(TextureRegion texture){ this.texture = texture; }
 	public void setNetworkEnabled(boolean net){ this.net = net; }
 	public void setId(int id){ this.id = id; }
@@ -145,6 +147,7 @@ public class Entity {
 	public void setRotation(float r){ this.rotation = r; }
 	public void setType(int type){ this.type = type; }
 
+    public boolean isHidden(){ return hide; }
     public TextureRegion getTexture(){ return texture; }
 	public boolean isNetworkEnabled(){ return net; }
 	public Vector2 getVelocity(){ return velocity; }

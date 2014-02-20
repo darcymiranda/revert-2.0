@@ -8,10 +8,8 @@ import com.dmiranda.revert.network.Network.Connect;
 import com.dmiranda.revert.network.Network.Disconnect;
 import com.dmiranda.revert.network.Network.EntitySpawnSelf;
 import com.dmiranda.revert.network.Network.MapProperties;
-import com.dmiranda.revert.network.Network.PingTest;
 import com.dmiranda.revert.network.Network.SingleUnitUpdate;
 import com.dmiranda.revert.network.properties.PAsteroid;
-import com.dmiranda.revert.server.RevertServer.UserConnection;
 import com.dmiranda.revert.shared.Asteroid;
 import com.dmiranda.revert.shared.Entity;
 import com.dmiranda.revert.shared.EntityFactory;
@@ -19,7 +17,6 @@ import com.dmiranda.revert.shared.GameWorld;
 import com.dmiranda.revert.shared.Player;
 import com.dmiranda.revert.shared.Unit;
 import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.FrameworkMessage;
 import com.esotericsoftware.kryonet.Listener;
 
 public class ServerIncoming extends Listener {

@@ -55,7 +55,6 @@ public class GameWorldClient extends GameWorld {
         rayHandler = new RayHandler(lightWorld);
         rayHandler.setShadows(true);
         rayHandler.setAmbientLight(0.8f);
-        rayHandler.setCombinedMatrix(game.getCamera().combined);
         rayHandler.setCulling(true);
         rayHandler.setBlurNum(1);
 

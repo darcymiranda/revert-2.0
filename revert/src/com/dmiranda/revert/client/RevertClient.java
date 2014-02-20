@@ -1,13 +1,11 @@
 package com.dmiranda.revert.client;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.network.Network;
 import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Listener.LagListener;
 import com.esotericsoftware.kryonet.Listener.ThreadedListener;
 
 public class RevertClient {

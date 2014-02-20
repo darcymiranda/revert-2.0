@@ -1,13 +1,9 @@
 package com.dmiranda.revert.server;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import com.dmiranda.revert.network.Network;
-import com.dmiranda.revert.shared.Player;
-import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.kryonet.Listener.LagListener;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
 
@@ -22,11 +18,7 @@ public class RevertServer extends Thread {
 
     public RevertServer() throws IOException {
 
-        server = new Server(2*1024, 2*1024){
-            protected Connection newConnection(){
-                return new UserConnection();
-            }
-        };
+        server = new Server(2*1024, 2*1024);
 
         Network.register(server);
 
@@ -66,15 +58,6 @@ public class RevertServer extends Thread {
     public static void main(String args[]) throws IOException{
         Log.set(Log.LEVEL_TRACE);
         new RevertServer();
-
-    }
-
-
-    public static class UserConnection extends Connection {
-
-        private Player player = new Player();
-
-        public Player getPlayer(){ return player; }
 
     }
 

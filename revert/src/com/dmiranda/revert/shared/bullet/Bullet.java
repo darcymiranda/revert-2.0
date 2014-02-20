@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.dmiranda.revert.GameWorldClient;
 import com.dmiranda.revert.Revert;
+import com.dmiranda.revert.effects.Effect;
 import com.dmiranda.revert.effects.LightExpire;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Entity;
@@ -69,8 +70,10 @@ public abstract class Bullet extends Entity {
 
             GameWorldClient.particleSystem.addNewEffect(effect, "hit", getId());
 
-            LightExpire light = new LightExpire(new Color(1f, 1f, 0.4f, 1f), 8, 64, 16, getCenterX(), getCenterY());
-            light.setExpireOption(LightExpire.REMOVE);
+            Effect light = new Effect(getCenterX(), getCenterY(), 0, 0);
+            light.expire(0.1f, Effect.EXPIRE_DELETE);
+            light.addLight(6, new Color(1f, 1f, 0.4f, 0.8f), 64);
+
             GameWorld.entityManager.addLocalEntity(light);
         }
 

@@ -137,7 +137,7 @@ public class ClientIncoming extends Listener {
 			game.getCamera().focusEntity(unit);
 			game.getHud().getMiniMap().setCenterOnShip(unit);
 			
-			Gdx.app.debug("Network [SpawnSelf]", "created unit(" + spawn.id + ")");
+			Gdx.app.debug("Network [SpawnSelf]", "self created unit(" + spawn.id + ")");
 			
 			GameWorld.entityManager.addEntity(unit, spawn.id);
 			

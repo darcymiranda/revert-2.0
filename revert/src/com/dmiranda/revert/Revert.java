@@ -236,7 +236,6 @@ public class Revert implements ApplicationListener {
                 localShip.moveLeft(Gdx.input.isKeyPressed(Input.Keys.A));
                 localShip.moveDown(Gdx.input.isKeyPressed(Input.Keys.S));
                 localShip.moveRight(Gdx.input.isKeyPressed(Input.Keys.D));
-                localShip.enableBooster(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
                 boolean shoot = Gdx.input.isButtonPressed(Buttons.LEFT);
 
                 if(localShip.isShooting() != shoot){

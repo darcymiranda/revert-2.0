@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.GameWorldClient;
 import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.client.NetSimulateState;
+import com.dmiranda.revert.effects.Effect;
 import com.dmiranda.revert.effects.LightExpire;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.bullet.Bullet;
@@ -71,6 +72,8 @@ public class Unit extends Entity {
 
     @Override
     protected void onDeath(Entity killer){
+        super.onDeath(killer);
+
         for(int i = 0; i < weapons.size(); i++){
             weapons.get(i).remove();
         }
@@ -79,9 +82,11 @@ public class Unit extends Entity {
 
             float cx = getCenterX(), cy = getCenterY();
 
-            LightExpire light = new LightExpire(new Color(1f, 0.9f, 0.9f, 1f), 16, (getWidth() + getHeight()) / 2 * 5, 32, cx, cy);
-            light.setExpireOption(LightExpire.REMOVE);
-            GameWorld.entityManager.addLocalEntity(light);
+            Effect effect = new Effect(cx, cy, 0, 0);
+            effect.addLight(16, new Color(1f, 0.9f, 0.9f, 1f), (getWidth() + getHeight()) / 2 * 8);
+            effect.expire(0.1f, Effect.EXPIRE_DELETE);
+
+            GameWorld.entityManager.addLocalEntity(effect);
             GameWorldClient.particleSystem.addNewEffect("expo1", getId(), cx, cy);
         }
 

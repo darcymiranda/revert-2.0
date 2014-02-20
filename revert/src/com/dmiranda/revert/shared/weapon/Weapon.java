@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.dmiranda.revert.GameWorldClient;
 import com.dmiranda.revert.effects.Effect;
 import com.dmiranda.revert.effects.LightExpire;
 import com.dmiranda.revert.Revert;
@@ -55,8 +54,8 @@ public class Weapon {
 	// protected SoundEffect soundShoot;
 	// protected SoundEffect soundReload;
 
-    private LightExpire light;
-	private TextureRegion[] muzzleFlashes;
+    private Effect muzzleFlash;
+	private TextureRegion[] muzzleFlashTexture;
 
 	/**
 	 * A weapon that returns bullets with .action()
@@ -98,7 +97,15 @@ public class Weapon {
 		setBullet(new GenericBullet(this));
 		
 		if(Network.clientSide){
-			muzzleFlashes = Revert.getLoadedTexture("muzzle-flash.png").split(16, 16)[0];
+			muzzleFlashTexture = Revert.getLoadedTexture("muzzle-flash.png").split(16, 16)[0];
+            muzzleFlash = new Effect(getRelativeLocation().x - 16 / 2, getRelativeLocation().y - 16 / 2, 16, 16);
+            muzzleFlash.setVelocity(new Vector2(owner.getVelocity()).scl(2));
+            muzzleFlash.setRotation(owner.getRotation());
+            muzzleFlash.setTexture(muzzleFlashTexture[MathUtils.random(muzzleFlashTexture.length - 1)]);
+            muzzleFlash.addLight(6, new Color(1.0f, 1.0f, 0, 0.8f), 64).setActive(false);
+            muzzleFlash.expire(0.1f, Effect.EXPIRE_HIDE);
+
+            GameWorld.entityManager.addLocalEntity(muzzleFlash);
 		}
 		
 	}
@@ -143,8 +150,7 @@ public class Weapon {
 		delta *= 1000;
 
         if(Network.clientSide)
-            if(light != null)
-                light.update(delta);
+            muzzleFlash.update(delta);
 
 		
 		locOffset.x = -MathUtils.sinDeg(owner.getRotation() + locOffsetDegree) * locOffsetDistance;
@@ -258,9 +264,6 @@ public class Weapon {
     }
 
     public void onClientCreate(){
-        light = new LightExpire(new Color(1.0f, 1.0f, 0, 0.7f), 6, 64, 16, 0, 0);
-        light.setExpireOption(LightExpire.TURN_OFF);
-        GameWorldClient.entityManager.addLocalEntity(light);
     }
 	
 	protected Bullet[] onShoot(){
@@ -269,25 +272,15 @@ public class Weapon {
 		bullets[0] = bullet.newInstance(getDamageRoll(), getEffectedAccuracy(), bulletSpeed);
 		
 		if(Network.clientSide){
-
-            if(light != null){
-
-                Vector2 r = getRelativeLocation();
-
-                light.setActive(true);
-                light.setPosition(r.x, r.y);
-
-            }
 			
 			Vector2 r = getRelativeLocation();
 
-            // TODO: Make a show/hide effect instead of always creating one like the light
-			Effect muzzle = new Effect(r.x - 16 / 2, r.y - 16 / 2, 16, 16);
-			muzzle.setVelocity(new Vector2(owner.getVelocity()).scl(2));
-			muzzle.setRotation(owner.getRotation());
-			muzzle.setTexture(muzzleFlashes[MathUtils.random(muzzleFlashes.length - 1)]);
-			
-			GameWorld.entityManager.addLocalEntity(muzzle);
+            muzzleFlash.show();
+            muzzleFlash.getLight().setActive(true);
+            muzzleFlash.setPosition(r.x - 16 * 0.5f, r.y - 16 * 0.5f);
+            muzzleFlash.setVelocity(new Vector2(owner.getVelocity()).scl(2));
+            muzzleFlash.setRotation(owner.getRotation());
+            muzzleFlash.setTexture(muzzleFlashTexture[MathUtils.random(muzzleFlashTexture.length - 1)]);
 
 		}
 		
@@ -307,7 +300,7 @@ public class Weapon {
 
     public void remove(){
         if(Network.clientSide){
-            light.kill(null);
+            muzzleFlash.kill(null);
         }
     }
 	
