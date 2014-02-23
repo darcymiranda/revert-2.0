@@ -2,18 +2,12 @@ package com.dmiranda.revert;
 
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.dmiranda.revert.effects.Effect;
-import com.dmiranda.revert.effects.LightExpire;
-import com.dmiranda.revert.effects.LightFlicker;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Asteroid;
 import com.dmiranda.revert.shared.Entity;
@@ -70,16 +64,23 @@ public class GameWorldClient extends GameWorld {
     @Override
     public void entityDeath(Entity entity) {
 
+        // TODO: Method needs to be removed
+
         // Shake nearby local player
+        /*
         if(entity instanceof Unit){
             Unit unit = (Unit)entity;
             if(getLocalPlayer().ship != null){
-                float distance = entity.getCenterPosition().dst(localPlayer.ship.getCenterPosition());
+                float distance = entity.getCenterPosition().dst(localPlayer.ship.getCenterPosition()) + 1;
                 if(distance < 5000){
-                    game.getCamera().shake(5000 / distance * (unit.getMaxHealth() * 0.15f));
+                    float amount = 5000 / distance * (unit.getMaxHealth() * 0.15f);
+                    game.getCamera().shake(amount);
                 }
+            } else {
+                game.getCamera().shake(250 * (unit.getMaxHealth() * 0.15f));
             }
         }
+        */
 
     }
 
@@ -92,6 +93,7 @@ public class GameWorldClient extends GameWorld {
     public void update(float delta) {
 
         entityManager.update(delta);
+
         lightWorld.step(delta, 8, 3);
         rayHandler.update();
 

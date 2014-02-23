@@ -1,10 +1,6 @@
 package com.dmiranda.revert.shared;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.dmiranda.revert.Camera;
-import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.shared.bullet.Bullet;
 
 public class GameMap {
@@ -25,7 +21,7 @@ public class GameMap {
 		if(position.x < 0 || position.x + bullet.getWidth() > getWidth()
 				|| position.y < 0 || position.y + bullet.getHeight() > getHeight()){
 			
-			bullet.kill(null);
+			bullet.die(null);
 			
 			return true;
 			

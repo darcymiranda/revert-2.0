@@ -4,13 +4,9 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.GameWorldClient;
-import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.client.NetSimulateState;
 import com.dmiranda.revert.effects.Effect;
-import com.dmiranda.revert.effects.LightExpire;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.bullet.Bullet;
 import com.dmiranda.revert.shared.weapon.Weapon;
@@ -71,8 +67,8 @@ public class Unit extends Entity {
     }
 
     @Override
-    protected void onDeath(Entity killer){
-        super.onDeath(killer);
+    protected void onDeath(){
+        super.onDeath();
 
         for(int i = 0; i < weapons.size(); i++){
             weapons.get(i).remove();
@@ -83,8 +79,8 @@ public class Unit extends Entity {
             float cx = getCenterX(), cy = getCenterY();
 
             Effect effect = new Effect(cx, cy, 0, 0);
-            effect.addLight(16, new Color(1f, 0.9f, 0.9f, 1f), (getWidth() + getHeight()) / 2 * 8);
-            effect.expire(0.1f, Effect.EXPIRE_DELETE);
+            effect.addLight(16, new Color(1f, 0.9f, 0.9f, 0.5f), (getWidth() + getHeight()) / 2 * 16).resize(0, 0.5f);
+            effect.expire(0.3f, Effect.EXPIRE_DELETE);
 
             GameWorld.entityManager.addLocalEntity(effect);
             GameWorldClient.particleSystem.addNewEffect("expo1", getId(), cx, cy);

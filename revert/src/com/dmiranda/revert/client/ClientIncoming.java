@@ -7,7 +7,6 @@ import com.dmiranda.revert.network.Network.Disconnect;
 import com.dmiranda.revert.network.Network.EntityDeath;
 import com.dmiranda.revert.network.Network.EntitySpawnSelf;
 import com.dmiranda.revert.network.Network.MapProperties;
-import com.dmiranda.revert.network.Network.PingTest;
 import com.dmiranda.revert.network.Network.UnitUpdate;
 import com.dmiranda.revert.network.properties.PAsteroid;
 import com.dmiranda.revert.network.properties.PUnit;
@@ -17,11 +16,9 @@ import com.dmiranda.revert.shared.EntityFactory;
 import com.dmiranda.revert.shared.GameWorld;
 import com.dmiranda.revert.shared.Player;
 import com.dmiranda.revert.shared.Ship;
-import com.dmiranda.revert.shared.SpaceStation;
 import com.dmiranda.revert.shared.Unit;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.FrameworkMessage;
-import com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive;
 import com.esotericsoftware.kryonet.Listener;
 
 public class ClientIncoming extends Listener {
@@ -125,7 +122,7 @@ public class ClientIncoming extends Listener {
 			Entity killer = GameWorld.entityManager.getEntityById(spawn.killerid);
 			
 			Gdx.app.debug("Network [Death]", "killed ship(" + spawn.id + ")");
-			dead.kill(killer);
+			dead.die(killer);
 			
 		}
 		else if(object instanceof EntitySpawnSelf){
@@ -164,7 +161,7 @@ public class ClientIncoming extends Listener {
 			
 			Gdx.app.debug("Network [Disconnect]", "player " + player + " disconnected. killed ship(" + player.ship+ ")");
             if(player.ship != null){
-			    player.ship.kill(null);
+			    player.ship.die(null);
             }
 			game.world.getPlayers().remove(disconnect.id);
 			

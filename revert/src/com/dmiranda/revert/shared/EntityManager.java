@@ -2,6 +2,8 @@ package com.dmiranda.revert.shared;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.dmiranda.revert.effects.Effect;
+import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.bullet.Bullet;
 
 
@@ -82,9 +84,9 @@ public class EntityManager {
 			if(!entity.isAlive()){
 				
 				world.entityDeath(entity);
-				
-				localEntities[entity.getId()] = null;
-				
+                entity.onDeath();
+				localEntities[i] = null;
+
 				continue;
 				
 			}
@@ -94,6 +96,8 @@ public class EntityManager {
 				Bullet bullet = (Bullet) entity;
 			
 				if(GameWorld.map.collideEndMapBullet(bullet)){
+                    entity.onDeath();
+                    localEntities[i] = null;
 					continue;
 				}
 			
@@ -139,8 +143,8 @@ public class EntityManager {
 			if(!entity.isAlive()){
 				
 				world.entityDeath(entity);
-				
-				entities[entity.getId()] = null;
+                entity.onDeath();
+				entities[i] = null;
 				
 				continue;
 				

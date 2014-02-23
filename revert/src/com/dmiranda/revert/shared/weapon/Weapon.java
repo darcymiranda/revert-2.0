@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.effects.Effect;
-import com.dmiranda.revert.effects.LightExpire;
 import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Entity;
@@ -102,8 +101,8 @@ public class Weapon {
             muzzleFlash.setVelocity(new Vector2(owner.getVelocity()).scl(2));
             muzzleFlash.setRotation(owner.getRotation());
             muzzleFlash.setTexture(muzzleFlashTexture[MathUtils.random(muzzleFlashTexture.length - 1)]);
-            muzzleFlash.addLight(6, new Color(1.0f, 1.0f, 0, 0.8f), 64).setActive(false);
-            muzzleFlash.expire(0.1f, Effect.EXPIRE_HIDE);
+            muzzleFlash.addLight(6, new Color(1.0f, 1.0f, 0, 0.8f), 32).setActive(false);
+            muzzleFlash.expire(0.4f, Effect.EXPIRE_HIDE);
 
             GameWorld.entityManager.addLocalEntity(muzzleFlash);
 		}
@@ -300,7 +299,7 @@ public class Weapon {
 
     public void remove(){
         if(Network.clientSide){
-            muzzleFlash.kill(null);
+            muzzleFlash.die(null);
         }
     }
 	

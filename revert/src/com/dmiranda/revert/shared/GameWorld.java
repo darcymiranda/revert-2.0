@@ -21,8 +21,8 @@ public abstract class GameWorld {
 		entityManager = new EntityManager(this);
 		map = new GameMap(4096, 4096);
 		
-		createPlayer(COMPUTER_RED, 0, "Red Team", false);
-		createPlayer(COMPUTER_BLUE, 1, "Blue Team", false);
+		createPlayer(COMPUTER_RED, Player.RED_TEAM, "Red Team", false);
+		createPlayer(COMPUTER_BLUE, Player.BLUE_TEAM, "Blue Team", false);
 		
 	}
 	

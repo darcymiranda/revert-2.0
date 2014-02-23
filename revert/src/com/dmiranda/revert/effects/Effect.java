@@ -21,6 +21,7 @@ public class Effect extends Entity {
 
         if(light != null){
             light.setPosition(getCenterX(), getCenterY());
+            light.update(delta);
         }
 
         expireUpdate(delta);
@@ -34,8 +35,8 @@ public class Effect extends Entity {
     }
 
     @Override
-    public void onDeath(Entity killer){
-        super.onDeath(killer);
+    protected void onDeath() {
+        super.onDeath();
         light.remove();
     }
 
@@ -46,7 +47,7 @@ public class Effect extends Entity {
         if(expireTime < 0){
             switch(expireOption){
                 case EXPIRE_DELETE:
-                    kill(null);
+                    die(null);
                     break;
                 case EXPIRE_HIDE:
                     if(light != null) light.setActive(false);

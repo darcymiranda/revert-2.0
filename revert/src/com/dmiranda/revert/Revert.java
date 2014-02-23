@@ -50,7 +50,6 @@ public class Revert implements ApplicationListener {
 		LOAD_ASSETS,
 		LOAD,
 		PLAY,
-		PAUSE,
 		MENU
 	}
 	
@@ -247,7 +246,7 @@ public class Revert implements ApplicationListener {
                 //debug
                 if(Gdx.input.isKeyPressed(Input.Keys.M)){
                     if(localShip != null){
-                        localShip.kill(null);
+                        localShip.die(null);
                     }
                 }
                 if(Gdx.input.isKeyPressed(Input.Keys.T)){

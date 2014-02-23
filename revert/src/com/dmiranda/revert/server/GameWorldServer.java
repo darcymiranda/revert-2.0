@@ -6,14 +6,9 @@ import com.dmiranda.revert.network.Network.EntityDeath;
 import com.dmiranda.revert.network.Network.EntitySpawnSelf;
 import com.dmiranda.revert.network.Network.UnitUpdate;
 import com.dmiranda.revert.network.properties.PUnit;
-import com.dmiranda.revert.shared.Entity;
-import com.dmiranda.revert.shared.EntityFactory;
-import com.dmiranda.revert.shared.GameWorld;
-import com.dmiranda.revert.shared.Player;
-import com.dmiranda.revert.shared.Ship;
-import com.dmiranda.revert.shared.SpaceStation;
-import com.dmiranda.revert.shared.Unit;
-import com.esotericsoftware.kryonet.Connection;
+import com.dmiranda.revert.shared.*;
+
+import java.util.Iterator;
 
 public class GameWorldServer extends GameWorld {
 	
@@ -68,17 +63,46 @@ public class GameWorldServer extends GameWorld {
 		unitUpdate.properties.clear();
 		
 		entityManager.update(delta);
-		
+
+        // Send entity updates to clients
 		if(tickTime < 1){
-		
 			game.server.sendToAllUDP(unitUpdate);
-		
 			tickTime = Network.CLIENT_SEND_INTERVAL;
-		}
-		else{
-		
+		}else{
 			tickTime--;
 		}
+
+        // Do respawns
+        Iterator<Player> it = players.values().iterator();
+        while(it.hasNext()){
+            Player player = it.next();
+
+            // ignore teams
+            if(player.id == GameWorld.COMPUTER_BLUE || player.id == GameWorld.COMPUTER_RED) continue;
+
+            if(player.isDead()){
+
+                if(player.getRespawnTimer() < 0){
+
+                    float x = player.getSpawnPoint().x;
+                    float y = player.getSpawnPoint().y;
+
+                    Entity spawnedEntity = EntityFactory.server().createEntity(Unit.UT_FIGHTER, player, x, y);
+
+                    GameWorld.entityManager.addEntity(spawnedEntity);
+
+                    EntitySpawnSelf spawn = new EntitySpawnSelf();
+                    spawn.id = spawnedEntity.getId();
+                    spawn.x = x;
+                    spawn.y = y;
+                    spawn.type = Unit.UT_FIGHTER;
+                    game.server.sendToTCP(spawnedEntity.getOwnerPlayer().id, spawn);
+
+                } else {
+                    player.reduceSpawnTimer(delta);
+                }
+            }
+        }
 		
 	}
 	
@@ -89,33 +113,18 @@ public class GameWorldServer extends GameWorld {
 			
 			if(entity instanceof Unit){
 				
-				Unit unit = (Unit) entity;
+				final Unit unit = (Unit) entity;
 				
 				// Confirm entity deaths that should be dead
 				if(unit.getHealth() < 1){
-					unit.kill(unit.getLastHitBy());
+					unit.die(unit.getLastHitBy());
 					
 					EntityDeath death = new EntityDeath();
 					death.id = unit.getId();
 					death.killerid = unit.getLastHitBy() == null ? -1 : unit.getLastHitBy().getId();	 //may sometimes return null on last hit by
 					game.server.sendToAllTCP(death);
-					
-					// Temp - respawn the killed ship for the player
-					if(entity instanceof Ship){
-						float x = unit.getOwnerPlayer().getSpawnPoint().x;
-						float y = unit.getOwnerPlayer().getSpawnPoint().y;
-						
-						Entity spawnedEntity = EntityFactory.server().createEntity(entity.getType(), entity.getOwnerPlayer(), x, y);
-						
-						GameWorld.entityManager.addEntity(spawnedEntity);
-						
-						EntitySpawnSelf spawn = new EntitySpawnSelf();
-						spawn.id = spawnedEntity.getId();
-						spawn.x = x;	
-						spawn.y = y;
-						spawn.type = entity.getType();
-						game.server.sendToTCP(spawnedEntity.getOwnerPlayer().id, spawn);
-					}
+
+                    unit.getOwnerPlayer().setRespawnTimer(3);
 					
 				}
 				

@@ -7,9 +7,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.dmiranda.revert.GameWorldClient;
-import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.effects.Effect;
-import com.dmiranda.revert.effects.LightExpire;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Entity;
 import com.dmiranda.revert.shared.GameWorld;
@@ -47,7 +45,7 @@ public abstract class Bullet extends Entity {
 		super.update(delta);
 		
 		if(decay < 0){
-			kill(null);
+			die(null);
 		}else{
 			decay -= delta * 1000;
 		}
@@ -77,13 +75,13 @@ public abstract class Bullet extends Entity {
             GameWorld.entityManager.addLocalEntity(light);
         }
 
-		kill(hitter);
+		die(hitter);
 		
 	}
 
     @Override
-    protected void onDeath(Entity killer) {
-        super.onDeath(killer);
+    protected void onDeath() {
+        super.onDeath();
     }
 
     @Override

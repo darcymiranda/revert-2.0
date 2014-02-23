@@ -123,8 +123,8 @@ public class Ship extends Unit {
 	}
 
     @Override
-    public void onDeath(Entity killer){
-        super.onDeath(killer);
+    public void onDeath(){
+        super.onDeath();
 
         shipEngine.dispose();
 
@@ -154,7 +154,6 @@ public class Ship extends Unit {
                 GameWorld.entityManager.addLocalEntity(effect);
             }
         }
-
     }
 
 /*	private void setDirectionVelocity(float acceleration, float maxSpeed){

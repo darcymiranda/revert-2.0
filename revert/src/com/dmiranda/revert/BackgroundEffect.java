@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.shared.Entity;
+import com.dmiranda.revert.shared.Unit;
 
 public class BackgroundEffect {
 	
@@ -65,7 +66,7 @@ public class BackgroundEffect {
 
         Entity focus = camera.getFocusEntity();
         if(focus == null){
-            focus = new Entity(Gdx.graphics.getWidth() * 0.5f, Gdx.graphics.getHeight() * 0.5f, 32, 32);
+            focus = new Unit(Gdx.graphics.getWidth() * 0.5f, Gdx.graphics.getHeight() * 0.5f, 32, 32);
             focus.setVelocity(1, 0);
         }
 

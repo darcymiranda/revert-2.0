@@ -4,16 +4,18 @@ import com.badlogic.gdx.math.Vector2;
 
 
 public class Player {
+
+    public static final int RED_TEAM = 0, BLUE_TEAM = 1;
 	
 	public String username;
 	public boolean local;
 	public int id;
 	public int team; // 0 red, 1 blue
-    public int latency;
 	
 	public Ship ship;
 	
 	private Vector2 spawnPoint;
+    private float respawnTimer;
 	
 	public Player(){
 		this("unknown", 0);
@@ -45,7 +47,26 @@ public class Player {
 		if(player == null) return false;
 		return this.team != player.team;
 	}
-	
-	public Vector2 getSpawnPoint(){ return spawnPoint; }
+
+    public float getRespawnTimer() {
+        return respawnTimer;
+    }
+
+    public void setRespawnTimer(float respawnTimer) {
+        this.respawnTimer = respawnTimer;
+    }
+
+    public void reduceSpawnTimer(float value){
+        respawnTimer -= value;
+    }
+
+    public Vector2 getSpawnPoint() {
+        return spawnPoint;
+    }
+
+    public boolean isDead(){
+        return ship == null || !ship.isAlive();
+    }
 
 }
+

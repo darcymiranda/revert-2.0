@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-public class Entity {
+public abstract class Entity {
 	
 	protected Vector2 position;
 	protected Vector2 velocity; 
@@ -25,6 +25,7 @@ public class Entity {
 	private boolean alive = true;
 	private int type = -1;
 	private int id = -1;
+    private Entity killer;
 	
 	private Vector2 oldPosition;
 	
@@ -116,13 +117,13 @@ public class Entity {
 		return (ownerEntity == null) ? ownerPlayer : ownerEntity.getOwnerPlayer();
 	}
 	
-	public void kill(Entity killer){
-		onDeath(killer);
+	public void die(Entity killer){
+        this.killer = killer;
 		alive = false;
 	}
 	
 	protected void onHit(Entity hitter){}
-	protected void onDeath(Entity killer){}
+	protected void onDeath(){}
     protected void onCreateClient(){}
 
     public void setRotationSpeed(float rotationSpeed){ this.rotationSpeed = rotationSpeed; }
@@ -162,6 +163,7 @@ public class Entity {
 	public CollisionCircle getCollisionCircle(){ return collisionCircle; }
 	public int getId(){ return id; }
 	public int getType(){ return type; }
+    protected Entity getKiller(){ return killer; }
 	
 	public EntityActionState getEntityActionState(){ return actionState; }
 	

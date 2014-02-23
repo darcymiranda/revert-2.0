@@ -1,6 +1,5 @@
 package com.dmiranda.revert.shared;
 
-import box2dLight.ConeLight;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -88,10 +87,10 @@ public class ShipEngine {
     public void dispose(){
 
         // TODO: newUnsafeByteBuffer exception
-        /*
+
         if(Network.clientSide)
-            light.kill(null);
-        */
+            engineEffect.die(null);
+
     }
 	
 	public Vector2 getForwardsThrust(){
