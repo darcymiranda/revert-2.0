@@ -1,7 +1,12 @@
 package com.dmiranda.revert.effects;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.shared.Entity;
+import com.dmiranda.revert.shared.GameWorld;
+import com.dmiranda.revert.tools.Tools;
 
 public class Effect extends Entity {
 
@@ -11,8 +16,12 @@ public class Effect extends Entity {
 
     private BaseLight light;
 
-	public Effect(float x, float y, int width, int height) {
+    private ParticleEffect particleEffect;
+    private boolean particleEffectFollow;
+
+	public Effect(float x, float y, int width, int height, boolean global) {
 		super(x, y, width, height);
+        if(global) GameWorld.entityManager.addLocalEntity(this);
 	}
 
 	@Override
@@ -24,20 +33,37 @@ public class Effect extends Entity {
             light.update(delta);
         }
 
+        if(particleEffect != null){
+            if(particleEffectFollow) particleEffect.setPosition(getCenterX(), getCenterY());
+            particleEffect.update(delta);
+        }
+
         expireUpdate(delta);
 
 	}
 
     @Override
+    public void render(SpriteBatch sb) {
+        super.render(sb);
+        if(isHidden()) return;
+
+        if(particleEffect != null){
+            particleEffect.draw(sb);
+        }
+    }
+
+    @Override
     public void setPosition(float x, float y){
         super.setPosition(x, y);
         if(light != null) light.setPosition(x, y);
+        if(particleEffect != null) particleEffect.setPosition(x, y);
     }
 
     @Override
     protected void onDeath() {
         super.onDeath();
-        light.remove();
+        if(light != null) light.remove();
+        if(particleEffect != null) particleEffect.dispose();
     }
 
     private void expireUpdate(float delta){
@@ -59,6 +85,14 @@ public class Effect extends Entity {
         }
     }
 
+    public Effect addParticleEffect(ParticleEffect effect, boolean follow){
+        this.particleEffect = effect;
+        this.particleEffect.start();
+        this.particleEffect.setPosition(getCenterX(), getCenterY());
+        this.particleEffectFollow = follow;
+        return this;
+    }
+
     public Effect expire(float time, int option){
         this.expireTime = time;
         this.expireOption = option;
@@ -74,4 +108,8 @@ public class Effect extends Entity {
     }
 
     public BaseLight getLight(){ return light; }
+
+    public ParticleEffect getParticleEffect() {
+        return particleEffect;
+    }
 }

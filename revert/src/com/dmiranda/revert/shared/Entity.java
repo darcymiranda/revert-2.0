@@ -124,7 +124,6 @@ public abstract class Entity {
 	
 	protected void onHit(Entity hitter){}
 	protected void onDeath(){}
-    protected void onCreateClient(){}
 
     public void setRotationSpeed(float rotationSpeed){ this.rotationSpeed = rotationSpeed; }
     public void rotateTo(float rotateTo){

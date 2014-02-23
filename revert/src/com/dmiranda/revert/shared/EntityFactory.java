@@ -44,6 +44,7 @@ public class EntityFactory {
 		switch(type){
 			case Unit.UT_FIGHTER:
 				Ship ship = new Ship(player, x, y, 30, 40);
+                ship.setType(Unit.UT_FIGHTER);
 				
 				ship.setParameters(50, 2.5f, 5.5f, 350f);
 				ship.createCollisionCircle(24);
@@ -60,7 +61,7 @@ public class EntityFactory {
 				
 				if(side == CLIENT_SIDE){
 					ship.setTexture(Revert.getLoadedTexture("fighter.png"));
-					ship.clientStartNetSim();
+					//ship.clientStartNetSim();
 					//GameWorldClient.particleSystem.addNewEffectFollower("smoke-trail", ship, ship.getEngineOffset(), true);
 				}
 				
@@ -68,21 +69,33 @@ public class EntityFactory {
 				
 				break;
 			case Unit.UT_SPACESTATION:
-				entity = new SpaceStation(player, x, y);
-				SpaceStation spaceStation = (SpaceStation) entity;;
+				entity = new Building(player, x, y, 256, 256);
+                entity.setType(Unit.UT_SPACESTATION);
 				
 				if(side == CLIENT_SIDE){
-					spaceStation.setTexture(Revert.getLoadedTexture("spacestation.png"));
+                    entity.setTexture(Revert.getLoadedTexture("spacestation.png"));
 				}
-				
-				spaceStation.addTurret(33, 80);
-				spaceStation.addTurret(90 + 20, 80);
-				spaceStation.addTurret(180, 80);
-				spaceStation.addTurret(270 - 20, 80);
-				spaceStation.addTurret(360 - 40, 80);
+
+                Building spaceStation = (Building)entity;
+
+                spaceStation.createCollisionCircle(50);
+                spaceStation.setHealth(1250, 1250);
+                spaceStation.addTurret(33, 80);
+                spaceStation.addTurret(90 + 20, 80);
+                spaceStation.addTurret(180, 80);
+                spaceStation.addTurret(270 - 20, 80);
+                spaceStation.addTurret(360 - 40, 80);
 				
 				break;
             case Unit.UT_SATGUN:
+
+                entity = new Building(player, x, y, 16, 16);
+                entity.setType(Unit.UT_SATGUN);
+
+                Building satgun = (Building)entity;
+                satgun.setHealth(750, 750);
+                satgun.createCollisionCircle();
+                satgun.addTurret();
 
                 if(side == CLIENT_SIDE){
                     entity.setTexture(Revert.getLoadedTexture("satgun.png"));
@@ -90,15 +103,6 @@ public class EntityFactory {
 
                 break;
 		}
-
-
-		
-		if(entity != null){
-			entity.setType(type);
-		    if(side == CLIENT_SIDE){
-                entity.onCreateClient();
-            }
-        }
 	
 		return entity;
 		

@@ -127,4 +127,4 @@ aligned: false
 additive: true
 behind: false
 - Image Path -
-.\assets\textures\p_hit.png
+p_hit.png

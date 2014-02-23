@@ -97,14 +97,12 @@ public class Weapon {
 		
 		if(Network.clientSide){
 			muzzleFlashTexture = Revert.getLoadedTexture("muzzle-flash.png").split(16, 16)[0];
-            muzzleFlash = new Effect(getRelativeLocation().x - 16 / 2, getRelativeLocation().y - 16 / 2, 16, 16);
+            muzzleFlash = new Effect(getRelativeLocation().x - 16 / 2, getRelativeLocation().y - 16 / 2, 16, 16, false);
             muzzleFlash.setVelocity(new Vector2(owner.getVelocity()).scl(2));
             muzzleFlash.setRotation(owner.getRotation());
             muzzleFlash.setTexture(muzzleFlashTexture[MathUtils.random(muzzleFlashTexture.length - 1)]);
             muzzleFlash.addLight(6, new Color(1.0f, 1.0f, 0, 0.8f), 32).setActive(false);
             muzzleFlash.expire(0.4f, Effect.EXPIRE_HIDE);
-
-            GameWorld.entityManager.addLocalEntity(muzzleFlash);
 		}
 		
 	}
@@ -260,9 +258,7 @@ public class Weapon {
 	}
 
     public void render(SpriteBatch sb){
-    }
-
-    public void onClientCreate(){
+        muzzleFlash.render(sb);
     }
 	
 	protected Bullet[] onShoot(){

@@ -19,7 +19,6 @@ import com.dmiranda.revert.shared.bullet.Bullet;
 public class GameWorldClient extends GameWorld {
 
     public Revert game;
-    public static ParticleSystem particleSystem;
     public static RayHandler rayHandler;
 
     private EntityRenderer entityRenderer;
@@ -40,8 +39,6 @@ public class GameWorldClient extends GameWorld {
 
         background = Revert.getLoadedTexture("bg-stars.png");
         entityRenderer.loadGraphics();
-
-        particleSystem = new ParticleSystem();
 
         RayHandler.setGammaCorrection(true);
 
@@ -164,8 +161,6 @@ public class GameWorldClient extends GameWorld {
 
             localEntities[i].render(sb);
         }
-
-        particleSystem.render(sb, Gdx.graphics.getDeltaTime());
 
         sb.end();
 

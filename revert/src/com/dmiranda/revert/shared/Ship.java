@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.dmiranda.revert.GameWorldClient;
 import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.effects.Effect;
 import com.dmiranda.revert.network.Network;
@@ -14,6 +13,7 @@ import com.dmiranda.revert.network.Network;
 public class Ship extends Unit {
 	
 	private boolean w,a,s,d;
+    private boolean previousMovement;
 	
 	private float acceleration, topSpeed;
 	
@@ -26,23 +26,31 @@ public class Ship extends Unit {
 		setOwnerPlayer(owner);
 		
 		engineOffset = new Vector2();
-		shipEngine = new ShipEngine(this, 20.5f, 5.5f, 350f);
+		shipEngine = new ShipEngine(this, 18.5f, 5.5f, 350f);
 		
 	}
-
-    @Override
-    protected void onCreateClient(){
-        super.onCreateClient();
-
-        shipEngine.onCreateClient();
-    }
 	
 	@Override
 	public void update(float delta){
 		super.update(delta);
-		
-		if(w || s || a || d){
-			
+
+        boolean move = (w || s || a || d);
+
+        // Turn off and on engine effects
+        if(Network.clientSide){
+            if(previousMovement != move){
+                if(move)
+                    shipEngine.startEffect();
+            } else {
+                if(!move)
+                    shipEngine.stopEffect();
+            }
+        }
+
+        previousMovement = move;
+
+		if(move){
+
 			actionState.changeState(EntityActionState.STATE_ON);
 			
 			if(w){
@@ -89,6 +97,7 @@ public class Ship extends Unit {
 			*/
 		}
 		else{
+            if(Network.clientSide) shipEngine.stopEffect();
 			actionState.changeState(EntityActionState.STATE_OFF);
 		}
 
@@ -134,7 +143,7 @@ public class Ship extends Unit {
                 float cx = getCenterX(), cy = getCenterY();
 
                 Effect effect = new Effect(cx, cy, (int)(getWidth() * (MathUtils.random() * 0.8f)),
-                        (int)(getHeight() * (MathUtils.random() * 0.8f)));
+                        (int)(getHeight() * (MathUtils.random() * 0.8f)), true);
                 effect.expire(3.5f, Effect.EXPIRE_DELETE);
                 effect.setTexture(Revert.getLoadedTexture("fighter-wreck.png"));
                 effect.setRotationSpeed(MathUtils.random() * 15);
@@ -145,13 +154,11 @@ public class Ship extends Unit {
                 float size = (effect.getWidth() + effect.getHeight()) * 0.5f;
                 effect.addLight(8, new Color(0.8f, 0.2f, 0.2f, 0.7f), size * 3).flicker(0.5f, 0.5f);
 
-                ParticleEffect particleEffect = GameWorldClient.particleSystem.getCachedEffect("smoke-trail");
+                ParticleEffect particleEffect = Revert.getLoadedParticleEffect("smoke-trail");
                 for(ParticleEmitter emitter : particleEffect.getEmitters()){
                     emitter.getScale().setHigh(size);
                 }
-
-                GameWorldClient.particleSystem.addNewEffectFollower(particleEffect, effect, true);
-                GameWorld.entityManager.addLocalEntity(effect);
+                effect.addParticleEffect(particleEffect, true);
             }
         }
     }
@@ -191,5 +198,112 @@ public class Ship extends Unit {
 	public boolean getA(){ return a; }
 	
 	public Vector2 getEngineOffset(){ return engineOffset; }
+
+    public class ShipEngine {
+
+        private float acceleration;
+        private float topSpeed;
+        private float directionalSpeed;
+
+        private Ship owner;
+        private float locationOffset;
+
+        private Effect[] engineEffect = new Effect[3];
+
+        public ShipEngine(Ship owner, float locationOffset, float acceleration, float topSpeed){
+            this.owner = owner;
+            this.acceleration = acceleration;
+            this.topSpeed = topSpeed;
+            this.locationOffset = locationOffset;
+
+            if(Network.clientSide){
+                engineEffect[0] = new Effect(getCenterX(), getCenterY(), 8, 8, false);
+                engineEffect[0].addParticleEffect(Revert.getLoadedParticleEffect("ship-engine"), false);
+                engineEffect[1] = new Effect(getCenterX(), getCenterY(), 8, 8, false);
+                engineEffect[1].addParticleEffect(Revert.getLoadedParticleEffect("ship-engine"), false);
+                engineEffect[2] = new Effect(getCenterX(), getCenterY(), 8, 8, false);
+                engineEffect[2].addParticleEffect(Revert.getLoadedParticleEffect("ship-engine"), false);
+            }
+
+        }
+
+        public void startEffect(){
+            for(int i = 0; i < engineEffect.length; i++)
+                engineEffect[i].getParticleEffect().start();
+        }
+
+        public void stopEffect(){
+            for(int i = 0; i < engineEffect.length; i++)
+                engineEffect[i].getParticleEffect().allowCompletion();
+        }
+
+        public void update(float delta){
+            if(Network.clientSide){
+                for(int i = 0; i < engineEffect.length; i++)
+                    engineEffect[i].update(delta);
+
+                Vector2 posOffset = new Vector2(
+                        -MathUtils.sinDeg(owner.getRotation() + 180) * locationOffset,
+                        MathUtils.cosDeg(owner.getRotation() + 180) * locationOffset
+                );
+
+                Vector2 posOffset1 = new Vector2(
+                        -MathUtils.sinDeg(owner.getRotation() + 180 + 16) * locationOffset,
+                        MathUtils.cosDeg(owner.getRotation() + 180 + 16) * locationOffset
+                );
+
+                Vector2 posOffset2 = new Vector2(
+                        -MathUtils.sinDeg(owner.getRotation() + 180 - 16) * locationOffset,
+                        MathUtils.cosDeg(owner.getRotation() + 180 - 16) * locationOffset
+                );
+
+                engineEffect[0].setPosition(owner.getCenterX() + posOffset.x, owner.getCenterY() + posOffset.y);
+                engineEffect[1].setPosition(owner.getCenterX() + posOffset1.x, owner.getCenterY() + posOffset1.y);
+                engineEffect[2].setPosition(owner.getCenterX() + posOffset2.x, owner.getCenterY() + posOffset2.y);
+
+            }
+
+        }
+
+        public void render(SpriteBatch sb){
+
+            for(int i = 0; i < engineEffect.length; i++){
+                engineEffect[i].render(sb);
+            }
+
+        }
+
+        public void dispose(){
+            if(Network.clientSide)
+                for(int i = 0; i < engineEffect.length; i++)
+                    engineEffect[i].die(null);
+
+        }
+
+        public Vector2 getForwardsThrust(){
+            return calculateVelocity(owner.getRotation());
+        }
+
+        private Vector2 calculateVelocity(float angle){
+
+            Vector2 velocity = new Vector2();
+
+            velocity.x = acceleration * MathUtils.sinDeg(angle);
+            velocity.y = acceleration * MathUtils.cosDeg(angle);
+
+            directionalSpeed = (float) Math.sqrt(Math.abs(velocity.x * velocity.x + velocity.y * velocity.y));
+
+            if (directionalSpeed >= topSpeed) {
+                velocity.x *= topSpeed / directionalSpeed;
+                velocity.y *= topSpeed / directionalSpeed;
+            }
+
+            return velocity;
+
+        }
+
+        public Ship getOwner(){ return owner; }
+
+    }
 
 }

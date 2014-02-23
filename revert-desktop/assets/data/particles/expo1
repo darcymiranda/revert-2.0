@@ -137,7 +137,7 @@ aligned: true
 additive: false
 behind: false
 - Image Path -
-.\bin\textures\p_cloud.png
+D:\Dropbox\workspace\revert\revert-desktop\assets\data\particles\p_cloud.png
 
 
 expo1
@@ -288,4 +288,4 @@ aligned: true
 additive: true
 behind: false
 - Image Path -
-.\assets\textures\p_expo2.png
+D:\Dropbox\workspace\revert\revert-desktop\assets\data\particles\p_expo1.png

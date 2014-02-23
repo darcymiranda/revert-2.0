@@ -6,11 +6,6 @@ import com.dmiranda.revert.network.Network;
 
 import java.util.ArrayList;
 
-/**
- * User: dmiranda
- * Date: 9/2/13
- * Time: 2:07 PM
- */
 public class Building extends Unit {
 
     private ArrayList<Turret> turrets = new ArrayList<Turret>();
@@ -23,7 +18,6 @@ public class Building extends Unit {
     @Override
     public void update(float delta){
         super.update(delta);
-
         for(int i = 0; i < turrets.size(); i++){
             turrets.get(i).update(delta);
         }
@@ -48,6 +42,10 @@ public class Building extends Unit {
             turret.setTexture(Revert.getLoadedTexture("turret.png"));
         }
         turrets.add(turret);
+    }
+
+    public void addTurret(){
+        addTurret(getCenterX(), getCenterY());
     }
 
     public ArrayList<Turret> getTurrets(){ return turrets; }

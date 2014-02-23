@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dmiranda.revert.GameWorldClient;
+import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.client.NetSimulateState;
 import com.dmiranda.revert.effects.Effect;
 import com.dmiranda.revert.network.Network;
@@ -28,15 +29,8 @@ public class Unit extends Entity {
 
 	public Unit(float x, float y, int width, int height) {
 		super(x, y, width, height);
-	}
-	
-	public void clientStartNetSim(){
-		clientNetSim = new NetSimulateState(this);
-	}
-
-    @Override
-    protected void onCreateClient(){
-        super.onCreateClient();
+	    if(Network.clientSide)
+            clientNetSim = new NetSimulateState(this);
     }
 	
 	@Override
@@ -78,12 +72,11 @@ public class Unit extends Entity {
 
             float cx = getCenterX(), cy = getCenterY();
 
-            Effect effect = new Effect(cx, cy, 0, 0);
+            Effect effect = new Effect(cx, cy, 0, 0, true);
             effect.addLight(16, new Color(1f, 0.9f, 0.9f, 0.5f), (getWidth() + getHeight()) / 2 * 16).resize(0, 0.5f);
-            effect.expire(0.3f, Effect.EXPIRE_DELETE);
+            effect.expire(2f, Effect.EXPIRE_DELETE);
+            effect.addParticleEffect(Revert.getLoadedParticleEffect("expo1"), false);
 
-            GameWorld.entityManager.addLocalEntity(effect);
-            GameWorldClient.particleSystem.addNewEffect("expo1", getId(), cx, cy);
         }
 
     }
@@ -137,9 +130,6 @@ public class Unit extends Entity {
 	
 	public void addWeapon(Weapon weapon){
         weapons.add(weapon);
-        if(Network.clientSide){
-            weapon.onClientCreate();
-        }
     }
 	
 	public NetSimulateState getClientNetSim(){ return clientNetSim; }

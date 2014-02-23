@@ -1,5 +1,6 @@
 package com.dmiranda.revert.tools;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -21,6 +22,13 @@ public class Tools {
 		if(r > 360) r -= 360;
 		return r;
 	}
+
+    public static Vector2 relativePosition(float rotation, Vector2 offset){
+        return new Vector2(
+                -MathUtils.sinDeg(rotation) * offset.x,
+                MathUtils.cosDeg(rotation) * offset.y
+        );
+    }
 	
 	public static Vector2 calcMinTranslationDistance(Rectangle rect1, Rectangle rect2){
 		

@@ -6,12 +6,15 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.GameWorldClient;
+import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.effects.Effect;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.Entity;
 import com.dmiranda.revert.shared.GameWorld;
 import com.dmiranda.revert.shared.weapon.Weapon;
+import com.dmiranda.revert.tools.Tools;
 
 
 public abstract class Bullet extends Entity {
@@ -58,21 +61,19 @@ public abstract class Bullet extends Entity {
 
         if(Network.clientSide){
 
-            ParticleEffect effect = GameWorldClient.particleSystem.getCachedEffect("hit");
-            ParticleEmitter emitter = effect.getEmitters().first();
+            ParticleEffect particleEffect = Revert.getLoadedParticleEffect("hit");
+            ParticleEmitter emitter = particleEffect.getEmitters().first();
             emitter.getLife().setHigh(150);
             emitter.setPosition(getCenterX() + (getVelocity().x * Gdx.graphics.getDeltaTime()),
                     getCenterY() + (getVelocity().y * Gdx.graphics.getDeltaTime()));
             emitter.getAngle().setHigh(getRotation() - 70, getRotation() - 110);
             emitter.getAngle().setLow(getRotation() - 70, getRotation() - 110);
 
-            GameWorldClient.particleSystem.addNewEffect(effect, "hit", getId());
-
-            Effect light = new Effect(getCenterX(), getCenterY(), 0, 0);
-            light.expire(0.1f, Effect.EXPIRE_DELETE);
-            light.addLight(6, new Color(1f, 1f, 0.4f, 0.8f), 64);
-
-            GameWorld.entityManager.addLocalEntity(light);
+            Vector2 rp = Tools.relativePosition(getRotation(), new Vector2((getWidth() + getHeight()) * 0.5f, (getWidth() + getHeight()) * 0.5f));
+            Effect effect = new Effect(rp.x + getCenterX(), rp.y + getCenterY(), 0, 0, true);
+            effect.expire(0.1f, Effect.EXPIRE_DELETE);
+            effect.addLight(6, new Color(1f, 1f, 0.4f, 0.8f), 64);
+            effect.addParticleEffect(particleEffect, false);
         }
 
 		die(hitter);

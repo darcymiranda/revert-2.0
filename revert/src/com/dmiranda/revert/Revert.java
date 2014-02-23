@@ -3,7 +3,6 @@ package com.dmiranda.revert;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -13,13 +12,11 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.dmiranda.revert.client.RevertClient;
+import com.dmiranda.revert.effects.Effect;
 import com.dmiranda.revert.network.Network;
 import com.dmiranda.revert.shared.*;
 import com.dmiranda.revert.ui.Hud;
@@ -59,7 +56,6 @@ public class Revert implements ApplicationListener {
 	public void create() {
 		
 		Network.clientSide = true;
-		
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
         toggleHandler = new ToggleHandler(this);
@@ -250,27 +246,27 @@ public class Revert implements ApplicationListener {
                     }
                 }
                 if(Gdx.input.isKeyPressed(Input.Keys.T)){
-                    getCamera().shake(1250);
+                    Effect effect = new Effect(mouse.x, mouse.y, 16, 16, true);
+                    effect.addParticleEffect(Revert.getLoadedParticleEffect("expo1"), false);
+                    effect.getParticleEffect().allowCompletion();
                 }
-
             }
 		}
 	}
 	
 	private void loadAssets(){
 		
-		FileHandle dirHandle;
-		if(Gdx.app.getType() == ApplicationType.Android){
-			dirHandle = Gdx.files.internal("/");
-		}
-		else{
-			dirHandle = Gdx.files.internal("./assets/textures/");
-		}
+		FileHandle imageDirHandle = Gdx.files.internal("./assets/textures/");
+        FileHandle particleDirHandle = Gdx.files.internal("./assets/data/particles/");
 		
-		for(FileHandle handle : dirHandle.list()){
-			assets.load(handle.path(), Texture.class);
-		}
-		
+		for(FileHandle handle : imageDirHandle.list())
+            assets.load(handle.path(), Texture.class);
+
+        for(FileHandle handle : particleDirHandle.list()){
+            if(handle.file().getName().toCharArray()[0] == 112) continue; // ignore files that startEffect with p
+            assets.load(handle.path(), ParticleEffect.class);
+        }
+
 	}
 	
 	public static TextureRegion getLoadedTexture(String name){
@@ -284,6 +280,17 @@ public class Revert implements ApplicationListener {
 		
 		return new TextureRegion(assets.get(prefix + name, Texture.class));
 	}
+
+    public static ParticleEffect getLoadedParticleEffect(String name){
+        final String prefix = "./assets/data/particles/";
+
+        if(!assets.isLoaded(prefix + name, ParticleEffect.class)){
+            Gdx.app.error("Assets", "NOT FOUND - " + prefix + name);
+            return null;
+        }
+
+        return new ParticleEffect(assets.get(prefix + name, ParticleEffect.class));
+    }
 
 
 	@Override
