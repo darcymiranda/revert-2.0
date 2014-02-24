@@ -68,7 +68,8 @@ public class MainMenu {
                 playButton.addAction(Actions.moveTo(-400, playButton.getY(), 1f, Interpolation.pow4));
                 quitButton.addAction(Actions.moveTo(-400, quitButton.getY(), 1f, Interpolation.pow4));
 
-                game.setGameState(Revert.GAME_STATES.LOAD_ASSETS);
+                game.getStateMachine().setCurrentState("load");
+                //game.setGameState(Revert.GAME_STATES.LOAD_ASSETS);
 
             }
 
@@ -81,16 +82,13 @@ public class MainMenu {
 
 			@Override
 			public void clicked(InputEvent e, float x, float y){
-
 				Gdx.app.exit();
-
 			}
 
 		});
 		stage.addActor(quitButton);
 
 		Gdx.input.setInputProcessor(stage);
-
 
 	}
     private void cameraBounce(){

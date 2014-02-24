@@ -36,9 +36,9 @@ public class ServerIncoming extends Listener {
 			
 			if(object instanceof Connect){
 				
-				System.out.println("Connected: Session #" + currentConnection.getID());
-				
 				currentPlayer = game.world.createPlayer(currentConnection.getID(), currentConnection.getID() % 2, ((Connect)object).username, false);
+
+                System.out.println("Connected: #" + currentConnection.getID() + " " + currentPlayer.username);
 				
 				if(currentPlayer.team == 0)
 					currentPlayer.setSpawnPoint(372, 372);

@@ -103,7 +103,7 @@ public class Effect extends Entity {
         light = new BaseLight(this, rays, color, distance, getCenterX(), getCenterY());
         light.setXray(true);
         light.setSoft(true);
-        light.setSoftnessLenght(5);
+        light.setSoftnessLenght(3);
         return light;
     }
 

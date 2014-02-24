@@ -149,7 +149,7 @@ public class ClientIncoming extends Listener {
 				localPlayer = true;
 				GameWorld.serverSeed = connect.seed;
 			}
-			
+
 			Player player = game.world.createPlayer(connect.id, connect.team, connect.username, localPlayer);
 			Gdx.app.debug("Network [Connect]", "Player created -  " + player);
 			

@@ -1,8 +1,10 @@
 package com.dmiranda.revert.server;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import com.dmiranda.revert.network.Network;
+import com.dmiranda.revert.shared.Player;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
@@ -26,8 +28,6 @@ public class RevertServer extends Thread {
 
         Listener serverListener = new ServerIncoming(this);
         server.addListener(serverListener);
-        //LagListener lagListener = new LagListener(Network.SIM_LAG_MIN, Network.SIM_LAG_MAX, serverListener);
-        //server.addListener(lagListener);
 
         server.bind(Network.PORT_TCP, Network.PORT_TCP);
         server.start();
@@ -36,6 +36,22 @@ public class RevertServer extends Thread {
 
         System.out.println("Server started on port " + Network.PORT_TCP);
 
+    }
+
+    public void sendTcpToAllValidatedPlayers(Object message){
+        for(int i = 0; i < server.getConnections().length; i++){
+            if(world.getPlayers().containsKey(server.getConnections())){
+                server.getConnections()[i].sendTCP(message);
+            }
+        }
+    }
+
+    public void sendUdpToAllValidatedPlayers(Object message){
+        for(int i = 0; i < server.getConnections().length; i++){
+            if(world.getPlayers().containsKey(server.getConnections())){
+                server.getConnections()[i].sendUDP(message);
+            }
+        }
     }
 
     public void run(){

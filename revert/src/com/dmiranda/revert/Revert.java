@@ -40,6 +40,7 @@ public class Revert implements ApplicationListener {
 	private RevertClient client;
     private ToggleHandler toggleHandler;
 
+    private StateMachine stateMachine;
 	private GAME_STATES currentGameState = null;
 
 	public enum GAME_STATES {
@@ -61,8 +62,6 @@ public class Revert implements ApplicationListener {
         toggleHandler = new ToggleHandler(this);
 
 		initLoad();
-		
-		setGameState(GAME_STATES.MENU);
 
 		uiCamera = new OrthographicCamera();
 		uiCamera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -79,8 +78,107 @@ public class Revert implements ApplicationListener {
 		menuScreen = new MainMenu(this);
 		
 		try{tempHostName = java.net.InetAddress.getLocalHost().getHostName();}catch(Exception e){}
-		
-		
+
+
+        /*
+        Setup states
+         */
+
+        stateMachine = new StateMachine(this);
+        stateMachine.addState("menu", new StateMachine.State(){
+            @Override
+            public void begin() {
+            }
+
+            @Override
+            public void render() {
+                menuScreen.render();
+            }
+
+            @Override
+            public void end() {
+            }
+        });
+        stateMachine.addState("load", new StateMachine.State(){
+            @Override
+            public void begin() {
+            }
+
+            @Override
+            public void render() {
+
+                menuScreen.render();
+
+                if(assets.update()){
+                    Gdx.app.log("Assets", "loaded " + assets.getLoadedAssets() + " assets");
+                    stateMachine.setCurrentState("network");
+                }
+
+                sb.begin();
+                String loadText = "Loading " + Math.round(assets.getProgress()*100) + "%";
+                sFont.draw(sb, loadText, Gdx.graphics.getWidth() * 0.5f - loadText.length() * 4, Gdx.graphics.getHeight() * 0.75f);
+                sb.end();
+            }
+
+            @Override
+            public void end() {
+                animations.put("fighter-engine", new Animation(64,Revert.getLoadedTexture("fighter_engine.png").split(16, 5)[0]));
+                animations.put("fighter-engine-light", new Animation(32, Revert.getLoadedTexture("light.png").split(30, 30)[0]));
+
+            }
+        });
+        stateMachine.addState("network", new StateMachine.State() {
+            @Override
+            public void begin() {
+                client = new RevertClient(stateMachine.getGame());
+                client.connect(Network.DEFAULT_HOST, Network.PORT_TCP, Network.PORT_TCP);
+            }
+
+            @Override
+            public void render() {
+
+                menuScreen.render();
+
+                sb.begin();
+                sFont.draw(sb, client.getStatus(), Gdx.graphics.getWidth() * 0.5f - client.getStatus().length() * 4, Gdx.graphics.getHeight() * 0.75f);
+                sb.end();
+
+                if(client.isConnected()){
+                    stateMachine.setCurrentState("play");
+                }
+
+            }
+
+            @Override
+            public void end() {
+                menuScreen.dispose();
+            }
+        });
+        stateMachine.addState("play", new StateMachine.State() {
+            @Override
+            public void begin() {
+                world.create();
+                hud.load();
+                Gdx.input.setInputProcessor(toggleHandler);
+                client.sendHandShake(tempHostName, Team.BLUE);
+            }
+
+            @Override
+            public void render() {
+
+                doInputs();
+
+                world.update(Gdx.graphics.getDeltaTime());
+                world.render(sb, gameCamera);
+
+                hud.render(sb);
+            }
+
+            @Override
+            public void end() {
+            }
+        });
+        stateMachine.setCurrentState("menu");
 	}
 	
 	private void initLoad(){
@@ -98,7 +196,6 @@ public class Revert implements ApplicationListener {
 		assets.dispose();
         world.dispose();
 	}
-	
 
 	@Override
 	public void render() {
@@ -109,7 +206,10 @@ public class Revert implements ApplicationListener {
 		uiCamera.update();
 
 		sb.setProjectionMatrix(gameCamera.combined);
-		
+
+        stateMachine.render();
+
+        /*
 		if(currentGameState == GAME_STATES.MENU){
 			
 			menuScreen.render();
@@ -119,7 +219,7 @@ public class Revert implements ApplicationListener {
 
             menuScreen.render();
 			
-			if(assets.update()){
+			if(assets.render()){
 				Gdx.app.log("Assets", "loaded " + assets.getLoadedAssets() + " assets");
 				setGameState(GAME_STATES.LOAD);
 			}
@@ -172,13 +272,12 @@ public class Revert implements ApplicationListener {
 			doInputs();
 
             // Update and render world
-            world.update(Gdx.graphics.getDeltaTime());
+            world.render(Gdx.graphics.getDeltaTime());
             world.render(sb, gameCamera);
 
 			hud.render(sb);
 
 			// Render debug info
-            /*
 			Entity[] entities = GameWorld.entityManager.getEntities();
 			debugRenderer.setProjectionMatrix(gameCamera.combined);
 			debugRenderer.setColor(Color.WHITE);
@@ -200,9 +299,9 @@ public class Revert implements ApplicationListener {
 				}
 			}
 			debugRenderer.end();
-			*/
 			
 		}
+        */
 		
 	}
 
@@ -309,6 +408,7 @@ public class Revert implements ApplicationListener {
 	public Camera getCamera(){ return gameCamera; }
     public OrthographicCamera getUICamera(){ return uiCamera; }
 	public RevertClient getClient(){ return client; }
+    public StateMachine getStateMachine(){ return stateMachine; }
     public Hud getHud(){ return hud; }
 	
 }

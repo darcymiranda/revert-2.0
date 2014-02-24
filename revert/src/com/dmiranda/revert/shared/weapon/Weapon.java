@@ -54,6 +54,7 @@ public class Weapon {
 	// protected SoundEffect soundReload;
 
     private Effect muzzleFlash;
+    private Effect muzzleFlashLight;
 	private TextureRegion[] muzzleFlashTexture;
 
 	/**

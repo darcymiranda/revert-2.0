@@ -13,7 +13,6 @@ public class RevertClient {
 	private Client client;
 	private Revert game;
 	private boolean handShakeStatus;
-	private boolean connecting;
     private int session;
 
     //private final int ROLLING_LATENCY_BUFFER_SIZE = 15;
@@ -23,7 +22,7 @@ public class RevertClient {
 	private String status = "";
 	
 	public RevertClient(Revert game){
-		
+
 		this.game = game;
 		
 		client = new Client(2*1024, 2*1024);
@@ -32,8 +31,6 @@ public class RevertClient {
 		
 		ThreadedListener listener = new ThreadedListener(new ClientIncoming(game));
 		client.addListener(listener);
-		//LagListener lagListener = new LagListener(Network.SIM_LAG_MIN, Network.SIM_LAG_MAX, listener);
-		//client.addListener(lagListener);
 		
 	}
 	
@@ -41,33 +38,34 @@ public class RevertClient {
 		return status;
 	}
 	
-	public void connect(final String host, final int portTcp, final int portUdp, final String username){
+	public void connect(final String host, final int portTcp, final int portUdp){
 		
 		status = "Connecting to " + Network.DEFAULT_HOST + " : " + Network.PORT_TCP;
 
         new Thread(){
             public void run(){
-
                 try {
-
-                    connecting = true;
                     client.connect(5000, host, portTcp, portTcp);
-
                 } catch (IOException e) {
-
                     status = e.getMessage();
-                    connecting = false;
                 }
-
-                Network.Connect connect = new Network.Connect();
-                connect.username = username;
-                connect.team = 0;
-                client.sendTCP(connect);
-
             }
         }.start();
 		
 	}
+
+    public void sendHandShake(String name, int team){
+
+        if(!isConnected()){
+            Gdx.app.log("Client", "Tried to handshake without being connected");
+            return;
+        }
+
+        Network.Connect connect = new Network.Connect();
+        connect.username = name;
+        connect.team = 0;
+        client.sendTCP(connect);
+    }
 	
 	public void setSessionId(int session){
 		this.session = session;
@@ -77,10 +75,6 @@ public class RevertClient {
 	public boolean isConnected(){
 		return client.isConnected(); 
 	}
-
-    public boolean isConnecting(){
-        return connecting;
-    }
 	
 	public void setHandshakeStatus(boolean handShakeStatus){
 		this.handShakeStatus = handShakeStatus;

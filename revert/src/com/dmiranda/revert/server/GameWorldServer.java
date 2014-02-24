@@ -122,6 +122,7 @@ public class GameWorldServer extends GameWorld {
 					EntityDeath death = new EntityDeath();
 					death.id = unit.getId();
 					death.killerid = unit.getLastHitBy() == null ? -1 : unit.getLastHitBy().getId();	 //may sometimes return null on last hit by
+
 					game.server.sendToAllTCP(death);
 
                     unit.getOwnerPlayer().setRespawnTimer(3);
