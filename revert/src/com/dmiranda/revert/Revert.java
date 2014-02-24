@@ -41,15 +41,6 @@ public class Revert implements ApplicationListener {
     private ToggleHandler toggleHandler;
 
     private StateMachine stateMachine;
-	private GAME_STATES currentGameState = null;
-
-	public enum GAME_STATES {
-		NETWORK,
-		LOAD_ASSETS,
-		LOAD,
-		PLAY,
-		MENU
-	}
 	
 	private String tempHostName;
 	
@@ -83,7 +74,6 @@ public class Revert implements ApplicationListener {
         /*
         Setup states
          */
-
         stateMachine = new StateMachine(this);
         stateMachine.addState("menu", new StateMachine.State(){
             @Override
@@ -208,106 +198,7 @@ public class Revert implements ApplicationListener {
 		sb.setProjectionMatrix(gameCamera.combined);
 
         stateMachine.render();
-
-        /*
-		if(currentGameState == GAME_STATES.MENU){
-			
-			menuScreen.render();
-			
-		}
-		else if(currentGameState == GAME_STATES.LOAD_ASSETS){
-
-            menuScreen.render();
-			
-			if(assets.render()){
-				Gdx.app.log("Assets", "loaded " + assets.getLoadedAssets() + " assets");
-				setGameState(GAME_STATES.LOAD);
-			}
-			
-			sb.begin();
-            String loadText = "Loading " + Math.round(assets.getProgress()*100) + "%";
-			sFont.draw(sb, loadText, Gdx.graphics.getWidth() * 0.5f - loadText.length() * 4, Gdx.graphics.getHeight() * 0.75f);
-			sb.end();
-			
-		}
-		else if(currentGameState == GAME_STATES.LOAD){
-
-            menuScreen.render();
-			
-			animations.put("fighter-engine", new Animation(64,Revert.getLoadedTexture("fighter_engine.png").split(16, 5)[0]));
-			animations.put("fighter-engine-light", new Animation(32, Revert.getLoadedTexture("light.png").split(30, 30)[0]));
-			
-			world.create();
-            hud.load();
-				
-            client = new RevertClient(this);
-
-            sb.begin();
-            sFont.draw(sb, "Connecting...", Gdx.graphics.getWidth() * 0.5f - client.getStatus().length() * 4, Gdx.graphics.getHeight() * 0.75f);
-            sb.end();
-
-            setGameState(GAME_STATES.NETWORK);
-		}
-		else if(currentGameState == GAME_STATES.NETWORK){
-
-            menuScreen.render();
-			
-			sb.begin();
-			sFont.draw(sb, client.getStatus(), Gdx.graphics.getWidth() * 0.5f - client.getStatus().length() * 4, Gdx.graphics.getHeight() * 0.75f);
-			sb.end();
-
-            if(!client.isConnecting()){
-                client.connect(Network.DEFAULT_HOST, Network.PORT_TCP, Network.PORT_TCP, tempHostName);
-            }
-				
-			if(client.isHandshakeComplete()){
-                menuScreen.dispose();
-                Gdx.input.setInputProcessor(toggleHandler);
-				setGameState(GAME_STATES.PLAY);
-			}
-			
-		}
-		else if(currentGameState == GAME_STATES.PLAY){
-			
-			doInputs();
-
-            // Update and render world
-            world.render(Gdx.graphics.getDeltaTime());
-            world.render(sb, gameCamera);
-
-			hud.render(sb);
-
-			// Render debug info
-			Entity[] entities = GameWorld.entityManager.getEntities();
-			debugRenderer.setProjectionMatrix(gameCamera.combined);
-			debugRenderer.setColor(Color.WHITE);
-			debugRenderer.begin(ShapeRenderer.ShapeType.Line);
-			{
-				for(int i = 0; i < entities.length; i++){
-					if(entities[i] == null) continue;
-					
-					if(entities[i] instanceof Unit){
-						Unit unit = (Unit)entities[i];
-                        if(unit.getClientNetSim() == null) continue;
-						
-						debugRenderer.circle(unit.getClientNetSim().getRawServerPosition().x + unit.getWidth() / 2,
-								unit.getClientNetSim().getRawServerPosition().y + unit.getHeight() / 2,
-								entities[i].getCollisionCircle().getShape().radius);
-						
-					}
-										
-				}
-			}
-			debugRenderer.end();
-			
-		}
-        */
 		
-	}
-
-	public void setGameState(GAME_STATES state){
-		Gdx.app.log("Game State Change", currentGameState + " to " + state);
-		currentGameState = state;
 	}
 	
 	private void doInputs(){
@@ -398,7 +289,6 @@ public class Revert implements ApplicationListener {
 
 	@Override
 	public void pause() {
-		
 	}
 
 	@Override
