@@ -152,10 +152,10 @@ public class ServerIncoming extends Listener {
 			if(player.ship != null){
 				game.world.getEntityManager().removeEntityById(player.ship.getId());
 			}
+
+            System.out.println("Connected: #" + connection.getID() + " " + player.username);
+
 			// TODO: Remove all entities related to the player.
-			
-			
-			System.out.println("Disconnected: Session #" + connection.getID());
 		}
 		
 		Disconnect disconnect = new Disconnect();

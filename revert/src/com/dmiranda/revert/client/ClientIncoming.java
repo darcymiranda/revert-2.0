@@ -118,11 +118,19 @@ public class ClientIncoming extends Listener {
 		else if(object instanceof EntityDeath){
 			EntityDeath spawn = (EntityDeath)object;
 			
-			Entity dead = GameWorld.entityManager.getEntityById(spawn.id);
-			Entity killer = GameWorld.entityManager.getEntityById(spawn.killerid);
-			
-			Gdx.app.debug("Network [Death]", "killed ship(" + spawn.id + ")");
-			dead.die(killer);
+			Entity dead = game.world.getEntityManager().getEntityById(spawn.id);
+			Entity killer = game.world.getEntityManager().getEntityById(spawn.killerid);
+
+            if(killer == null){
+                Gdx.app.error("Network [Death]", "Received null for entity who did the killing" + spawn.killerid);
+            }
+
+            if(dead != null){
+                Gdx.app.debug("Network [Death]", killer + " killed " + dead);
+                dead.die(killer);
+            } else {
+                Gdx.app.error("Network [Death]", "Received null locally for dead entity with id " + spawn.id);
+            }
 			
 		}
 		else if(object instanceof EntitySpawnSelf){

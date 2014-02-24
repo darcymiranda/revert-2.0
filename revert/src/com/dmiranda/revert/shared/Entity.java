@@ -114,14 +114,22 @@ public abstract class Entity {
 	}
 	
 	public Player getOwnerPlayer(){
-		return (ownerEntity == null) ? ownerPlayer : ownerEntity.getOwnerPlayer();
+		return ownerEntity == null ? ownerPlayer : ownerEntity.getOwnerPlayer();
 	}
+
+    /**
+     * Returns top-most owner of entity else returns this
+     * @return
+     */
+    public Entity getOwnerEntity(){
+        return ownerEntity == null ? this : ownerEntity.getOwnerEntity();
+    }
 	
 	public void die(Entity killer){
         this.killer = killer;
-		alive = false;
+		this.alive = false;
 	}
-	
+
 	protected void onHit(Entity hitter){}
 	protected void onDeath(){}
 
@@ -158,11 +166,9 @@ public abstract class Entity {
 	public float getRotation(){ return rotation; }
 	public float getWidth(){ return width; }
 	public float getHeight(){ return height; }
-	public Entity getOwnerEntity(){ return ownerEntity; }
 	public CollisionCircle getCollisionCircle(){ return collisionCircle; }
 	public int getId(){ return id; }
 	public int getType(){ return type; }
-    protected Entity getKiller(){ return killer; }
 	
 	public EntityActionState getEntityActionState(){ return actionState; }
 	
@@ -170,7 +176,15 @@ public abstract class Entity {
 	public boolean hasMoved(){ return oldPosition.x != position.x && oldPosition.y != position.y; }
 	
 	public String toString(){
-		return "{Entity " + this.getClass().getSimpleName() + " (" + id + ")}";
+        StringBuilder sb = new StringBuilder();
+        sb.append(" Entity: { ");
+        sb.append(this.getClass().getSimpleName());
+        sb.append(" (");
+        sb.append(id);
+        sb.append(")]");
+        sb.append(" Player: ");
+        sb.append(getOwnerPlayer());
+		return sb.toString();
 	}
 
 	

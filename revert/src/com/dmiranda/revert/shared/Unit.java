@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.dmiranda.revert.GameWorldClient;
 import com.dmiranda.revert.Revert;
 import com.dmiranda.revert.client.NetSimulateState;
 import com.dmiranda.revert.effects.Effect;
@@ -19,13 +18,11 @@ public class Unit extends Entity {
                             UT_SATGUN = 3;
 	
 	protected float health, maxHealth;
-	
 	protected boolean shooting;
-	
-	private Entity lastHitBy;
+
 	private NetSimulateState clientNetSim;
-	
 	private ArrayList<Weapon> weapons = new ArrayList<Weapon>();
+    private Entity lastHitBy;
 
 	public Unit(float x, float y, int width, int height) {
 		super(x, y, width, height);
@@ -88,7 +85,6 @@ public class Unit extends Entity {
 		if(hitter instanceof Bullet){
 			
 			Bullet bullet = (Bullet) hitter;
-		
 			applyDamage(bullet.getOwnerEntity(), bullet.getDamage());
 			
 		}
@@ -96,7 +92,7 @@ public class Unit extends Entity {
 	}
 	
 	public void applyDamage(Entity attacker, float damage){
-		lastHitBy = attacker;
+        lastHitBy = attacker.getOwnerEntity();
 		health -= damage;
 	}
 	
@@ -133,11 +129,11 @@ public class Unit extends Entity {
     }
 	
 	public NetSimulateState getClientNetSim(){ return clientNetSim; }
-	public Entity getLastHitBy(){ return lastHitBy; }
 	public float getHealth(){ return health; }
 	public float getMaxHealth(){ return maxHealth; }
 	public ArrayList<Weapon> getWeapons(){ return weapons; }
 	public Weapon getPrimaryWeapon(){ return weapons.size() > 0 ? weapons.get(0) : null; }
+    public Entity getLastHitBy(){ return lastHitBy; }
 	
 	public boolean isShooting(){ return shooting; }
 	public void setShooting(boolean shooting){ this.shooting = shooting; }

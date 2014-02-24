@@ -67,7 +67,7 @@ public class Network {
 	}
 	
 	public static class EntityDeath {
-		public int id, killerid;
+		public int id, killerid, playerid;
 	}
 	
 	public static class Connect {
