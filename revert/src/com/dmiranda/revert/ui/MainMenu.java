@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -69,6 +70,7 @@ public class MainMenu {
                 quitButton.addAction(Actions.moveTo(-400, quitButton.getY(), 1f, Interpolation.pow4));
 
                 game.getStateMachine().setCurrentState("load");
+                playButton.setTouchable(Touchable.disabled);
                 //game.setGameState(Revert.GAME_STATES.LOAD_ASSETS);
 
             }

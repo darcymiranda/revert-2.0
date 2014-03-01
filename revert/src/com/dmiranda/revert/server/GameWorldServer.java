@@ -27,27 +27,14 @@ public class GameWorldServer extends GameWorld {
 	
 	public void create(){
 		
-		/*
-		Asteroid asteroid = new Asteroid(0, 500, 500, 85);
+
+		Asteroid asteroid = new Asteroid(0, 1500, 1900, 85);
 		asteroid.randAsteroidType();
 		entityManager.addEntity(asteroid);
 		
-		asteroid = new Asteroid(0, 100, 500, 125);
+		asteroid = new Asteroid(0, 1200, 1200, 125);
 		asteroid.randAsteroidType();
 		entityManager.addEntity(asteroid);
-		
-		asteroid = new Asteroid(0, 750, 100, 190);
-		asteroid.randAsteroidType();
-		entityManager.addEntity(asteroid);
-		
-		asteroid = new Asteroid(0, 250, 800, 2);
-		asteroid.randAsteroidType();
-		entityManager.addEntity(asteroid);
-		
-		asteroid = new Asteroid(0, 300, 350, 30);
-		asteroid.randAsteroidType();
-		entityManager.addEntity(asteroid);
-		*/
 		
 		entityManager.addEntity(
 				EntityFactory.server().createEntity(Unit.UT_SPACESTATION, players.get(COMPUTER_RED), 372, 372));

@@ -9,6 +9,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -113,7 +114,8 @@ public class Revert implements ApplicationListener {
             @Override
             public void end() {
                 animations.put("fighter-engine", new Animation(64,Revert.getLoadedTexture("fighter_engine.png").split(16, 5)[0]));
-                animations.put("fighter-engine-light", new Animation(32, Revert.getLoadedTexture("light.png").split(30, 30)[0]));
+
+                world.create();
 
             }
         });
@@ -147,7 +149,6 @@ public class Revert implements ApplicationListener {
         stateMachine.addState("play", new StateMachine.State() {
             @Override
             public void begin() {
-                world.create();
                 hud.load();
                 Gdx.input.setInputProcessor(toggleHandler);
                 client.sendHandShake(tempHostName, Team.BLUE);
@@ -160,6 +161,23 @@ public class Revert implements ApplicationListener {
 
                 world.update(Gdx.graphics.getDeltaTime());
                 world.render(sb, gameCamera);
+
+                Entity[] entities = GameWorld.entityManager.getEntities();
+                Entity[] localEntities = GameWorld.entityManager.getLocalEntities();
+                debugRenderer.setProjectionMatrix(gameCamera.combined);
+                debugRenderer.setColor(Color.WHITE);
+                debugRenderer.begin(ShapeRenderer.ShapeType.Line);
+                {
+                    for(int i = 0; i < entities.length; i++){
+                        if(entities[i] == null) continue;
+
+                        debugRenderer.circle(entities[i].getCollisionCircle().getShape().x,
+                                entities[i].getCollisionCircle().getShape().y,
+                                entities[i].getCollisionCircle().getShape().radius);
+
+                    }
+                }
+                debugRenderer.end();
 
                 hud.render(sb);
             }

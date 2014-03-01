@@ -8,13 +8,14 @@ import com.dmiranda.revert.shared.bullet.Bullet;
 public abstract class GameWorld {
 
 	public static final int COMPUTER_RED = -100, COMPUTER_BLUE = -200;
-	
+
 	public static long serverSeed = System.currentTimeMillis();
 	public static GameMap map;
 	public static EntityManager entityManager;
 	
 	protected Player localPlayer;
 	protected HashMap<Integer, Player> players = new HashMap<Integer, Player>();
+
 
 	public GameWorld(){
 		

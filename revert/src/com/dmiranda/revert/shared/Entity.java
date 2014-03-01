@@ -16,11 +16,12 @@ public abstract class Entity {
 	protected Entity ownerEntity;
 	protected Player ownerPlayer;
 	protected EntityActionState actionState;
-	
+
 	protected TextureRegion texture;
+
     private boolean hide;
-	
 	private CollisionCircle collisionCircle;
+    private float collisionMass;
 	private boolean net = true;
 	private boolean alive = true;
 	private int type = -1;
@@ -40,7 +41,7 @@ public abstract class Entity {
 	}
 	
 	public void update(float delta){
-		
+
 		oldPosition.x = position.x;
 		oldPosition.y = position.y;
 		
@@ -62,12 +63,7 @@ public abstract class Entity {
         rotation += d * rotationSpeed * delta;
 		
 		if(collisionCircle != null){
-			
-			Vector2 futurePosition = new Vector2(position.x, position.y);
-			futurePosition.x += vx + width / 2;
-			futurePosition.y += vy + height / 2;
-			
-			collisionCircle.update(futurePosition, rotation);
+			collisionCircle.update(getCenterPosition(), rotation);
 		}
 		
 		actionState.update(delta);
@@ -88,7 +84,7 @@ public abstract class Entity {
 	}
 	
 	public void createCollisionCircle(){
-		createCollisionCircle(width / 2);
+		createCollisionCircle(width * 0.5f);
 	}
 	
 	public void createCollisionCircle(float radius){
@@ -148,12 +144,13 @@ public abstract class Entity {
 	public void setId(int id){ this.id = id; }
 	public void setOwnerEntity(Entity entity){ this.ownerEntity = entity; }
 	public void setOwnerPlayer(Player player){ this.ownerPlayer = player; }
-	public void setPosition(Vector2 position){ this.position = new Vector2(position); }
-	public void setPosition(float x, float y){ this.position = new Vector2(x, y); }
-	public void setVelocity(Vector2 velocity){ this.velocity = new Vector2(velocity); }
-	public void setVelocity(float x, float y){ this.velocity = new Vector2(x, y); }
+	public void setPosition(Vector2 position){ this.position.x = position.x; this.position.y = position.y; }
+	public void setPosition(float x, float y){ this.position.x = x; this.position.y = y;}
+	public void setVelocity(Vector2 velocity){ this.velocity.x = velocity.x; this.velocity.y = velocity.y; }
+	public void setVelocity(float x, float y){ this.velocity.x = x; this.velocity.y = y; }
 	public void setRotation(float r){ this.rotation = r; }
 	public void setType(int type){ this.type = type; }
+    public void setCollisionMass(float mass){ this.collisionMass = mass; }
 
     public boolean isHidden(){ return hide; }
     public TextureRegion getTexture(){ return texture; }
@@ -169,6 +166,7 @@ public abstract class Entity {
 	public CollisionCircle getCollisionCircle(){ return collisionCircle; }
 	public int getId(){ return id; }
 	public int getType(){ return type; }
+    public float getCollisionMass(){ return collisionMass; }
 	
 	public EntityActionState getEntityActionState(){ return actionState; }
 	

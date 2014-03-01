@@ -1,6 +1,7 @@
 package com.dmiranda.revert.shared;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.dmiranda.revert.effects.Effect;
 import com.dmiranda.revert.network.Network;
@@ -20,7 +21,7 @@ public class EntityManager {
 		this.world = world;
 	}
 	
-	private void doCollision(Entity entity){
+	private void doCollision(Entity entity, float delta){
 	
 		for(int i = 0; i < entities.length; i++){
 			if(entities[i] == null) continue;
@@ -33,39 +34,69 @@ public class EntityManager {
 			if(entity.getCollisionCircle().intersects(otherEntity.getCollisionCircle())){
 				
 				world.entityCollision(entity, otherEntity);
-				
-				Vector2 collision = new Vector2(
-						entity.getCenterX() - otherEntity.getCenterX(),
-						entity.getCenterY() - otherEntity.getCenterY());
-				
-				
-				float distance = collision.len();
-				
-				if(distance == 0){
-					collision = new Vector2(1, 0);
-					distance = 1;
-				}
-			
-				collision.x /= distance;
-				collision.y /= distance;
-				
-				Vector2 vel = new Vector2(entity.getVelocity());
-				Vector2 otherVel = new Vector2(otherEntity.getVelocity());
-				
-				float aci = vel.dot(collision);
-				float bci = otherVel.dot(collision);
-				
-				float acf = bci;
-				float bcf = aci;
-				
-				entity.velocity.x = (acf - aci) * collision.x / 2;
-				entity.velocity.y = (acf - aci) * collision.y / 2;
-				otherEntity.velocity.x = (bcf - bci) * collision.x / 2;
-				otherEntity.velocity.y = (bcf - bci) * collision.y / 2;
-				
-				entity.onHit(otherEntity);
-				otherEntity.onHit(entity);
-				
+                entity.onHit(otherEntity);
+                otherEntity.onHit(entity);
+
+                CollisionCircle cc1 = entity.getCollisionCircle();
+                CollisionCircle cc2 = otherEntity.getCollisionCircle();
+                Circle c1 = cc1.getShape();
+                Circle c2 = cc2.getShape();
+
+                /*
+                Vector2 collision = new Vector2(
+                        c1.x - c2.x,
+                        c1.y - c2.y
+                );
+
+                float distance = collision.len2();
+                if(distance == 0){
+                    collision = new Vector2(1, 0);
+                    distance = 1;
+                }
+                if(distance > 1){
+                    continue;
+                }
+
+                collision = collision.div(distance);
+                System.out.println(collision);
+                float aci = entity.getVelocity().dot(collision);
+                float bci = otherEntity.getVelocity().dot(collision);
+
+                float acf = bci;
+                float bcf = aci;
+
+                entity.velocity.x += (acf - aci) * collision.x;
+                entity.velocity.y += (bcf - bci) * collision.y;
+                */
+
+                float xDist = c1.x - c2.x;
+                float yDist = c1.y - c2.y;
+                float distSquared = xDist * xDist + yDist * yDist;
+
+                float vx = otherEntity.velocity.x - entity.velocity.x;
+                float vy = otherEntity.velocity.y - entity.velocity.y;
+                float dp = xDist * vx + yDist * vy;
+
+                if(dp > 0){
+
+                    float cScale = dp / distSquared;
+                    float cx = xDist * cScale;
+                    float cy = yDist * cScale;
+
+                    float combinedMass = entity.getCollisionMass() + otherEntity.getCollisionMass();
+                    float c1Weight = 2 * otherEntity.getCollisionMass() / combinedMass;
+                    float c2Weight = 2 * entity.getCollisionMass() / combinedMass;
+
+                    entity.velocity.x = c1Weight * cx * 0.25f;
+                    entity.velocity.y = c1Weight * cy * 0.25f;
+                    otherEntity.velocity.x = -(c2Weight * cx * 0.25f);
+                    otherEntity.velocity.y = -(c2Weight * cy * 0.25f);
+
+                    entity.position.x += entity.velocity.x * delta;
+                    entity.position.y += entity.velocity.y * delta;
+                    otherEntity.position.x -= otherEntity.velocity.x * delta;
+                    otherEntity.position.y -= otherEntity.velocity.y * delta;
+                }
 			}
 		}
 	
@@ -90,46 +121,53 @@ public class EntityManager {
 				continue;
 				
 			}
-			
-			if(entity instanceof Bullet){
-				
-				Bullet bullet = (Bullet) entity;
-			
-				if(GameWorld.map.collideEndMapBullet(bullet)){
-                    entity.onDeath();
-                    localEntities[i] = null;
-					continue;
-				}
-			
-				for(int j = 0; j < entities.length; j++){
-					if(entities[j] == null) continue;
-					if(entities[j].isAllieTo(bullet)) continue;
-					if(entities[j].getCollisionCircle() == null) continue;
-					
-					Entity otherEntity = entities[j];
-					
-					if(bullet.getCollisionCircle().intersects(otherEntity.getCollisionCircle())){
-						
-						world.bulletCollision(bullet);
-						
-						otherEntity.onHit(bullet);
-						bullet.onHit(otherEntity);
-						
-					}
-				}
-			}
-			else{
-				
-				if(entity.getCollisionCircle() != null){
-					doCollision(entity);
-				}
-				
-			}
 
 			entity.update(delta);
             world.entityUpdate(entity);
 			
 		}
+
+        // Now check collisions
+        for(int i = 0; i < localEntities.length; i++){
+            if(localEntities[i] == null) continue;
+
+            Entity entity = localEntities[i];
+
+            if(entity instanceof Bullet){
+
+                Bullet bullet = (Bullet) entity;
+
+                if(GameWorld.map.collideEndMapBullet(bullet)){
+                    entity.onDeath();
+                    localEntities[i] = null;
+                    continue;
+                }
+
+                for(int j = 0; j < entities.length; j++){
+                    if(entities[j] == null) continue;
+                    if(entities[j].isAllieTo(bullet)) continue;
+                    if(entities[j].getCollisionCircle() == null) continue;
+
+                    Entity otherEntity = entities[j];
+
+                    if(bullet.getCollisionCircle().intersects(otherEntity.getCollisionCircle())){
+
+                        world.bulletCollision(bullet);
+
+                        otherEntity.onHit(bullet);
+                        bullet.onHit(otherEntity);
+
+                    }
+                }
+            }
+            else{
+
+                if(entity.getCollisionCircle() != null){
+                    doCollision(entity, delta);
+                }
+
+            }
+        }
 		
 		
 		/**
@@ -149,17 +187,26 @@ public class EntityManager {
 				continue;
 				
 			}
-			
-			GameWorld.map.collideEndMapEntity(entity);
-			
-			if(entity.getCollisionCircle() != null){
-				doCollision(entity);
-			}
 
 			entity.update(delta);
             world.entityUpdate(entity);
 			
 		}
+
+        // Now check collisions
+        for(int i = 0; i < entities.length; i++){
+            if(entities[i] == null) continue;
+
+            Entity entity = entities[i];
+
+            GameWorld.map.collideEndMapEntity(entity);
+
+            if(entity.getCollisionCircle() != null){
+                doCollision(entity, delta);
+            }
+        }
+
+
 		
 	}
 

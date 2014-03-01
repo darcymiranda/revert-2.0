@@ -1,7 +1,6 @@
-package com.dmiranda.revert.shared;
+package com.dmiranda.revert;
 
 import com.badlogic.gdx.Gdx;
-import com.dmiranda.revert.Revert;
 
 import java.util.HashMap;
 

@@ -52,7 +52,7 @@ public class Ship extends Unit {
 		if(move){
 
 			actionState.changeState(EntityActionState.STATE_ON);
-			
+
 			if(w){
 				
 				if(velocity.y > -topSpeed){
