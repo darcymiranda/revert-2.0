@@ -10,8 +10,8 @@ import com.dmiranda.revert.shared.bullet.Bullet;
 
 public class EntityManager {
 	
-	private Entity[] entities = new Entity[1024];
-	private Entity[] localEntities = new Entity[2048];
+	private Entity[] entities = new Entity[1024*4];
+	private Entity[] localEntities = new Entity[1024*4];
 	public final Entity[] getEntities() { return entities; }
 	public final Entity[] getLocalEntities(){ return localEntities; }
 	

@@ -3,6 +3,8 @@ package com.dmiranda.revert.shared;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.dmiranda.revert.shared.bullet.Bullet;
 
 public abstract class GameWorld {

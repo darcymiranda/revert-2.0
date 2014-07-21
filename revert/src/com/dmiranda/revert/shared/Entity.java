@@ -6,10 +6,10 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class Entity {
 	
-	protected Vector2 position;
-	protected Vector2 velocity; 
+	protected Vector2 position, oldPosition;
+	protected Vector2 velocity, oldVelocity;
 	protected int width, height;
-	protected float rotation;
+	protected float rotation, oldRotation;
     protected float rotationSpeed;
     protected float rotateTo;
 	
@@ -28,8 +28,6 @@ public abstract class Entity {
 	private int id = -1;
     private Entity killer;
 	
-	private Vector2 oldPosition;
-	
 	public Entity(float x, float y, int width, int height){
 		velocity = new Vector2(0, 0);
 		position = new Vector2(x, y);
@@ -44,6 +42,8 @@ public abstract class Entity {
 
 		oldPosition.x = position.x;
 		oldPosition.y = position.y;
+        oldRotation = rotation;
+        oldVelocity = velocity;
 		
 		float vx = velocity.x * delta;
 		float vy = velocity.y * delta;
@@ -94,6 +94,11 @@ public abstract class Entity {
 	public void createCollisionCircle(float x, float y, float radius){
 		collisionCircle = new CollisionCircle(x, y, radius);
 	}
+
+    public boolean hasChangedSinceLastTick(){
+        return oldPosition.x != position.x && oldPosition.y != position.y && oldRotation != rotation &&
+                oldVelocity.x != velocity.x && oldVelocity.y != velocity.y;
+    }
 	
 	public boolean isAllieTo(Entity otherEntity){
 		return !isEnemyTo(otherEntity);

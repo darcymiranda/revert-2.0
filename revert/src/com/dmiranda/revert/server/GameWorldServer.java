@@ -7,40 +7,33 @@ import com.dmiranda.revert.network.Network.EntitySpawnSelf;
 import com.dmiranda.revert.network.Network.UnitUpdate;
 import com.dmiranda.revert.network.properties.PUnit;
 import com.dmiranda.revert.shared.*;
+import com.dmiranda.revert.tools.Tools;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class GameWorldServer extends GameWorld {
 	
 	public RevertServer game;
-	
+
+    private final float updateRadius = 2000 * 2000;
 	private UnitUpdate unitUpdate = new UnitUpdate();
 	private float tickTime;
 	
 	public GameWorldServer(RevertServer game){
 		super();
-
 		this.game = game;
-		
 		create();
 	}
 	
 	public void create(){
 		
-
-		Asteroid asteroid = new Asteroid(0, 1500, 1900, 85);
-		asteroid.randAsteroidType();
-		entityManager.addEntity(asteroid);
-		
-		asteroid = new Asteroid(0, 1200, 1200, 125);
-		asteroid.randAsteroidType();
-		entityManager.addEntity(asteroid);
-		
 		entityManager.addEntity(
 				EntityFactory.server().createEntity(Unit.UT_SPACESTATION, players.get(COMPUTER_RED), 372, 372));
 		entityManager.addEntity(
 				EntityFactory.server().createEntity(Unit.UT_SPACESTATION, players.get(COMPUTER_BLUE), 2188, 2188));
-		
+
+        //map.load();
 		
 	}
 	
@@ -53,7 +46,31 @@ public class GameWorldServer extends GameWorld {
 
         // Send entity updates to clients
 		if(tickTime < 1){
-			game.server.sendToAllUDP(unitUpdate);
+
+            // only send entity updates to those in range
+            Iterator<Player> it = players.values().iterator();
+            while(it.hasNext()){
+                Player player = it.next();
+
+                // TODO: Use radius based from camera if ship is dead/null
+                if(player.ship == null) continue;
+
+                UnitUpdate unitUpdateCopy = new UnitUpdate();
+                unitUpdateCopy.properties = new ArrayList<PUnit>();
+                unitUpdateCopy.properties.addAll(unitUpdate.properties);
+
+                for(int i = 0; i < unitUpdateCopy.properties.size(); i++) {
+                    PUnit pUnit = unitUpdateCopy.properties.get(i);
+                    if(!Tools.withinDistance(pUnit.x, pUnit.y, player.ship.getCenterX(), player.ship.getCenterY(), updateRadius)){
+                        unitUpdateCopy.properties.remove(i);
+                    }
+                }
+
+                if(unitUpdateCopy.properties.size() > 0) {
+                    game.server.sendToUDP(player.id, unitUpdateCopy);
+                }
+            }
+
 			tickTime = Network.CLIENT_SEND_INTERVAL;
 		}else{
 			tickTime--;
@@ -64,7 +81,7 @@ public class GameWorldServer extends GameWorld {
         while(it.hasNext()){
             Player player = it.next();
 
-            // ignore teams
+            // ignore non-players
             if(player.id == GameWorld.COMPUTER_BLUE || player.id == GameWorld.COMPUTER_RED) continue;
 
             if(player.isDead()){

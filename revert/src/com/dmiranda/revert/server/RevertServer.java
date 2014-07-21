@@ -1,10 +1,8 @@
 package com.dmiranda.revert.server;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import com.dmiranda.revert.network.Network;
-import com.dmiranda.revert.shared.Player;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
@@ -20,7 +18,7 @@ public class RevertServer extends Thread {
 
     public RevertServer() throws IOException {
 
-        server = new Server(2*1024, 2*1024);
+        server = new Server(50*1024, 50*1024);
 
         Network.register(server);
 

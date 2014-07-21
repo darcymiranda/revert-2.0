@@ -17,8 +17,8 @@ public class Unit extends Entity {
 							UT_FIGHTER = 2,
                             UT_SATGUN = 3;
 	
-	protected float health, maxHealth;
-	protected boolean shooting;
+	protected float health, maxHealth, oldHealth;
+	protected boolean shooting, oldShooting;
 
 	private NetSimulateState clientNetSim;
 	private ArrayList<Weapon> weapons = new ArrayList<Weapon>();
@@ -123,6 +123,12 @@ public class Unit extends Entity {
 		setHealth(health, health);
 		this.rotationSpeed = rotationSpeed;
 	}
+
+    @Override
+    public boolean hasChangedSinceLastTick(){
+        boolean b = super.hasChangedSinceLastTick();
+        return b && oldShooting != shooting && oldHealth != health;
+    }
 	
 	public void addWeapon(Weapon weapon){
         weapons.add(weapon);

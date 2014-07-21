@@ -25,7 +25,7 @@ public class RevertClient {
 
 		this.game = game;
 		
-		client = new Client(2*1024, 2*1024);
+		client = new Client(50*1024, 50*1024);
 		client.start();
 		Network.register(client);
 		

@@ -38,6 +38,7 @@ public class Revert implements ApplicationListener {
 	private SpriteBatch sb;
     private Hud hud;
 	private ShapeRenderer debugRenderer;
+    private boolean debugMode;
 	private RevertClient client;
     private ToggleHandler toggleHandler;
 
@@ -162,22 +163,24 @@ public class Revert implements ApplicationListener {
                 world.update(Gdx.graphics.getDeltaTime());
                 world.render(sb, gameCamera);
 
-                Entity[] entities = GameWorld.entityManager.getEntities();
-                Entity[] localEntities = GameWorld.entityManager.getLocalEntities();
-                debugRenderer.setProjectionMatrix(gameCamera.combined);
-                debugRenderer.setColor(Color.WHITE);
-                debugRenderer.begin(ShapeRenderer.ShapeType.Line);
-                {
-                    for(int i = 0; i < entities.length; i++){
-                        if(entities[i] == null) continue;
+                if(debugMode) {
+                    Entity[] entities = GameWorld.entityManager.getEntities();
+                    Entity[] localEntities = GameWorld.entityManager.getLocalEntities();
+                    debugRenderer.setProjectionMatrix(gameCamera.combined);
+                    debugRenderer.setColor(Color.WHITE);
+                    debugRenderer.begin(ShapeRenderer.ShapeType.Line);
+                    {
+                        for (int i = 0; i < entities.length; i++) {
+                            if (entities[i] == null) continue;
 
-                        debugRenderer.circle(entities[i].getCollisionCircle().getShape().x,
-                                entities[i].getCollisionCircle().getShape().y,
-                                entities[i].getCollisionCircle().getShape().radius);
+                            debugRenderer.circle(entities[i].getCollisionCircle().getShape().x,
+                                    entities[i].getCollisionCircle().getShape().y,
+                                    entities[i].getCollisionCircle().getShape().radius);
 
+                        }
                     }
+                    debugRenderer.end();
                 }
-                debugRenderer.end();
 
                 hud.render(sb);
             }
@@ -248,6 +251,9 @@ public class Revert implements ApplicationListener {
                 localShip.setShooting(Gdx.input.isButtonPressed(Buttons.LEFT));
 
                 //debug
+                if(Gdx.input.isKeyPressed(Input.Keys.GRAVE)){
+                    debugMode = !debugMode;
+                }
                 if(Gdx.input.isKeyPressed(Input.Keys.M)){
                     if(localShip != null){
                         localShip.die(null);
@@ -318,5 +324,6 @@ public class Revert implements ApplicationListener {
 	public RevertClient getClient(){ return client; }
     public StateMachine getStateMachine(){ return stateMachine; }
     public Hud getHud(){ return hud; }
+    public boolean getDebugMode(){ return debugMode; }
 	
 }

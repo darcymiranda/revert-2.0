@@ -29,6 +29,12 @@ public class Tools {
                 MathUtils.cosDeg(rotation) * offset.y
         );
     }
+
+    public static boolean withinDistance(float x1, float y1, float x2, float y2, float radius){
+        float xd = x1 - x2;
+        float yd = y1 - y2;
+        return xd * xd + yd * yd <= radius;
+    }
 	
 	public static Vector2 calcMinTranslationDistance(Rectangle rect1, Rectangle rect2){
 		
